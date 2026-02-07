@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BAHUR TERMINAL PRO v2.1</title>
+    <title>BAHUR TERMINAL</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <style>
@@ -11,58 +11,81 @@
 
         :root {
             --bg: #000; --text: #fff; --border: rgba(255,255,255,0.08); --dim: #555; 
-            --green: #00ff88; --red: #ff3b30; --accent: #fff; --orange: #ff9500; --blue: #007aff;
+            --green: #00ff88; --red: #ff3b30; --aura: rgba(255,255,255,0.05);
         }
 
-        .bahur-terminal { min-height: 100vh; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; transition: 0.5s; }
-        .bahur-terminal.light { --bg: #ffffff; --text: #000000; --border: rgba(0,0,0,0.1); --dim: #888; --accent: #000; }
+        .bahur-terminal { min-height: 100vh; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; transition: background 0.4s ease, color 0.4s ease; }
+        .bahur-terminal.light { --bg: #ffffff; --text: #000000; --border: rgba(0,0,0,0.1); --dim: #888; --aura: rgba(0,0,0,0.03); }
 
-        ::-webkit-scrollbar { width: 0; } /* Скрытый скролл */
-        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        /* СКРЫВАЕМ СКРОЛЛБАР */
+        * { -ms-overflow-style: none; scrollbar-width: none; }
+        *::-webkit-scrollbar { display: none; }
+
+        .container { max-width: 1400px; margin: 0 auto; padding: 15px; }
         .mono { font-family: 'JetBrains Mono', monospace; }
 
-        /* ВАУ-ЗАГРУЗКА */
+        /* ВАУ-ЛОАДЕР */
         .loader-wrap { position: fixed; inset: 0; background: #000; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .loader-logo { font-size: 42px; font-weight: 900; letter-spacing: 0.5em; animation: logo-glow 2s infinite alternate; color: #fff; }
-        @keyframes logo-glow { from { opacity: 0.1; } to { opacity: 1; } }
+        .loader-logo { font-size: 42px; font-weight: 900; letter-spacing: 0.6em; animation: pulse 1.5s infinite; color: #fff; }
+        @keyframes pulse { 0% { opacity: 0.2; transform: scale(0.98); } 50% { opacity: 1; transform: scale(1); } 100% { opacity: 0.2; transform: scale(0.98); } }
 
-        /* HEADER */
-        .header-manifest { text-align: center; margin-bottom: 40px; position: relative; }
-        .logo-text { font-size: 48px; font-weight: 900; letter-spacing: 0.3em; margin: 0; color: var(--accent); }
-        .theme-toggle { position: absolute; right: 0; top: 10px; background: none; border: 1px solid var(--border); cursor: pointer; padding: 8px; border-radius: 50%; color: var(--text); }
+        /* HEADER & LOGO */
+        .header-manifest { text-align: center; margin-bottom: 30px; position: relative; }
+        .logo-text { font-size: 38px; font-weight: 900; letter-spacing: 0.35em; margin: 0; text-indent: 0.35em; color: var(--text); }
+        .logo-url { font-size: 9px; color: var(--dim); letter-spacing: 3px; margin-top: 5px; font-weight: 700; }
+        .theme-btn { position: absolute; right: 0; top: 10px; background: none; border: 1px solid var(--border); cursor: pointer; padding: 6px; border-radius: 4px; color: var(--text); display: flex; align-items: center; }
 
-        /* ДАШБОРД */
-        .dash-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; margin-bottom: 40px; }
-        .stat-card { border: 1px solid var(--border); padding: 20px; background: var(--bg); border-left: 4px solid var(--accent); }
-        .d-label { display: block; font-size: 8px; font-weight: 900; color: var(--dim); margin-bottom: 15px; letter-spacing: 2px; }
-        .avg-price-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
-        .price-val { font-size: 18px; font-weight: 700; color: var(--accent); }
+        /* DASHBOARD */
+        .dash-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 10px; margin-bottom: 30px; }
+        .stat-card { border: 1px solid var(--border); padding: 18px; background: var(--bg); border-left: 3px solid var(--text); }
+        .d-label { display: block; font-size: 7px; font-weight: 900; color: var(--dim); margin-bottom: 12px; letter-spacing: 1.5px; text-transform: uppercase; }
+        .avg-row { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 5px; color: var(--dim); }
+        .avg-row b { color: var(--text); font-family: 'JetBrains Mono'; }
 
-        /* БАДЖИ СИМВОЛОВ */
-        .status-badge { font-size: 8px; font-weight: 900; padding: 2px 6px; margin-left: 8px; border: 1px solid var(--accent); color: var(--accent); letter-spacing: 1px; }
-        .status-badge.mod { border-color: var(--blue); color: var(--blue); }
-        .status-badge.sim-l { border-color: var(--orange); color: var(--orange); }
-        .status-badge.out { border-color: var(--red); color: var(--red); }
+        /* ТАБЛИЦА СТАТИСТИКИ ФАБРИК */
+        .factory-mini-list { margin-top: 10px; border-top: 1px solid var(--border); padding-top: 10px; }
+        .f-row { display: flex; justify-content: space-between; font-size: 9px; margin-bottom: 4px; }
 
-        /* ФИЛЬТРЫ */
-        .filter-section { display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 30px; border-top: 1px solid var(--border); padding-top: 20px; }
-        .btn-tabs button { background: none; border: 1px solid var(--border); color: var(--dim); padding: 8px 15px; font-size: 10px; font-weight: 700; cursor: pointer; margin-right: 5px; }
-        .btn-tabs button.active { border-color: var(--accent); color: var(--accent); background: rgba(128,128,128,0.1); }
+        /* ФИЛЬТРЫ В БЛОКЕ СОРТИРОВКИ */
+        .controls-row { display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 25px; align-items: flex-end; }
+        .ctrl-group label { display: block; font-size: 8px; font-weight: 900; color: var(--dim); margin-bottom: 8px; letter-spacing: 1.5px; }
+        .btn-tabs { display: flex; gap: 4px; }
+        .btn-tabs button { background: none; border: 1px solid var(--border); color: var(--dim); padding: 6px 12px; font-size: 9px; font-weight: 900; cursor: pointer; transition: 0.2s; }
+        .btn-tabs button.active { border-color: var(--text); color: var(--text); background: var(--aura); }
 
-        /* ТАБЛИЦА */
-        .table-container { border: 1px solid var(--border); overflow-x: auto; }
-        .grid-row { display: grid; grid-template-columns: 60px 1fr 80px 120px 120px var(--w-cols); border-bottom: 1px solid var(--border); transition: 0.3s; }
-        .grid-row.is-out { opacity: 0.3; filter: grayscale(1); }
-        .grid-header { background: var(--bg); border-bottom: 2px solid var(--accent); position: sticky; top: 0; z-index: 100; font-size: 8px; font-weight: 900; color: var(--dim); }
-        .cell { padding: 15px; display: flex; align-items: center; border-right: 1px solid var(--border); }
-        .cell.center { justify-content: center; }
+        /* ТАБЛИЦА ОРИГИНАЛ */
+        .grid-table { display: flex; flex-direction: column; width: 100%; min-width: 900px; border: 1px solid var(--border); }
+        .grid-row { 
+            display: grid; grid-template-columns: 50px 1fr 70px 100px 100px var(--price-cols); 
+            background: var(--bg); border-bottom: 1px solid var(--border); position: relative; transition: filter 0.3s;
+        }
+        .grid-header { position: sticky; top: 0; z-index: 100; border-bottom: 2px solid var(--text); font-size: 7px; font-weight: 900; color: var(--dim); background: var(--bg); }
+        .cell { padding: 14px; display: flex; align-items: center; border-right: 1px solid var(--border); }
+        .cell.center { justify-content: center; text-align: center; }
 
-        /* ЭФФЕКТ СКРОЛЛА */
-        .scrolling .grid-row { filter: blur(2px); opacity: 0.5; }
+        /* ВЕСА И КРЕСТИКИ */
+        .weight-cell { position: relative; }
+        .hide-x { position: absolute; top: 2px; right: 4px; color: var(--red); cursor: pointer; opacity: 0.4; font-size: 8px; transition: 0.2s; }
+        .hide-x:hover { opacity: 1; }
+
+        /* ЗНАЧОК NEW */
+        .new-tag { font-size: 8px; font-weight: 900; padding: 1px 5px; border: 1px solid var(--text); margin-left: 8px; letter-spacing: 1px; }
+
+        /* ПОИСК И ПОДСКАЗКИ */
+        .search-container { position: relative; width: 100%; }
+        .header-search { width: 100%; background: none; border: none; color: var(--text); font-size: 11px; outline: none; font-weight: 700; }
+        .sug-list { position: absolute; top: calc(100% + 15px); left: 0; width: 300px; background: var(--bg); border: 1px solid var(--border); z-index: 500; box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
+        .sug-item { padding: 10px; font-size: 10px; cursor: pointer; border-bottom: 1px solid var(--border); color: var(--dim); }
+        .sug-item:hover { color: var(--text); background: var(--aura); }
+
+        /* СКРОЛЛ-БЛЮР */
+        .scrolling .grid-row { filter: blur(2.5px); opacity: 0.6; }
         .scrolling .grid-row:hover { filter: blur(0); opacity: 1; }
+        .go-btn { position: absolute; left: 50%; transform: translateX(-50%); background: var(--text); color: var(--bg); font-size: 8px; font-weight: 900; padding: 4px 10px; border-radius: 20px; opacity: 0; transition: 0.3s; pointer-events: none; }
+        .scrolling .grid-row:hover .go-btn { opacity: 1; pointer-events: auto; }
 
         @media (max-width: 900px) {
-            .grid-header, .grid-row { grid-template-columns: 40px 1fr var(--w-cols); }
+            .grid-header, .grid-row { grid-template-columns: 35px 1fr var(--price-cols); }
             .desk-only { display: none; }
         }
     </style>
@@ -77,81 +100,79 @@
             
             <header class="header-manifest">
                 <h1 class="logo-text">BAHUR</h1>
-                <div style="font-size: 10px; color: var(--dim); letter-spacing: 4px; margin-top: 10px;">OFFICE DUBAI</div>
-                <button @click="isDark = !isDark" class="theme-toggle">
-                    <span v-if="isDark">☀</span><span v-else>☾</span>
+                <div class="logo-url">DUBAI • TERMINAL PRO</div>
+                <button @click="isDark = !isDark" class="theme-btn">
+                    <svg v-if="isDark" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                    <svg v-else width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
                 </button>
             </header>
 
-            <section class="dashboard">
-                <div class="dash-grid">
-                    <div class="stat-card">
-                        <label class="d-label">АНАЛИТИКА ТЕКУЩЕЙ ВЫБОРКИ ({{ stats.total }})</label>
-                        <div class="avg-price-grid">
-                            <div v-show="colVis.p50"><span class="price-val mono">{{ stats.avg50 }}₽</span><div style="font-size: 7px; opacity: 0.5;">СРЕДНЯЯ 50Г</div></div>
-                            <div v-show="colVis.p500"><span class="price-val mono">{{ stats.avg500 }}₽</span><div style="font-size: 7px; opacity: 0.5;">СРЕДНЯЯ 500Г</div></div>
-                            <div v-show="colVis.p1000"><span class="price-val mono">{{ stats.avg1000 }}₽</span><div style="font-size: 7px; opacity: 0.5;">СРЕДНЯЯ 1КГ</div></div>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <label class="d-label">СТАТИСТИКА ПО ФАБРИКАМ</label>
-                        <div v-for="(val, key) in stats.factories" :key="key" style="display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 5px;">
-                            <span class="mono">{{ key }}</span>
-                            <span class="mono" style="color: var(--accent)">{{ val.percent }}%</span>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <label class="d-label">ГРАДАЦИЯ КАЧЕСТВА</label>
-                        <div v-for="(val, key) in stats.quality" :key="key" style="display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 5px;">
-                            <span class="mono">{{ key }}</span>
-                            <span class="mono" style="color: var(--accent)">{{ val }}%</span>
-                        </div>
+            <section class="dash-grid">
+                <div class="stat-card">
+                    <label class="d-label">АНАЛИТИКА ЦЕН ({{ stats.total }})</label>
+                    <div class="avg-row" v-if="colVis.p50">50г: <b>{{ stats.avg50 }}₽</b></div>
+                    <div class="avg-row" v-if="colVis.p500">500г: <b>{{ stats.avg500 }}₽</b></div>
+                    <div class="avg-row" v-if="colVis.p1000">1кг: <b>{{ stats.avg1000 }}₽</b></div>
+                </div>
+                <div class="stat-card">
+                    <label class="d-label">СТАТИСТИКА ПО ФАБРИКЕ</label>
+                    <div class="f-row" v-for="(v, k) in stats.factories" :key="k">
+                        <span>{{ k }} ({{ v }}%)</span>
+                        <span style="opacity: 0.5;">TOP:{{ stats.qualities[k] }}%</span>
                     </div>
                 </div>
             </section>
 
-            <section class="filter-section">
-                <div class="filter-group" style="flex: 1; min-width: 250px;">
-                    <label class="d-label">ПОИСК ПО НАЗВАНИЮ</label>
-                    <input v-model="search" style="width: 100%; background: none; border: 1px solid var(--border); color: var(--accent); padding: 10px; outline: none;" placeholder="...">
-                </div>
-                <div class="filter-group">
-                    <label class="d-label">ФАБРИКА / СТАТУС</label>
+            <section class="controls-row">
+                <div class="ctrl-group">
+                    <label>ПОЛ</label>
                     <div class="btn-tabs">
-                        <button v-for="f in ['ВСЕ', 'LUZI', 'EPS', 'SELUZ']" :key="f" :class="{ active: activeFactory === f }" @click="activeFactory = f">{{ f }}</button>
-                        <button :class="{ active: showOnlyNew }" @click="showOnlyNew = !showOnlyNew">NEW (+)</button>
+                        <button v-for="g in ['ВСЕ','МУЖ','ЖЕН','УНИ']" :key="g" :class="{active: activeG === g}" @click="activeG = g">{{g}}</button>
                     </div>
                 </div>
-                <div class="filter-group">
-                    <label class="d-label">СОРТИРОВКА</label>
+                <div class="ctrl-group">
+                    <label>ФАБРИКА</label>
                     <div class="btn-tabs">
-                        <button v-for="s in sortOpts" :key="s.val" :class="{ active: sortBy === s.val }" @click="sortBy = s.val">{{ s.label }}</button>
+                        <button v-for="f in ['ВСЕ','LUZI','EPS','SELUZ']" :key="f" :class="{active: activeF === f}" @click="activeF = f">{{f}}</button>
+                    </div>
+                </div>
+                <div class="ctrl-group">
+                    <label>СОРТИРОВКА / ОПЦИИ</label>
+                    <div class="btn-tabs">
+                        <button v-for="s in sortOpts" :key="s.v" :class="{active: sortBy === s.v}" @click="sortBy = s.v">{{s.l}}</button>
+                        <button :class="{active: onlyNew}" @click="onlyNew = !onlyNew">NEW</button>
                     </div>
                 </div>
             </section>
 
-            <div class="table-container" :class="{ 'scrolling': isScrolling }">
-                <div class="grid-row grid-header" :style="{ '--w-cols': gridWidth }">
+            <div class="grid-table" :class="{scrolling: isScrolling}">
+                <div class="grid-row grid-header" :style="{'--price-cols': gridWidth}">
                     <div class="cell center">№</div>
-                    <div class="cell">АРОМАТ / БРЕНД</div>
+                    <div class="cell">
+                        <div class="search-container">
+                            <input v-model="search" class="header-search" placeholder="ПОИСК АРОМАТА..." @focus="showSug = true" @blur="closeSug">
+                            <div v-if="showSug && suggestions.length" class="sug-list">
+                                <div v-for="s in suggestions" :key="s.id" class="sug-item" @mousedown="search = s.name">
+                                    <b>{{ s.brand }}</b> {{ s.name }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="cell center desk-only">ПОЛ</div>
                     <div class="cell center desk-only">ФАБРИКА</div>
                     <div class="cell center desk-only">КАЧЕСТВО</div>
-                    <div v-if="colVis.p50" class="cell center">50Г <span @click="toggleCol('p50')" style="cursor:pointer; margin-left:5px; color:var(--red);">✕</span></div>
-                    <div v-if="colVis.p500" class="cell center">500Г <span @click="toggleCol('p500')" style="cursor:pointer; margin-left:5px; color:var(--red);">✕</span></div>
-                    <div v-if="colVis.p1000" class="cell center">1КГ <span @click="toggleCol('p1000')" style="cursor:pointer; margin-left:5px; color:var(--red);">✕</span></div>
+                    <div v-if="colVis.p50" class="cell center weight-cell">50Г <span class="hide-x" @click="toggleCol('p50')">✕</span></div>
+                    <div v-if="colVis.p500" class="cell center weight-cell">500Г <span class="hide-x" @click="toggleCol('p500')">✕</span></div>
+                    <div v-if="colVis.p1000" class="cell center weight-cell">1КГ <span class="hide-x" @click="toggleCol('p1000')">✕</span></div>
                 </div>
 
-                <div v-for="p in sortedProducts" :key="p.id" :class="['grid-row', { 'is-out': p.statusRaw === '-' }]" @click="p.link && window.open(p.link, '_blank')">
-                    <div class="cell center mono" style="font-size: 10px; opacity: 0.5;">{{ p.id }}</div>
+                <div v-for="p in sortedProducts" :key="p.id" class="grid-row" @click="openLink(p.link)">
+                    <div class="cell center mono" style="font-size: 9px; opacity: 0.4;">{{ p.id }}</div>
                     <div class="cell" style="flex-direction: column; align-items: flex-start;">
-                        <span class="mono" style="font-size: 8px; opacity: 0.4;">{{ p.brand }}</span>
-                        <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 4px;">
+                        <span class="mono" style="font-size: 8px; opacity: 0.3; letter-spacing: 1px;">{{ p.brand }}</span>
+                        <div style="display: flex; align-items: center;">
                             <span style="font-weight: 700;">{{ p.name }}</span>
-                            <span v-if="p.statusRaw === '+'" class="status-badge">NEW</span>
-                            <span v-if="p.statusRaw === '*'" class="status-badge mod">MOD</span>
-                            <span v-if="p.statusRaw === '#'" class="status-badge sim-l">SIM-L</span>
-                            <span v-if="p.statusRaw === '-'" class="status-badge out">OUT</span>
+                            <span v-if="p.isNew" class="new-tag">NEW</span>
                         </div>
                     </div>
                     <div class="cell center desk-only mono" style="font-size: 10px;">{{ p.gender }}</div>
@@ -159,9 +180,12 @@
                     <div class="cell center desk-only mono" style="font-size: 10px;">{{ p.quality }}</div>
                     <div v-if="colVis.p50" class="cell center mono">{{ p.p50 }}₽</div>
                     <div v-if="colVis.p500" class="cell center mono">{{ p.p500 }}₽</div>
-                    <div v-if="colVis.p1000" class="cell center mono" style="font-weight: 900; color: var(--accent);">{{ p.p1000 }}₽</div>
+                    <div v-if="colVis.p1000" class="cell center mono" style="font-weight: 700;">{{ p.p1000 }}₽</div>
+                    <div class="go-btn">ПЕРЕЙТИ</div>
                 </div>
             </div>
+            
+            <div v-if="hiddenColsCount > 0" @click="resetCols" style="margin-top: 15px; font-size: 8px; color: var(--dim); cursor: pointer; text-align: center; letter-spacing: 1px;">ПОКАЗАТЬ ВСЕ СТОЛБЦЫ</div>
 
         </div>
     </div>
@@ -176,111 +200,109 @@ createApp({
         const initLoading = ref(true);
         const products = ref([]);
         const search = ref('');
-        const activeFactory = ref('ВСЕ');
         const sortBy = ref('id');
-        const showOnlyNew = ref(false);
-        const colVis = ref({ p50: true, p500: true, p1000: true });
+        const activeG = ref('ВСЕ');
+        const activeF = ref('ВСЕ');
+        const onlyNew = ref(false);
+        const showSug = ref(false);
         const isScrolling = ref(false);
-        let scrollTimer;
+        const colVis = ref({ p50: true, p500: true, p1000: true });
 
-        const sortOpts = [{ label: 'ID', val: 'id' }, { label: 'ЦЕНА ↑', val: 'asc' }, { label: 'ЦЕНА ↓', val: 'desc' }];
+        const sortOpts = [{l:'ID', v:'id'}, {l:'ЦЕНА ↑', v:'asc'}, {l:'ЦЕНА ↓', v:'desc'}];
 
-        const loadData = async () => {
+        const load = async () => {
             const url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTtT4zLEY49maKt0VxanZWA2ORKO1h39Mc5wB-XcZclDTmWfroFxQNAPxomg3x0-w/pub?gid=1234145733&single=true&output=csv';
             try {
-                const res = await fetch(url);
-                const text = await res.text();
-                const rows = text.split(/\r?\n/).filter(line => line.trim()).slice(1);
-                
+                const r = await fetch(url);
+                const t = await r.text();
+                const rows = t.split(/\r?\n/).filter(l => l.trim()).slice(1);
                 products.value = rows.map(row => {
-                    const col = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(c => c.replace(/^"|"$/g, '').trim());
+                    const c = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(v => v.replace(/^"|"$/g, '').trim());
                     return {
-                        id: parseInt(col[0]),
-                        link: col[1],
-                        brand: col[2],
-                        name: col[3],
-                        gender: col[4] === 'm' ? 'МУЖ' : col[4] === 'w' ? 'ЖЕН' : 'УНИ',
-                        factory: col[5] || '—',
-                        quality: col[6] || 'Q1',
-                        p50: parseInt(col[7]) || 0,
-                        p500: parseInt(col[8]) || 0,
-                        p1000: parseInt(col[9]) || 0,
-                        statusRaw: col[10], // Наш спец-символ (+, -, *, #)
-                        salesTotal: col[11] || 0, // Будущая статистика
-                        salesTrend: col[12] || 0  // Будущая статистика
+                        id: parseInt(c[0]), link: c[1], brand: c[2], name: c[3],
+                        gender: c[4] === 'm' ? 'МУЖ' : c[4] === 'w' ? 'ЖЕН' : 'УНИ',
+                        factory: c[5] || '—', quality: c[6] || 'Q1',
+                        p50: parseInt(c[7]) || 0, p500: parseInt(c[8]) || 0, p1000: parseInt(c[9]) || 0,
+                        isNew: c[10] === '+'
                     };
                 }).filter(p => !isNaN(p.id));
             } catch (e) { console.error(e); }
-            finally { setTimeout(() => initLoading.value = false, 1500); }
+            finally { setTimeout(() => initLoading.value = false, 1200); }
         };
 
-        const sortedProducts = computed(() => {
-            let list = products.value.filter(p => {
+        const filtered = computed(() => {
+            return products.value.filter(p => {
                 const s = search.value.toLowerCase();
-                const matchSearch = p.name.toLowerCase().includes(s) || p.brand.toLowerCase().includes(s);
-                const matchFactory = activeFactory.value === 'ВСЕ' || p.factory === activeFactory.value;
-                const matchNew = !showOnlyNew.value || p.statusRaw === '+';
-                return matchSearch && matchFactory && matchNew;
+                return (p.name.toLowerCase().includes(s) || p.brand.toLowerCase().includes(s)) &&
+                       (activeG.value === 'ВСЕ' || p.gender === activeG.value) &&
+                       (activeF.value === 'ВСЕ' || p.factory === activeF.value) &&
+                       (!onlyNew.value || p.isNew);
             });
-            if (sortBy.value === 'asc') list.sort((a,b) => a.p1000 - b.p1000);
-            else if (sortBy.value === 'desc') list.sort((a,b) => b.p1000 - a.p1000);
-            else list.sort((a,b) => a.id - b.id);
-            return list;
+        });
+
+        const sortedProducts = computed(() => {
+            let l = [...filtered.value];
+            if (sortBy.value === 'asc') l.sort((a,b) => a.p1000 - b.p1000);
+            else if (sortBy.value === 'desc') l.sort((a,b) => b.p1000 - a.p1000);
+            else l.sort((a,b) => a.id - b.id);
+            return l;
         });
 
         const stats = computed(() => {
-            const p = sortedProducts.value;
-            const count = p.length || 1;
-            let s50 = 0, s500 = 0, s1000 = 0;
-            const facts = { 'LUZI': 0, 'EPS': 0, 'SELUZ': 0 };
-            const quals = { 'TOP': 0, 'Q1': 0, 'Q2': 0 };
+            const p = filtered.value; // Статистика ВСЕГДА по отфильтрованному списку
+            const c = p.length || 1;
+            let s50=0, s500=0, s1000=0;
+            const fcs = {'LUZI':0, 'EPS':0, 'SELUZ':0};
+            const qls = {'LUZI':0, 'EPS':0, 'SELUZ':0};
 
             p.forEach(i => {
-                s50 += i.p50; s500 += i.p500; s1000 += i.p1000;
-                if (facts[i.factory] !== undefined) facts[i.factory]++;
-                if (quals[i.quality] !== undefined) quals[i.quality]++;
+                s50+=i.p50; s500+=i.p500; s1000+=i.p1000;
+                if(fcs[i.factory] !== undefined) fcs[i.factory]++;
+                if(i.quality === 'TOP' && qls[i.factory] !== undefined) qls[i.factory]++;
             });
 
             const factories = {};
-            Object.keys(facts).forEach(k => factories[k] = { percent: Math.round((facts[k] / count) * 100) });
+            const qualities = {};
+            Object.keys(fcs).forEach(k => {
+                factories[k] = Math.round((fcs[k]/c)*100);
+                qualities[k] = fcs[k] ? Math.round((qls[k]/fcs[k])*100) : 0;
+            });
 
-            return {
-                total: p.length,
-                avg50: Math.round(s50 / count),
-                avg500: Math.round(s500 / count),
-                avg1000: Math.round(s1000 / count),
-                factories,
-                quality: { 'TOP': Math.round((quals['TOP'] / count) * 100), 'Q1': Math.round((quals['Q1'] / count) * 100), 'Q2': Math.round((quals['Q2'] / count) * 100) }
-            };
+            return { total: p.length, avg50: Math.round(s50/c), avg500: Math.round(s500/c), avg1000: Math.round(s1000/c), factories, qualities };
         });
 
         const gridWidth = computed(() => {
             let w = [];
-            if (colVis.value.p50) w.push('80px');
-            if (colVis.value.p500) w.push('80px');
-            if (colVis.value.p1000) w.push('100px');
+            if(colVis.value.p50) w.push('80px');
+            if(colVis.value.p500) w.push('80px');
+            if(colVis.value.p1000) w.push('80px');
             return w.join(' ');
         });
 
         const toggleCol = (c) => {
-            const visibleCount = Object.values(colVis.value).filter(v => v).length;
-            if (visibleCount > 1 || !colVis.value[c]) colVis.value[c] = !colVis.value[c];
+            const v = Object.values(colVis.value).filter(x => x).length;
+            if(v > 1 || !colVis.value[c]) colVis.value[c] = !colVis.value[c];
         };
 
+        const resetCols = () => colVis.value = {p50:true, p500:true, p1000:true};
+        const openLink = (u) => u && window.open(u.startsWith('http') ? u : `https://${u}`, '_blank');
+        const closeSug = () => setTimeout(() => showSug.value = false, 200);
+
         onMounted(() => {
-            loadData();
+            load();
+            let st;
             window.addEventListener('scroll', () => {
                 isScrolling.value = true;
-                clearTimeout(scrollTimer);
-                scrollTimer = setTimeout(() => isScrolling.value = false, 150);
-            }, { passive: true });
-            if (window.Telegram && window.Telegram.WebApp) {
+                clearTimeout(st);
+                st = setTimeout(() => isScrolling.value = false, 150);
+            });
+            if(window.Telegram && window.Telegram.WebApp) {
                 window.Telegram.WebApp.ready();
                 window.Telegram.WebApp.expand();
             }
         });
 
-        return { isDark, initLoading, search, activeFactory, sortBy, showOnlyNew, colVis, sortedProducts, stats, sortOpts, gridWidth, toggleCol, isScrolling };
+        return { isDark, initLoading, search, sortBy, activeG, activeF, onlyNew, showSug, isScrolling, colVis, sortOpts, sortedProducts, stats, gridWidth, toggleCol, resetCols, openLink, closeSug, suggestions: computed(() => search.value ? products.value.filter(p => p.name.toLowerCase().startsWith(search.value.toLowerCase())).slice(0,5) : []), hiddenColsCount: computed(() => Object.values(colVis.value).filter(x => !x).length) };
     }
 }).mount('#app');
 </script>
