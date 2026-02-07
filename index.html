@@ -3,260 +3,286 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BAHUR TERMINAL v2.0</title>
+    <title>BAHUR TERMINAL PRO v2.1</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap');
 
         :root {
-            --bg: #000; --text: #fff; --border: rgba(255,255,255,0.1); --dim: #555; 
-            --green: #00ff88; --red: #ff3b30; --accent: #fff; --transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .light-theme {
-            --bg: #ffffff; --text: #000000; --border: rgba(0,0,0,0.1); --dim: #999; --accent: #000;
+            --bg: #000; --text: #fff; --border: rgba(255,255,255,0.08); --dim: #555; 
+            --green: #00ff88; --red: #ff3b30; --accent: #fff; --orange: #ff9500; --blue: #007aff;
         }
 
-        body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; transition: background var(--transition), color var(--transition); overflow-x: hidden; }
-        .container { max-width: 1400px; margin: 0 auto; padding: 10px; }
+        .bahur-terminal { min-height: 100vh; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; transition: 0.5s; }
+        .bahur-terminal.light { --bg: #ffffff; --text: #000000; --border: rgba(0,0,0,0.1); --dim: #888; --accent: #000; }
+
+        ::-webkit-scrollbar { width: 0; } /* Скрытый скролл */
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
         .mono { font-family: 'JetBrains Mono', monospace; }
 
-        /* LOADING BAR */
-        .top-loader { position: fixed; top: 0; left: 0; height: 2px; background: var(--green); z-index: 9999; transition: width 0.3s; box-shadow: 0 0 10px var(--green); }
-
-        /* THEME TOGGLE */
-        .theme-btn { background: none; border: 1px solid var(--border); color: var(--text); padding: 8px; cursor: pointer; border-radius: 50%; display: flex; align-items: center; justify-content: center; width: 35px; height: 35px; transition: var(--transition); }
-        .theme-btn svg { width: 18px; height: 18px; fill: currentColor; }
+        /* ВАУ-ЗАГРУЗКА */
+        .loader-wrap { position: fixed; inset: 0; background: #000; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .loader-logo { font-size: 42px; font-weight: 900; letter-spacing: 0.5em; animation: logo-glow 2s infinite alternate; color: #fff; }
+        @keyframes logo-glow { from { opacity: 0.1; } to { opacity: 1; } }
 
         /* HEADER */
-        .header-manifest { text-align: center; margin-bottom: 20px; position: relative; }
-        .logo-text { font-size: 32px; font-weight: 900; letter-spacing: 0.3em; margin: 0; }
-        .logo-url { font-size: 8px; color: var(--dim); letter-spacing: 3px; margin-top: 5px; font-weight: 700; }
+        .header-manifest { text-align: center; margin-bottom: 40px; position: relative; }
+        .logo-text { font-size: 48px; font-weight: 900; letter-spacing: 0.3em; margin: 0; color: var(--accent); }
+        .theme-toggle { position: absolute; right: 0; top: 10px; background: none; border: 1px solid var(--border); cursor: pointer; padding: 8px; border-radius: 50%; color: var(--text); }
 
-        /* DASHBOARD */
-        .dash-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-bottom: 25px; }
-        .stat-card { border: 1px solid var(--border); padding: 15px; border-left: 4px solid var(--accent); background: rgba(128,128,128,0.03); }
-        .d-label { font-size: 7px; font-weight: 900; color: var(--dim); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 10px; display: block; }
-        .stat-val { font-size: 22px; font-weight: 700; }
-        
-        .q-bar-group { margin-top: 10px; }
-        .q-item { margin-bottom: 8px; }
-        .q-meta { display: flex; justify-content: space-between; font-size: 9px; margin-bottom: 3px; font-weight: 700; }
-        .q-track { height: 2px; background: var(--border); width: 100%; position: relative; }
-        .q-fill { height: 100%; background: var(--accent); transition: width 1.5s ease-out; }
+        /* ДАШБОРД */
+        .dash-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; margin-bottom: 40px; }
+        .stat-card { border: 1px solid var(--border); padding: 20px; background: var(--bg); border-left: 4px solid var(--accent); }
+        .d-label { display: block; font-size: 8px; font-weight: 900; color: var(--dim); margin-bottom: 15px; letter-spacing: 2px; }
+        .avg-price-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+        .price-val { font-size: 18px; font-weight: 700; color: var(--accent); }
 
-        /* FILTERS */
-        .filter-section { display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 20px; padding: 15px; border: 1px solid var(--border); }
-        .filter-group label { display: block; font-size: 8px; font-weight: 900; opacity: 0.5; margin-bottom: 8px; letter-spacing: 1px; }
-        .btn-grid { display: flex; gap: 5px; flex-wrap: wrap; }
-        .btn-grid button { background: none; border: 1px solid var(--border); color: var(--dim); padding: 6px 12px; font-size: 9px; font-weight: 900; cursor: pointer; transition: 0.2s; }
-        .btn-grid button.active { border-color: var(--accent); color: var(--text); background: rgba(128,128,128,0.1); }
+        /* БАДЖИ СИМВОЛОВ */
+        .status-badge { font-size: 8px; font-weight: 900; padding: 2px 6px; margin-left: 8px; border: 1px solid var(--accent); color: var(--accent); letter-spacing: 1px; }
+        .status-badge.mod { border-color: var(--blue); color: var(--blue); }
+        .status-badge.sim-l { border-color: var(--orange); color: var(--orange); }
+        .status-badge.out { border-color: var(--red); color: var(--red); }
 
-        /* SEARCH SUGGESTIONS */
-        .search-box { position: relative; width: 100%; }
-        .sug-list { position: absolute; top: 100%; left: 0; width: 100%; background: var(--bg); border: 1px solid var(--border); z-index: 1000; max-height: 200px; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .sug-item { padding: 10px; font-size: 11px; cursor: pointer; border-bottom: 1px solid var(--border); }
-        .sug-item:hover { background: rgba(128,128,128,0.1); }
+        /* ФИЛЬТРЫ */
+        .filter-section { display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 30px; border-top: 1px solid var(--border); padding-top: 20px; }
+        .btn-tabs button { background: none; border: 1px solid var(--border); color: var(--dim); padding: 8px 15px; font-size: 10px; font-weight: 700; cursor: pointer; margin-right: 5px; }
+        .btn-tabs button.active { border-color: var(--accent); color: var(--accent); background: rgba(128,128,128,0.1); }
 
-        /* TABLE */
-        .grid-table { border: 1px solid var(--border); min-width: 1000px; }
-        .grid-row { display: grid; grid-template-columns: 50px 1fr 80px 100px 100px 240px; align-items: center; border-bottom: 1px solid var(--border); position: relative; transition: 0.3s; }
-        .grid-row.active-row { background: rgba(0, 255, 136, 0.05); border-left: 2px solid var(--green); }
-        
-        .cell { padding: 12px; height: 100%; display: flex; align-items: center; position: relative; }
-        .head-cell { font-size: 8px; font-weight: 900; color: var(--dim); letter-spacing: 1px; }
-        .hide-col { position: absolute; top: 2px; right: 2px; font-size: 8px; cursor: pointer; opacity: 0; transition: 0.2s; }
-        .head-cell:hover .hide-col { opacity: 1; }
+        /* ТАБЛИЦА */
+        .table-container { border: 1px solid var(--border); overflow-x: auto; }
+        .grid-row { display: grid; grid-template-columns: 60px 1fr 80px 120px 120px var(--w-cols); border-bottom: 1px solid var(--border); transition: 0.3s; }
+        .grid-row.is-out { opacity: 0.3; filter: grayscale(1); }
+        .grid-header { background: var(--bg); border-bottom: 2px solid var(--accent); position: sticky; top: 0; z-index: 100; font-size: 8px; font-weight: 900; color: var(--dim); }
+        .cell { padding: 15px; display: flex; align-items: center; border-right: 1px solid var(--border); }
+        .cell.center { justify-content: center; }
 
-        /* PRICE FONTS */
-        .price-grid { display: grid; grid-template-columns: repeat(3, 1fr); width: 100%; text-align: center; }
-        .p-val { font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 400; }
-        .p-val.bold { font-weight: 700; color: var(--green); }
+        /* ЭФФЕКТ СКРОЛЛА */
+        .scrolling .grid-row { filter: blur(2px); opacity: 0.5; }
+        .scrolling .grid-row:hover { filter: blur(0); opacity: 1; }
 
-        /* AURA BLUR EFFECT */
-        .aura-layer { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; opacity: 0; z-index: 5; transition: 0.4s; pointer-events: none; }
-        .grid-row:hover .aura-layer { opacity: 1; backdrop-filter: blur(4px); background: rgba(0,0,0,0.2); }
-        .aura-txt { font-size: 10px; font-weight: 900; letter-spacing: 4px; color: #fff; text-shadow: 0 0 10px #000; }
-
-        /* MOBILE */
         @media (max-width: 900px) {
-            .grid-table { min-width: 100%; border: none; }
+            .grid-header, .grid-row { grid-template-columns: 40px 1fr var(--w-cols); }
             .desk-only { display: none; }
-            .grid-row { grid-template-columns: 40px 1fr 150px; }
-            .mobile-meta { display: flex; gap: 5px; margin-top: 5px; }
-            .m-badge { font-size: 7px; font-weight: 900; border: 1px solid var(--border); padding: 2px 5px; opacity: 0.6; text-transform: uppercase; }
         }
     </style>
 </head>
-<body :class="{ 'light-theme': !isDark }">
+<body>
 
-<div id="app" class="container">
-    <div class="top-loader" :style="{ width: loadProgress + '%' }" v-if="loading"></div>
+<div id="app">
+    <div v-if="initLoading" class="loader-wrap"><div class="loader-logo">BAHUR</div></div>
 
-    <header class="header-manifest">
-        <h1 class="logo-text">BAHUR</h1>
-        <div class="logo-url">DUBAI • TERMINAL • STORE</div>
-        <div style="position: absolute; right: 0; top: 0;">
-            <button @click="isDark = !isDark" class="theme-btn">
-                <svg v-if="isDark" viewBox="0 0 24 24"><path d="M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2l0,2c0,0.55,0.45,1,1,1s1-0.45,1-1l0-2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20l0,2c0,0.55,0.45,1,1,1s1-0.45,1-1l0-2c0-0.55-0.45-1-1-1S11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0s-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95c-0.39-0.39-1.03-0.39-1.41,0s-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L18.36,16.95z M7.05,18.36l-1.06,1.06c-0.39,0.39-1.03,0.39-1.41,0s-0.39-1.03,0-1.41l1.06-1.06c0.39-0.39,1.03-0.39,1.41,0S7.44,17.97,7.05,18.36z M18.36,5.99l1.06-1.06c0.39-0.39,0.39-1.03,0-1.41s-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41S17.97,6.38,18.36,5.99z"/></svg>
-                <svg v-else viewBox="0 0 24 24"><path d="M12.1,20.9c-4.9,0-8.9-4-8.9-8.9s4-8.9,8.9-8.9c0.4,0,0.7,0,1.1,0.1c0.3,0,0.5,0.3,0.5,0.6c0.1,0.3-0.1,0.6-0.4,0.6c-0.4-0.1-0.8-0.1-1.2-0.1c-3.7,0-6.7,3-6.7,6.7s3,6.7,6.7,6.7c0.8,0,1.5-0.1,2.3-0.4c0.3-0.1,0.6,0,0.8,0.2c0.2,0.2,0.3,0.5,0.2,0.8C14.8,19.9,13.5,20.9,12.1,20.9z"/></svg>
-            </button>
-        </div>
-    </header>
+    <div :class="['bahur-terminal', { 'light': !isDark }]">
+        <div class="container">
+            
+            <header class="header-manifest">
+                <h1 class="logo-text">BAHUR</h1>
+                <div style="font-size: 10px; color: var(--dim); letter-spacing: 4px; margin-top: 10px;">OFFICE DUBAI</div>
+                <button @click="isDark = !isDark" class="theme-toggle">
+                    <span v-if="isDark">☀</span><span v-else>☾</span>
+                </button>
+            </header>
 
-    <section class="dash-grid">
-        <div class="stat-card"><label class="d-label">БАЗА АРОМАТОВ</label><div class="stat-val mono">{{ filtered.length }}</div></div>
-        <div class="stat-card">
-            <label class="d-label">СРЕДНИЙ ПРАЙС ({{ activeFactory }})</label>
-            <div class="mono" style="font-size: 11px; opacity: 0.7;">
-                50г: {{ stats.avg50 }}₽ | 500г: {{ stats.avg500 }}₽ | <span style="color:var(--green)">1кг: {{ stats.avg1000 }}₽</span>
-            </div>
-        </div>
-        <div class="stat-card">
-            <label class="d-label">КАЧЕСТВО %</label>
-            <div class="q-bar-group">
-                <div v-for="q in ['TOP','Q1','Q2']" :key="q" class="q-item">
-                    <div class="q-meta"><span>{{ q }}</span><span>{{ stats.qualityPerc[q] }}%</span></div>
-                    <div class="q-track"><div class="q-fill" :style="{ width: stats.qualityPerc[q] + '%' }"></div></div>
-                </div>
-            </div>
-        </div>
-        <div class="stat-card">
-            <label class="d-label">ФАБРИКИ %</label>
-            <div class="q-bar-group">
-                <div v-for="f in ['LUZI','EPS','SELUZ']" :key="f" class="q-item">
-                    <div class="q-meta"><span>{{ f }}</span><span>{{ stats.factoryPerc[f] }}%</span></div>
-                    <div class="q-track"><div class="q-fill" :style="{ width: stats.factoryPerc[f] + '%' }"></div></div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="filter-section">
-        <div class="filter-group"><label>ПОИСК ПО БАЗЕ</label>
-            <div class="search-box">
-                <input v-model="search" @focus="showSug=true" @blur="hideSug" class="mono" style="width:100%; background:none; border:none; border-bottom:1px solid var(--border); color:var(--text); padding:5px 0; outline:none;" placeholder="...">
-                <div v-if="showSug && suggestions.length" class="sug-list custom-scroll">
-                    <div v-for="s in suggestions" :key="s.id" class="sug-item" @mousedown="search=s.name"><b>{{ s.brand }}</b> {{ s.name }}</div>
-                </div>
-            </div>
-        </div>
-        <div class="filter-group"><label>ФАБРИКА</label>
-            <div class="btn-grid">
-                <button v-for="f in ['ВСЕ','LUZI','EPS','SELUZ']" :key="f" @click="activeFactory=f" :class="{active: activeFactory===f}">{{f}}</button>
-            </div>
-        </div>
-        <div class="filter-group"><label>КАТЕГОРИЯ</label>
-            <div class="btn-grid">
-                <button v-for="g in ['ВСЕ','МУЖ','ЖЕН','УНИ']" :key="g" @click="activeGender=g" :class="{active: activeGender===g}">{{g}}</button>
-                <button @click="onlyNew=!onlyNew" :class="{active: onlyNew}">НОВИНКИ</button>
-            </div>
-        </div>
-        <div class="filter-group"><label>СОРТИРОВКА</label>
-            <div class="btn-grid">
-                <button v-for="s in [{n:'ID',v:'id'},{n:'ЦЕНА ↑',v:'asc'},{n:'ЦЕНА ↓',v:'desc'}]" :key="s.v" @click="sortBy=s.v" :class="{active: sortBy===s.v}">{{s.n}}</button>
-            </div>
-        </div>
-    </section>
-
-    <div class="grid-table custom-scroll" style="overflow-x: auto;">
-        <div class="grid-row" style="background:var(--bg); position:sticky; top:0; z-index:100; font-weight:900;">
-            <div class="cell head-cell center" v-if="!hiddenCols.includes('id')">№ <span class="hide-col" @click="hiddenCols.push('id')">✕</span></div>
-            <div class="cell head-cell">НАЗВАНИЕ</div>
-            <div class="cell head-cell center desk-only" v-if="!hiddenCols.includes('gender')">ПОЛ <span class="hide-col" @click="hiddenCols.push('gender')">✕</span></div>
-            <div class="cell head-cell center desk-only" v-if="!hiddenCols.includes('factory')">ФАБРИКА <span class="hide-col" @click="hiddenCols.push('factory')">✕</span></div>
-            <div class="cell head-cell center desk-only" v-if="!hiddenCols.includes('quality')">КАЧЕСТВО <span class="hide-col" @click="hiddenCols.push('quality')">✕</span></div>
-            <div class="cell head-cell center">ПРАЙС (50г / 500г / 1кг)</div>
-        </div>
-
-        <div v-for="p in filtered" :key="p.id" class="grid-row" :class="{'active-row': activeId === p.id}" @click="clickRow(p)">
-            <div class="cell center mono" style="opacity:0.4; font-size:12px;" v-if="!hiddenCols.includes('id')">{{ p.id }}</div>
-            <div class="cell">
-                <div style="width:100%">
-                    <div style="font-size:8px; font-weight:900; opacity:0.3; letter-spacing:1px;">{{ p.brand }}</div>
-                    <div style="font-size:14px; font-weight:700;">{{ p.name }}</div>
-                    <div class="mobile-meta">
-                        <span class="m-badge">{{ p.gender }}</span><span class="m-badge">{{ p.factory }}</span><span class="m-badge">{{ p.quality }}</span>
+            <section class="dashboard">
+                <div class="dash-grid">
+                    <div class="stat-card">
+                        <label class="d-label">АНАЛИТИКА ТЕКУЩЕЙ ВЫБОРКИ ({{ stats.total }})</label>
+                        <div class="avg-price-grid">
+                            <div v-show="colVis.p50"><span class="price-val mono">{{ stats.avg50 }}₽</span><div style="font-size: 7px; opacity: 0.5;">СРЕДНЯЯ 50Г</div></div>
+                            <div v-show="colVis.p500"><span class="price-val mono">{{ stats.avg500 }}₽</span><div style="font-size: 7px; opacity: 0.5;">СРЕДНЯЯ 500Г</div></div>
+                            <div v-show="colVis.p1000"><span class="price-val mono">{{ stats.avg1000 }}₽</span><div style="font-size: 7px; opacity: 0.5;">СРЕДНЯЯ 1КГ</div></div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <label class="d-label">СТАТИСТИКА ПО ФАБРИКАМ</label>
+                        <div v-for="(val, key) in stats.factories" :key="key" style="display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 5px;">
+                            <span class="mono">{{ key }}</span>
+                            <span class="mono" style="color: var(--accent)">{{ val.percent }}%</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <label class="d-label">ГРАДАЦИЯ КАЧЕСТВА</label>
+                        <div v-for="(val, key) in stats.quality" :key="key" style="display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 5px;">
+                            <span class="mono">{{ key }}</span>
+                            <span class="mono" style="color: var(--accent)">{{ val }}%</span>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="cell center desk-only" v-if="!hiddenCols.includes('gender')"><span class="m-badge">{{ p.gender }}</span></div>
-            <div class="cell center desk-only" v-if="!hiddenCols.includes('factory')"><span class="m-badge">{{ p.factory }}</span></div>
-            <div class="cell center desk-only" v-if="!hiddenCols.includes('quality')"><span class="m-badge">{{ p.quality }}</span></div>
-            <div class="cell">
-                <div class="price-grid">
-                    <div class="p-val">{{ p.p50 }}₽</div>
-                    <div class="p-val">{{ p.p500 }}₽</div>
-                    <div class="p-val bold">{{ p.p1000 }}₽</div>
+            </section>
+
+            <section class="filter-section">
+                <div class="filter-group" style="flex: 1; min-width: 250px;">
+                    <label class="d-label">ПОИСК ПО НАЗВАНИЮ</label>
+                    <input v-model="search" style="width: 100%; background: none; border: 1px solid var(--border); color: var(--accent); padding: 10px; outline: none;" placeholder="...">
+                </div>
+                <div class="filter-group">
+                    <label class="d-label">ФАБРИКА / СТАТУС</label>
+                    <div class="btn-tabs">
+                        <button v-for="f in ['ВСЕ', 'LUZI', 'EPS', 'SELUZ']" :key="f" :class="{ active: activeFactory === f }" @click="activeFactory = f">{{ f }}</button>
+                        <button :class="{ active: showOnlyNew }" @click="showOnlyNew = !showOnlyNew">NEW (+)</button>
+                    </div>
+                </div>
+                <div class="filter-group">
+                    <label class="d-label">СОРТИРОВКА</label>
+                    <div class="btn-tabs">
+                        <button v-for="s in sortOpts" :key="s.val" :class="{ active: sortBy === s.val }" @click="sortBy = s.val">{{ s.label }}</button>
+                    </div>
+                </div>
+            </section>
+
+            <div class="table-container" :class="{ 'scrolling': isScrolling }">
+                <div class="grid-row grid-header" :style="{ '--w-cols': gridWidth }">
+                    <div class="cell center">№</div>
+                    <div class="cell">АРОМАТ / БРЕНД</div>
+                    <div class="cell center desk-only">ПОЛ</div>
+                    <div class="cell center desk-only">ФАБРИКА</div>
+                    <div class="cell center desk-only">КАЧЕСТВО</div>
+                    <div v-if="colVis.p50" class="cell center">50Г <span @click="toggleCol('p50')" style="cursor:pointer; margin-left:5px; color:var(--red);">✕</span></div>
+                    <div v-if="colVis.p500" class="cell center">500Г <span @click="toggleCol('p500')" style="cursor:pointer; margin-left:5px; color:var(--red);">✕</span></div>
+                    <div v-if="colVis.p1000" class="cell center">1КГ <span @click="toggleCol('p1000')" style="cursor:pointer; margin-left:5px; color:var(--red);">✕</span></div>
+                </div>
+
+                <div v-for="p in sortedProducts" :key="p.id" :class="['grid-row', { 'is-out': p.statusRaw === '-' }]" @click="p.link && window.open(p.link, '_blank')">
+                    <div class="cell center mono" style="font-size: 10px; opacity: 0.5;">{{ p.id }}</div>
+                    <div class="cell" style="flex-direction: column; align-items: flex-start;">
+                        <span class="mono" style="font-size: 8px; opacity: 0.4;">{{ p.brand }}</span>
+                        <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 4px;">
+                            <span style="font-weight: 700;">{{ p.name }}</span>
+                            <span v-if="p.statusRaw === '+'" class="status-badge">NEW</span>
+                            <span v-if="p.statusRaw === '*'" class="status-badge mod">MOD</span>
+                            <span v-if="p.statusRaw === '#'" class="status-badge sim-l">SIM-L</span>
+                            <span v-if="p.statusRaw === '-'" class="status-badge out">OUT</span>
+                        </div>
+                    </div>
+                    <div class="cell center desk-only mono" style="font-size: 10px;">{{ p.gender }}</div>
+                    <div class="cell center desk-only mono" style="font-size: 10px;">{{ p.factory }}</div>
+                    <div class="cell center desk-only mono" style="font-size: 10px;">{{ p.quality }}</div>
+                    <div v-if="colVis.p50" class="cell center mono">{{ p.p50 }}₽</div>
+                    <div v-if="colVis.p500" class="cell center mono">{{ p.p500 }}₽</div>
+                    <div v-if="colVis.p1000" class="cell center mono" style="font-weight: 900; color: var(--accent);">{{ p.p1000 }}₽</div>
                 </div>
             </div>
-            <div class="aura-layer"><span class="aura-txt">ПЕРЕЙТИ К АРОМАТУ</span></div>
+
         </div>
     </div>
 </div>
 
 <script>
-    const { createApp, ref, computed, onMounted } = Vue;
-    createApp({
-        setup() {
-            const isDark = ref(true); const loading = ref(true); const loadProgress = ref(0);
-            const products = ref([]); const search = ref(''); const showSug = ref(false);
-            const activeFactory = ref('ВСЕ'); const activeGender = ref('ВСЕ'); const sortBy = ref('id');
-            const activeId = ref(null); const onlyNew = ref(false); const hiddenCols = ref([]);
+const { createApp, ref, computed, onMounted } = Vue;
 
-            const loadData = async () => {
-                loading.value = true; loadProgress.value = 30;
-                try {
-                    const res = await fetch('https://docs.google.com/spreadsheets/d/e/2PACX-1vTtT4zLEY49maKt0VxanZWA2ORKO1h39Mc5wB-XcZclDTmWfroFxQNAPxomg3x0-w/pub?gid=1234145733&single=true&output=csv');
-                    const text = await res.text(); loadProgress.value = 70;
-                    const rows = text.split(/\r?\n/).filter(l => l.trim()).slice(1);
-                    products.value = rows.map(r => {
-                        const c = r.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(v => v.replace(/^"|"$/g, '').trim());
-                        return { id: parseInt(c[0]), link: c[1], brand: c[2], name: c[3], gender: c[4]||'y', factory: c[5]||'?', quality: c[6]||'?', p50: parseInt(c[7])||0, p500: parseInt(c[8])||0, p1000: parseInt(c[9])||0, status: c[10] };
-                    }).filter(p => !isNaN(p.id));
-                    loadProgress.value = 100;
-                } catch (e) { console.error(e); } finally { setTimeout(() => loading.value = false, 500); }
+createApp({
+    setup() {
+        const isDark = ref(true);
+        const initLoading = ref(true);
+        const products = ref([]);
+        const search = ref('');
+        const activeFactory = ref('ВСЕ');
+        const sortBy = ref('id');
+        const showOnlyNew = ref(false);
+        const colVis = ref({ p50: true, p500: true, p1000: true });
+        const isScrolling = ref(false);
+        let scrollTimer;
+
+        const sortOpts = [{ label: 'ID', val: 'id' }, { label: 'ЦЕНА ↑', val: 'asc' }, { label: 'ЦЕНА ↓', val: 'desc' }];
+
+        const loadData = async () => {
+            const url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTtT4zLEY49maKt0VxanZWA2ORKO1h39Mc5wB-XcZclDTmWfroFxQNAPxomg3x0-w/pub?gid=1234145733&single=true&output=csv';
+            try {
+                const res = await fetch(url);
+                const text = await res.text();
+                const rows = text.split(/\r?\n/).filter(line => line.trim()).slice(1);
+                
+                products.value = rows.map(row => {
+                    const col = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(c => c.replace(/^"|"$/g, '').trim());
+                    return {
+                        id: parseInt(col[0]),
+                        link: col[1],
+                        brand: col[2],
+                        name: col[3],
+                        gender: col[4] === 'm' ? 'МУЖ' : col[4] === 'w' ? 'ЖЕН' : 'УНИ',
+                        factory: col[5] || '—',
+                        quality: col[6] || 'Q1',
+                        p50: parseInt(col[7]) || 0,
+                        p500: parseInt(col[8]) || 0,
+                        p1000: parseInt(col[9]) || 0,
+                        statusRaw: col[10], // Наш спец-символ (+, -, *, #)
+                        salesTotal: col[11] || 0, // Будущая статистика
+                        salesTrend: col[12] || 0  // Будущая статистика
+                    };
+                }).filter(p => !isNaN(p.id));
+            } catch (e) { console.error(e); }
+            finally { setTimeout(() => initLoading.value = false, 1500); }
+        };
+
+        const sortedProducts = computed(() => {
+            let list = products.value.filter(p => {
+                const s = search.value.toLowerCase();
+                const matchSearch = p.name.toLowerCase().includes(s) || p.brand.toLowerCase().includes(s);
+                const matchFactory = activeFactory.value === 'ВСЕ' || p.factory === activeFactory.value;
+                const matchNew = !showOnlyNew.value || p.statusRaw === '+';
+                return matchSearch && matchFactory && matchNew;
+            });
+            if (sortBy.value === 'asc') list.sort((a,b) => a.p1000 - b.p1000);
+            else if (sortBy.value === 'desc') list.sort((a,b) => b.p1000 - a.p1000);
+            else list.sort((a,b) => a.id - b.id);
+            return list;
+        });
+
+        const stats = computed(() => {
+            const p = sortedProducts.value;
+            const count = p.length || 1;
+            let s50 = 0, s500 = 0, s1000 = 0;
+            const facts = { 'LUZI': 0, 'EPS': 0, 'SELUZ': 0 };
+            const quals = { 'TOP': 0, 'Q1': 0, 'Q2': 0 };
+
+            p.forEach(i => {
+                s50 += i.p50; s500 += i.p500; s1000 += i.p1000;
+                if (facts[i.factory] !== undefined) facts[i.factory]++;
+                if (quals[i.quality] !== undefined) quals[i.quality]++;
+            });
+
+            const factories = {};
+            Object.keys(facts).forEach(k => factories[k] = { percent: Math.round((facts[k] / count) * 100) });
+
+            return {
+                total: p.length,
+                avg50: Math.round(s50 / count),
+                avg500: Math.round(s500 / count),
+                avg1000: Math.round(s1000 / count),
+                factories,
+                quality: { 'TOP': Math.round((quals['TOP'] / count) * 100), 'Q1': Math.round((quals['Q1'] / count) * 100), 'Q2': Math.round((quals['Q2'] / count) * 100) }
             };
+        });
 
-            const filtered = computed(() => {
-                let list = products.value.filter(p => {
-                    const matchSearch = p.name.toLowerCase().includes(search.value.toLowerCase()) || p.brand.toLowerCase().includes(search.value.toLowerCase());
-                    const matchFact = activeFactory.value === 'ВСЕ' || p.factory.toUpperCase() === activeFactory.value;
-                    const matchGen = activeGender.value === 'ВСЕ' || (activeGender.value === 'МУЖ' && p.gender === 'm') || (activeGender.value === 'ЖЕН' && p.gender === 'w');
-                    const matchNew = !onlyNew.value || p.status === 'new';
-                    return matchSearch && matchFact && matchGen && matchNew;
-                });
-                if (sortBy.value === 'asc') list.sort((a,b) => a.p1000 - b.p1000);
-                else if (sortBy.value === 'desc') list.sort((a,b) => b.p1000 - a.p1000);
-                else list.sort((a,b) => a.id - b.id);
-                return list;
-            });
+        const gridWidth = computed(() => {
+            let w = [];
+            if (colVis.value.p50) w.push('80px');
+            if (colVis.value.p500) w.push('80px');
+            if (colVis.value.p1000) w.push('100px');
+            return w.join(' ');
+        });
 
-            const stats = computed(() => {
-                const data = filtered.value; const len = data.length || 1;
-                let s50=0, s500=0, s1000=0;
-                const q = {TOP:0, Q1:0, Q2:0}, f = {LUZI:0, EPS:0, SELUZ:0};
-                data.forEach(p => {
-                    s50 += p.p50; s500 += p.p500; s1000 += p.p1000;
-                    if(q[p.quality.toUpperCase()]!==undefined) q[p.quality.toUpperCase()]++;
-                    if(f[p.factory.toUpperCase()]!==undefined) f[p.factory.toUpperCase()]++;
-                });
-                return {
-                    avg50: Math.round(s50/len), avg500: Math.round(s500/len), avg1000: Math.round(s1000/len),
-                    qualityPerc: { TOP: Math.round(q.TOP/len*100), Q1: Math.round(q.Q1/len*100), Q2: Math.round(q.Q2/len*100) },
-                    factoryPerc: { LUZI: Math.round(f.LUZI/len*100), EPS: Math.round(f.EPS/len*100), SELUZ: Math.round(f.SELUZ/len*100) }
-                };
-            });
+        const toggleCol = (c) => {
+            const visibleCount = Object.values(colVis.value).filter(v => v).length;
+            if (visibleCount > 1 || !colVis.value[c]) colVis.value[c] = !colVis.value[c];
+        };
 
-            const suggestions = computed(() => search.value ? products.value.filter(p => p.name.toLowerCase().startsWith(search.value.toLowerCase())).slice(0,6) : []);
-            const hideSug = () => setTimeout(() => showSug.value = false, 200);
-            const clickRow = (p) => { activeId.value = p.id; if(p.link) window.open(p.link.startsWith('http') ? p.link : `https://${p.link}`, '_blank'); };
+        onMounted(() => {
+            loadData();
+            window.addEventListener('scroll', () => {
+                isScrolling.value = true;
+                clearTimeout(scrollTimer);
+                scrollTimer = setTimeout(() => isScrolling.value = false, 150);
+            }, { passive: true });
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.ready();
+                window.Telegram.WebApp.expand();
+            }
+        });
 
-            onMounted(() => { loadData(); if(window.Telegram?.WebApp) { window.Telegram.WebApp.ready(); window.Telegram.WebApp.expand(); } });
-
-            return { isDark, loading, loadProgress, search, showSug, activeFactory, activeGender, sortBy, activeId, onlyNew, hiddenCols, filtered, stats, suggestions, hideSug, clickRow };
-        }
-    }).mount('#app');
+        return { isDark, initLoading, search, activeFactory, sortBy, showOnlyNew, colVis, sortedProducts, stats, sortOpts, gridWidth, toggleCol, isScrolling };
+    }
+}).mount('#app');
 </script>
 </body>
 </html>
