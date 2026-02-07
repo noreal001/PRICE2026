@@ -1,5 +1,8 @@
 {
+  "dependencies": {
+    "serve": "^14.2.1"
+  },
   "scripts": {
-    "start": "npx serve -l $PORT"
+    "start": "serve -s . -l $PORT"
   }
 }
