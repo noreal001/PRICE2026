@@ -6,94 +6,254 @@
     <title>BAHUR TERMINAL</title>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap');
+        /* ТВОИ ОРИГИНАЛЬНЫЕ ШРИФТЫ И СТИЛИ */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap');
 
         :root {
-            --bg: #000; --text: #fff; --border: rgba(255,255,255,0.1); --dim: #666; 
-            --green: #00ff88; --red: #ff3b30; --accent: #fff;
+            --bg: #000; --text: #fff; --border: rgba(255,255,255,0.08); --dim: #555; --green: #00ff88; --red: #ff3b30;
+            --aura-bg: rgba(0,0,0,0.4); --aura-text: #fff;
         }
 
-        body, html { margin: 0; padding: 0; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; }
-        .noir-theme { --bg: #000; --text: #fff; --accent: #fff; }
-        .light-theme { --bg: #f5f5f5; --text: #000; --border: rgba(0,0,0,0.1); --accent: #000; }
+        .bahur-terminal {
+            min-height: 100vh; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; transition: 0.1s;
+        }
 
-        .app-container { min-height: 100vh; background: var(--bg); transition: 0.3s; padding: 15px; box-sizing: border-box; }
+        .bahur-terminal.noir { --bg: #000; --text: #fff; --aura-bg: rgba(0,0,0,0.4); }
+        .bahur-terminal:not(.noir) { 
+            --bg: #fff; --text: #000; --border: rgba(0,0,0,0.1); --dim: #888; 
+            --aura-bg: rgba(255,255,255,0.5); --aura-text: #000;
+        }
+
+        .container { max-width: 1400px; margin: 0 auto; padding: 15px; }
         .mono { font-family: 'JetBrains Mono', monospace; }
 
-        /* Шапка */
-        header { text-align: center; margin-bottom: 25px; border-bottom: 1px solid var(--border); padding-bottom: 15px; position: relative; }
-        .logo { font-size: 28px; font-weight: 900; letter-spacing: 0.3em; margin: 0; }
-        .theme-btn { position: absolute; top: 0; right: 0; background: none; border: 1px solid var(--border); color: var(--text); padding: 5px 12px; cursor: pointer; border-radius: 4px; }
+        /* LOADING */
+        .loading-container { display: flex; justify-content: center; align-items: center; height: 300px; }
+        .loading-line { width: 0; height: 1px; background: var(--text); animation: load 1.5s infinite ease-in-out; }
+        @keyframes load { 0% { width: 0; opacity: 0; } 50% { width: 200px; opacity: 1; } 100% { width: 0; opacity: 0; } }
 
-        /* Статистика */
-        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 20px; }
-        .card { border: 1px solid var(--border); padding: 15px; background: rgba(128,128,128,0.05); }
-        .card label { font-size: 8px; font-weight: 900; color: var(--dim); display: block; margin-bottom: 5px; }
-        .card span { font-size: 20px; font-weight: 700; }
+        /* HEADER */
+        .header-manifest { text-align: center; margin-bottom: 30px; }
+        .logo-strip-box { display: inline-block; position: relative; padding: 12px 60px; }
+        .strip { height: 0.5px; background: var(--text); width: 100%; position: absolute; left: 0; opacity: 0.3; }
+        .strip.top { top: 0; } .strip.bottom { bottom: 0; }
+        .logo-text { font-size: 36px; font-weight: 900; margin: 0; letter-spacing: 0.25em; }
+        .logo-url { font-size: 9px; color: var(--dim); font-weight: 700; letter-spacing: 2px; margin-top: 5px; }
+        .theme-centered { position: absolute; top: 50%; right: 10px; transform: translateY(-50%); background: none; border: 0.5px solid var(--border); color: var(--text); padding: 4px 8px; cursor: pointer; border-radius: 2px; font-size: 12px; }
 
-        /* Фильтры */
-        .filters { display: flex; gap: 8px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 10px; }
-        .f-btn { background: none; border: 1px solid var(--border); color: var(--dim); padding: 6px 14px; font-size: 10px; font-weight: 700; cursor: pointer; white-space: nowrap; }
-        .f-btn.active { border-color: var(--text); color: var(--text); background: rgba(255,255,255,0.1); }
+        /* DASHBOARD */
+        .dash-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 30px; }
+        .stat-card { border: 0.5px solid var(--border); padding: 18px; background: var(--bg); border-left: 3.5px solid var(--text); }
+        .d-label { display: block; font-size: 7px; font-weight: 900; color: var(--dim); margin-bottom: 12px; letter-spacing: 1.5px; text-transform: uppercase; }
+        .stat-card .v { font-size: 24px; font-weight: 700; }
 
-        /* Поиск */
-        .search-box { width: 100%; padding: 12px; background: rgba(128,128,128,0.1); border: 1px solid var(--border); color: var(--text); margin-bottom: 15px; box-sizing: border-box; border-radius: 4px; outline: none; }
+        .responsive-text { font-size: clamp(10px, 1.1vw, 14px); }
+        .avg-row { margin-bottom: 4px; color: var(--dim); }
+        .avg-row .val { color: var(--text); font-weight: 700; margin-left: 4px; }
 
-        /* Список ароматов */
-        .scent-list { display: flex; flex-direction: column; gap: 8px; }
-        .scent-item { border: 1px solid var(--border); padding: 15px; display: grid; grid-template-columns: 40px 1fr auto; align-items: center; gap: 15px; cursor: pointer; transition: 0.2s; }
-        .scent-item:hover { background: rgba(128,128,128,0.05); }
-        .scent-id { color: var(--dim); font-size: 12px; }
-        .scent-name { font-weight: 700; font-size: 15px; }
-        .scent-brand { font-size: 9px; color: var(--dim); text-transform: uppercase; letter-spacing: 1px; }
-        .prices { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
-        .p-row { font-size: 11px; }
-        .p-row b { color: var(--green); font-size: 13px; margin-left: 5px; }
+        .q-row-stacked, .stock-box-stacked { margin-bottom: 10px; }
+        .q-meta { display: flex; justify-content: space-between; font-size: 9px; font-weight: 600; margin-bottom: 5px; }
+        .op-5 { opacity: 0.5; }
+        .q-track-neon { height: 2px; background: var(--border); width: 100%; overflow: hidden; }
+        .q-fill-neon { height: 100%; background: var(--text); box-shadow: 0 0 5px var(--text); transition: 1s ease-out; }
+        .v-small { font-size: 16px; font-weight: 700; margin-bottom: 5px; }
 
-        /* Загрузка */
-        .loader { text-align: center; padding: 50px; color: var(--dim); font-size: 12px; letter-spacing: 2px; }
+        /* FILTERS */
+        .controls-luxury { margin-bottom: 25px; }
+        .ctrl-layout { display: flex; flex-wrap: wrap; gap: 15px; }
+        .ctrl-label { display: block; font-size: 8px; font-weight: 900; color: var(--text); margin-bottom: 8px; letter-spacing: 2px; opacity: 0.4; }
+        .btn-grid { display: flex; gap: 5px; }
+        .btn-grid button { background: none; border: 0.5px solid var(--border); color: var(--dim); padding: 7px 16px; font-size: 9px; font-weight: 900; cursor: pointer; transition: 0.2s; }
+        .btn-grid button.active { border-color: var(--text); color: var(--text); background: rgba(128,128,128,0.08); }
+
+        /* SEARCH */
+        .search-wrapper { position: relative; width: 100%; display: flex; align-items: center; }
+        .search-icon { width: 15px; height: 15px; color: var(--dim); margin-right: 10px; }
+        .header-search { width: 100%; background: none; border: none; color: var(--text); font-size: 11px; outline: none; letter-spacing: 1px; }
+        .search-suggestions { 
+            position: absolute; top: calc(100% + 15px); left: 0; width: 280px; 
+            background: var(--bg); border: 0.5px solid var(--border); z-index: 999; max-height: 250px; 
+            overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .sug-item { padding: 10px 15px; font-size: 10px; cursor: pointer; border-bottom: 0.5px solid var(--border); color: var(--dim); }
+        .sug-item:hover { background: rgba(255,255,255,0.03); color: var(--text); }
+
+        /* GRID SYSTEM */
+        .grid-table { display: flex; flex-direction: column; width: 100%; min-width: 1000px; border: 0.5px solid var(--border); }
+        .grid-row { 
+            display: grid; grid-template-columns: 60px 1fr 80px 120px 120px 240px; align-items: center; 
+            background: var(--bg); border-bottom: 0.5px solid var(--border); position: relative; overflow: hidden; 
+        }
+        .sticky-head { position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--text); background: var(--bg); }
+        .cell { height: 100%; display: flex; align-items: center; padding: 15px; border-right: 0.5px solid var(--border); }
+        .head-txt { font-size: 7px; font-weight: 900; color: var(--dim); text-transform: uppercase; letter-spacing: 1.5px; }
+        .center { justify-content: center; text-align: center; }
+
+        /* AURA EFFECT */
+        .clickable-row { cursor: pointer; transition: 0.3s; }
+        .row-aura-overlay {
+            position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+            opacity: 0; backdrop-filter: blur(0px); background: transparent;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: 10;
+        }
+        .clickable-row:hover .row-aura-overlay { opacity: 1; backdrop-filter: blur(8px); background: var(--aura-bg); }
+        .aura-text {
+            font-size: 11px; font-weight: 900; letter-spacing: 5px; color: var(--aura-text);
+            transform: translateY(15px); opacity: 0; transition: 0.5s;
+        }
+        .clickable-row:hover .aura-text { opacity: 1; transform: translateY(0); }
+
+        /* ID ZONE */
+        .id-zone-square { flex-direction: column; gap: 5px; justify-content: center; border-right: 0.5px solid var(--border); padding: 8px 0; }
+        .id-sq-top { font-size: 14px; font-weight: 900; color: var(--dim); }
+        .lamp-sq { width: 14px; height: 3px; margin: 0 auto; border-radius: 1px; }
+        .lamp-sq.green { background: var(--green); box-shadow: 0 0 8px var(--green); }
+        .lamp-sq.red { background: var(--red); }
+
+        /* BADGES */
+        .badge-square-matte { font-size: 8px; font-weight: 900; border: 0.5px solid var(--border); padding: 5px 12px; letter-spacing: 2px; text-transform: uppercase; margin: 0 auto; color: var(--text); opacity: 0.6; }
+        .m-square-matte { font-size: 7px; font-weight: 900; border: 0.5px solid var(--border); padding: 2px 6px; opacity: 0.5; text-transform: uppercase; }
+
+        /* CONTENT */
+        .scent-info { width: 100%; padding-left: 10px; }
+        .brand-code { font-size: 8px; font-weight: 900; opacity: 0.3; display: block; text-transform: uppercase; letter-spacing: 1px; }
+        .scent-title { font-size: 16px; font-weight: 700; line-height: 1.1; }
+        .mobile-only-meta { display: none; margin-top: 8px; gap: 5px; }
+
+        /* PRICE BLOCK */
+        .price-container { display: flex; flex-direction: column; height: 100%; width: 100%; }
+        .price-section { display: grid; grid-template-columns: repeat(3, 1fr); height: 100%; width: 100%; align-items: center; }
+        .p-col { text-align: center; font-size: 15px; height: 100%; display: flex; align-items: center; justify-content: center; }
+        .p-col.line { border-right: 0.5px solid var(--border); }
+        .head-p .p-col { font-size: 7px; font-weight: 900; color: var(--dim); letter-spacing: 1.5px; }
+
+        @media (max-width: 900px) {
+            .dash-grid { grid-template-columns: 1fr 1fr; }
+            .grid-table { min-width: 100%; border: none; }
+            .desk-only { display: none; }
+            .mobile-only-meta { display: flex; }
+            .grid-row { grid-template-columns: 35px 1fr 165px; border-bottom: 0.5px solid var(--border); }
+            .id-sq-top { font-size: 9px; }
+            .price-container { width: 165px; }
+            .price-section { grid-template-columns: 55px 55px 55px; }
+        }
     </style>
 </head>
 <body>
 
 <div id="app">
-    <div :class="['app-container', isDark ? 'noir-theme' : 'light-theme']">
-        
-        <header>
-            <h1 class="logo">BAHUR</h1>
-            <div class="mono" style="font-size: 10px; opacity: 0.5;">OFFICIAL TERMINAL</div>
-            <button @click="isDark = !isDark" class="theme-btn">{{ isDark ? '☀' : '☾' }}</button>
-        </header>
+    <div :class="['bahur-terminal', { 'noir': isDark }]">
+        <div class="container">
+            
+            <header class="header-manifest">
+                <div class="logo-strip-box">
+                    <div class="strip top"></div>
+                    <h1 class="logo-text">BAHUR</h1>
+                    <div class="strip bottom"></div>
+                    <div class="logo-url">WWW.BAHUR.STORE</div>
+                    <button @click="isDark = !isDark" class="theme-centered">{{ isDark ? '☀' : '☾' }}</button>
+                </div>
+            </header>
 
-        <div v-if="loading" class="loader mono">ЗАГРУЗКА БАЗЫ ДАННЫХ...</div>
-
-        <div v-else>
-            <div class="stats">
-                <div class="card"><label>ВСЕГО</label><span class="mono">{{ filtered.length }}</span></div>
-                <div class="card"><label>СРЕДНЯЯ ЦЕНА (1КГ)</label><span class="mono">{{ avgPrice }}₽</span></div>
-            </div>
-
-            <input v-model="search" class="search-box mono" placeholder="ПОИСК АРОМАТА ИЛИ БРЕНДА...">
-
-            <div class="filters">
-                <button v-for="g in ['ВСЕ', 'm', 'w', 'y']" :key="g" @click="gender = g" :class="['f-btn', { active: gender === g }]">
-                    {{ g === 'm' ? 'МУЖ' : g === 'w' ? 'ЖЕН' : g === 'y' ? 'УНИ' : 'ПОЛ' }}
-                </button>
-                <button v-for="q in ['ВСЕ', 'TOP', 'Q1', 'Q2']" :key="q" @click="quality = q" :class="['f-btn', { active: quality === q }]">
-                    {{ q }}
-                </button>
-            </div>
-
-            <div class="scent-list">
-                <div v-for="p in filtered" :key="p.id" class="scent-item" @click="p.link ? window.open(p.link, '_blank') : null">
-                    <div class="scent-id mono">{{ p.id }}</div>
-                    <div>
-                        <div class="scent-name">{{ p.name }}</div>
-                        <div class="scent-brand">{{ p.brand }} | {{ p.factory }}</div>
+            <section class="dashboard">
+                <div class="dash-grid">
+                    <div class="stat-card">
+                        <label class="d-label">АРОМАТОВ</label>
+                        <div class="v mono">{{ stats.total }}</div>
                     </div>
-                    <div class="prices mono">
-                        <div class="p-row">50г <b>{{ p.p50 }}</b></div>
-                        <div class="p-row">1кг <b>{{ p.p1000 }}</b></div>
+                    <div class="stat-card">
+                        <label class="d-label">СРЕДНЯЯ ЦЕНА</label>
+                        <div class="avg-list mono responsive-text">
+                            <div class="avg-row">50г: <span class="val">{{ stats.avg50 }}₽</span></div>
+                            <div class="avg-row">500г: <span class="val">{{ stats.avg500 }}₽</span></div>
+                            <div class="avg-row">1кг: <span class="val">{{ stats.avg1000 }}₽</span></div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <label class="d-label">НА СКЛАДЕ</label>
+                        <div class="stock-box-stacked">
+                            <div class="v-small mono">{{ stats.availability }}%</div>
+                            <div class="q-track-neon"><div class="q-fill-neon" :style="{ width: stats.availability + '%' }"></div></div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <label class="d-label">КАЧЕСТВО %</label>
+                        <div class="q-list">
+                            <div v-for="q in ['TOP', 'Q1', 'Q2']" :key="q" class="q-row-stacked">
+                                <div class="q-meta"><span class="mono">{{ q }}</span><span class="mono op-5">{{ stats.qualityPerc[q] }}%</span></div>
+                                <div class="q-track-neon"><div class="q-fill-neon" :style="{ width: stats.qualityPerc[q] + '%' }"></div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="controls-luxury">
+                <div class="ctrl-layout">
+                    <div class="ui-group"><label class="ctrl-label">ПОЛ</label>
+                        <div class="btn-grid"><button v-for="g in genderOptions" :key="g.val" @click="activeGender = g.val" :class="{ active: activeGender === g.val }">{{ g.label }}</button></div>
+                    </div>
+                    <div class="ui-group"><label class="ctrl-label">КАЧЕСТВО</label>
+                        <div class="btn-grid"><button v-for="q in qualityOptions" :key="q.val" @click="activeQuality = q.val" :class="{ active: activeQuality === q.val }">{{ q.label }}</button></div>
+                    </div>
+                    <div class="ui-group"><label class="ctrl-label">СОРТИРОВКА</label>
+                        <div class="btn-grid"><button v-for="s in sortOptions" :key="s.val" @click="sortBy = s.val" :class="{ active: sortBy === s.val }">{{ s.label }}</button></div>
+                    </div>
+                </div>
+            </section>
+
+            <div class="table-frame">
+                <div v-if="loading" class="loading-container"><div class="loading-line"></div></div>
+                <div v-else class="grid-table">
+                    <div class="grid-row head sticky-head no-click">
+                        <div class="cell id head-txt center">№</div>
+                        <div class="cell name name-header">
+                            <div class="search-wrapper">
+                                <input v-model="search" type="text" placeholder="ПОИСК" class="header-search" @focus="showSug = true" @blur="hideSug" />
+                                <div v-if="showSug && suggestions.length" class="search-suggestions">
+                                    <div v-for="s in suggestions" :key="s.name" class="sug-item" @mousedown="search = s.name">
+                                        <strong>{{ s.brand }}</strong> {{ s.name }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="cell desk-only head-txt center">ПОЛ</div>
+                        <div class="cell desk-only head-txt center">ФАБРИКА</div>
+                        <div class="cell desk-only head-txt center">КАЧЕСТВО</div>
+                        <div class="price-section head-p">
+                            <div class="p-col line center">50Г</div>
+                            <div class="p-col line center">500Г</div>
+                            <div class="p-col last center">1КГ</div>
+                        </div>
+                    </div>
+
+                    <div v-for="p in sortedProducts" :key="p.id" :class="['grid-row', 'clickable-row', { 'out': p.status === '-' }]" @click="open(p.link)">
+                        <div class="id-zone-square center cell">
+                            <div class="id-sq-top mono">{{ p.id }}</div>
+                            <div :class="['lamp-sq', p.status === '-' ? 'red' : 'green']"></div>
+                        </div>
+                        <div class="cell name border-right-mobile">
+                            <div class="scent-info">
+                                <span class="brand-code">{{ p.brand }}</span>
+                                <span class="scent-title">{{ p.name }}</span>
+                                <div class="mobile-only-meta">
+                                    <span class="m-square-matte">{{ getSex(p.gender) }}</span> 
+                                    <span class="m-square-matte">{{ p.factory }}</span> 
+                                    <span class="m-square-matte">{{ p.quality }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="cell desk-only center"><div class="badge-square-matte">{{ getSex(p.gender) }}</div></div>
+                        <div class="cell desk-only center"><div class="badge-square-matte">{{ p.factory }}</div></div>
+                        <div class="cell desk-only center"><div class="badge-square-matte">{{ p.quality }}</div></div>
+                        <div class="price-container">
+                            <div class="price-section mono center">
+                                <div class="p-col line">{{ p.p50 }}₽</div>
+                                <div class="p-col line">{{ p.p500 }}₽</div>
+                                <div class="p-col last" style="font-weight: 700;">{{ p.p1000 }}₽</div>
+                            </div>
+                        </div>
+                        <div class="row-aura-overlay"><span class="aura-text">ПЕРЕЙТИ К АРОМАТУ</span></div>
                     </div>
                 </div>
             </div>
@@ -106,54 +266,74 @@
 
     createApp({
         setup() {
-            const isDark = ref(true);
-            const loading = ref(true);
-            const products = ref([]);
-            const search = ref('');
-            const gender = ref('ВСЕ');
-            const quality = ref('ВСЕ');
+            const isDark = ref(true); const loading = ref(true); const products = ref([]); const search = ref(''); const showSug = ref(false);
+            const activeGender = ref('ВСЕ'); const activeQuality = ref('ВСЕ'); const sortBy = ref('id');
+
+            const genderOptions = [{ label: 'ВСЕ', val: 'ВСЕ' }, { label: 'МУЖ', val: 'm' }, { label: 'ЖЕН', val: 'w' }, { label: 'УНИ', val: 'y' }];
+            const qualityOptions = [{ label: 'ВСЕ', val: 'ВСЕ' }, { label: 'TOP', val: 'TOP' }, { label: 'Q1', val: 'Q1' }, { label: 'Q2', val: 'Q2' }];
+            const sortOptions = [{ label: 'ID', val: 'id' }, { label: 'ЦЕНА ↑', val: 'asc' }, { label: 'ЦЕНА ↓', val: 'desc' }];
 
             const loadData = async () => {
                 const url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTtT4zLEY49maKt0VxanZWA2ORKO1h39Mc5wB-XcZclDTmWfroFxQNAPxomg3x0-w/pub?gid=1234145733&single=true&output=csv';
                 try {
                     const res = await fetch(url);
-                    const data = await res.text();
-                    const rows = data.split(/\r?\n/).slice(1); // Пропускаем заголовок
+                    const text = await res.text();
+                    const rows = text.split(/\r?\n/).filter(line => line.trim()).slice(1);
                     
                     products.value = rows.map(row => {
                         const col = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(c => c.replace(/^"|"$/g, '').trim());
-                        return {
-                            id: col[0], link: col[1], brand: col[2], name: col[3],
-                            gender: col[4], factory: col[5], quality: col[6],
-                            p50: col[7], p500: col[8], p1000: col[9]
-                        };
-                    }).filter(p => p.id && !isNaN(p.id));
-                } catch (e) {
-                    console.error("Ошибка загрузки CSV:", e);
-                } finally {
-                    loading.value = false;
-                }
+                        if (isNaN(parseInt(col[0]))) return null;
+                        let g = col[4] ? col[4].toLowerCase().trim() : '';
+                        let fG = (g === 'm' || g === 'м' || g.includes('муж')) ? 'm' : (g === 'w' || g === 'ж' || g.includes('жен')) ? 'w' : (g === 'y' || g === 'у' || g.includes('уни')) ? 'y' : 'y';
+                        return { id: col[0], link: col[1], brand: col[2], name: col[3], gender: fG, factory: col[5], quality: col[6], p50: parseInt(col[7]) || 0, p500: parseInt(col[8]) || 0, p1000: parseInt(col[9]) || 0, status: col[10] };
+                    }).filter(p => p !== null);
+                } catch (e) { console.error(e); }
+                finally { setTimeout(() => loading.value = false, 800); }
             };
 
-            const filtered = computed(() => {
+            const suggestions = computed(() => {
+                if (!search.value) return [];
+                const s = search.value.toLowerCase();
+                return products.value.filter(p => p.brand.toLowerCase().startsWith(s) || p.name.toLowerCase().startsWith(s)).slice(0, 8);
+            });
+
+            const hideSug = () => setTimeout(() => showSug.value = false, 200);
+
+            const filteredProducts = computed(() => {
                 return products.value.filter(p => {
                     const s = search.value.toLowerCase();
-                    return (p.name.toLowerCase().includes(s) || p.brand.toLowerCase().includes(s)) &&
-                           (gender.value === 'ВСЕ' || p.gender === gender.value) &&
-                           (quality.value === 'ВСЕ' || p.quality === quality.value);
+                    return (p.name.toLowerCase().includes(s) || p.brand.toLowerCase().includes(s)) && 
+                           (activeGender.value === 'ВСЕ' || p.gender === activeGender.value) && 
+                           (activeQuality.value === 'ВСЕ' || p.quality === activeQuality.value);
                 });
             });
 
-            const avgPrice = computed(() => {
-                const p = filtered.value;
-                if (!p.length) return 0;
-                const sum = p.reduce((acc, i) => acc + (parseInt(i.p1000) || 0), 0);
-                return Math.round(sum / p.length);
+            const sortedProducts = computed(() => {
+                let list = [...filteredProducts.value];
+                if (sortBy.value === 'asc') list.sort((a,b) => a.p1000 - b.p1000);
+                else if (sortBy.value === 'desc') list.sort((a,b) => b.p1000 - a.p1000);
+                else list.sort((a,b) => a.id - b.id);
+                return list;
             });
+
+            const stats = computed(() => {
+                const p = filteredProducts.value; const count = p.length || 1;
+                let s50 = 0, s500 = 0, s1000 = 0, avail = 0;
+                const qual = { 'TOP': 0, 'Q1': 0, 'Q2': 0 };
+                p.forEach(i => {
+                    if (qual[i.quality] !== undefined) qual[i.quality]++;
+                    if (i.status !== '-') avail++;
+                    s50 += i.p50; s500 += i.p500; s1000 += i.p1000;
+                });
+                return { total: p.length, availability: Math.round((avail / count) * 100), avg50: Math.round(s50 / count), avg500: Math.round(s500 / count), avg1000: Math.round(s1000 / count), qualityPerc: { 'TOP': Math.round((qual['TOP'] / count) * 100), 'Q1': Math.round((qual['Q1'] / count) * 100), 'Q2': Math.round((qual['Q2'] / count) * 100) } }
+            });
+
+            const getSex = (g) => ({ m: 'МУЖ', w: 'ЖЕН', y: 'УНИ' }[g] || '—');
+            const open = (u) => u && window.open(u.startsWith('http') ? u : `https://${u}`, '_blank');
 
             onMounted(loadData);
 
-            return { isDark, loading, search, gender, quality, filtered, avgPrice };
+            return { isDark, loading, search, showSug, activeGender, activeQuality, sortBy, genderOptions, qualityOptions, sortOptions, suggestions, filteredProducts, sortedProducts, stats, getSex, open, hideSug };
         }
     }).mount('#app');
 </script>
