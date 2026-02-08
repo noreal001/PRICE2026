@@ -125,7 +125,7 @@
           <div class="sticky-nav-group">
             
             <section class="controls-luxury relative-zone">
-              <div class="top-bar-controls-grid-4">
+              <div class="top-bar-controls-grid-3">
                 
                 <div class="control-item relative-zone">
                    <button @click="toggleBrandMenu" :class="['main-ctrl-btn', { 'active': showBrandMenu || selectedBrands.length > 0 }]">
@@ -140,7 +140,8 @@
                          <div class="brands-scroll-area custom-scroll-minimal">
                             <div class="brands-list-vertical">
                               <button @click="clearBrands" class="brand-row-btn rus-font all-brand-btn"><div class="brand-left-group"><span>Все</span></div></button>
-                              <button v-for="b in filteredBrandsDropdown" :key="b" @click="toggleBrandSelection(b)" class="brand-row-btn eng-font">
+                              
+                              <button v-for="b in filteredBrandsDropdown" :key="b" @click="toggleBrandSelection(b)" class="brand-row-btn eng-font brand-font-fix">
                                 <div class="brand-left-group"><span class="brand-txt-truncate">{{ b }}</span></div>
                                 <svg v-if="selectedBrands.includes(b)" class="check-status" viewBox="0 0 24 24"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z" /></svg>
                               </button>
@@ -176,10 +177,6 @@
                          </div>
                       </div>
                    </transition>
-                </div>
-
-                <div class="control-item">
-                  <button @click="toggleNew" :class="['main-ctrl-btn', { 'active': isNewOnly }]"><span class="rus-font">Новинки</span></button>
                 </div>
 
                 <div class="control-item relative-zone">
@@ -220,6 +217,13 @@
                         <span class="popup-label rus-font">Столбцы</span>
                         <div class="segmented-control">
                           <button v-for="(val, key) in priceLabels" :key="key" @click="togglePrice(key)" :class="['segment-btn', { active: showPrices[key] }]"><span class="rus-font">{{ val }}</span></button>
+                        </div>
+                      </div>
+                      <div class="popup-section">
+                        <span class="popup-label rus-font">Статус</span>
+                        <div class="segmented-control">
+                           <button @click="isNewOnly = false" :class="['segment-btn', { active: !isNewOnly }]">Все</button>
+                           <button @click="isNewOnly = true" :class="['segment-btn', { active: isNewOnly }]">New</button>
                         </div>
                       </div>
                     </div>
@@ -317,14 +321,14 @@ const errorMsg = ref(null);
 const products = ref([]); 
 const showDash = ref(true);
 
-// --- SCROLL WIDGET LOGIC (FIXED) ---
+// --- SCROLL WIDGET LOGIC ---
 let isScrolling = false;
 let scrollDir = 0;
 let animationFrameId = null;
 
 const smoothScrollLoop = () => {
   if (isScrolling) {
-    window.scrollBy(0, scrollDir * 15); // 15px per frame = smooth fast scroll
+    window.scrollBy(0, scrollDir * 15);
     animationFrameId = requestAnimationFrame(smoothScrollLoop);
   }
 }
@@ -390,7 +394,6 @@ const toggleFilterMenu = () => { if (showFilters.value) { closeAllMenus(); retur
 const toggleBrandMenu = () => { 
   if (showBrandMenu.value) { closeAllMenus(); return; } 
   closeAllMenus(); showBrandMenu.value = true; tempBrandInput.value = ''; 
-  // Убран авто-фокус
 }
 const toggleBrandSelection = (b) => {
   const idx = selectedBrands.value.indexOf(b);
@@ -401,7 +404,6 @@ const clearBrands = () => { selectedBrands.value = []; closeAllMenus(); }
 const toggleAromaMenu = () => { 
   if (showAromaMenu.value) { closeAllMenus(); return; } 
   closeAllMenus(); showAromaMenu.value = true; tempAromaInput.value = ''; 
-  // Убран авто-фокус
 }
 const toggleAromaSelection = (a) => {
   const idx = selectedAromas.value.indexOf(a);
@@ -447,7 +449,6 @@ const loadData = async () => {
     products.value = parseCSV(txt);
     if (products.value.length === 0) throw new Error('Данные пусты или ошибка формата');
     startAutoHighlight();
-    // Искусственная задержка для красоты анимации заставки
     setTimeout(() => loading.value = false, 1500);
   } catch (e) { console.error(e); errorMsg.value = "Не удалось подключиться к базе данных. Проверьте соединение."; loading.value = false; }
 }
@@ -499,7 +500,12 @@ const stats = computed(() => {
     const f = i.factory.toUpperCase();
     if (f.includes('LUZI')) factories['LUZI']++; else if (f.includes('EPS')) factories['EPS']++; else if (f.includes('SELUZ')) factories['SELUZ']++;
   });
-  const topListFull = [...p].sort((a,b) => { const valA = statsMode.value === '6m' ? a.sales6m : a.salesAll; const valB = statsMode.value === '6m' ? b.sales6m : b.salesAll; return valB - valA; });
+  
+  // TOP LIST LIMITED TO 50
+  const topListFull = [...p]
+      .sort((a,b) => { const valA = statsMode.value === '6m' ? a.sales6m : a.salesAll; const valB = statsMode.value === '6m' ? b.sales6m : b.salesAll; return valB - valA; })
+      .slice(0, 50);
+
   const availPerc = Math.round((avail / count) * 100);
   return { 
       total: p.length, countAvail: avail, countOut: out, availability: availPerc, 
@@ -513,7 +519,6 @@ const stats = computed(() => {
 const getSex = (g) => ({ m: 'Муж', w: 'Жен', y: 'Уни' }[g] || '—');
 const open = (u) => window.open(u.startsWith('http') ? u : `https://${u}`, '_blank');
 onMounted(() => {
-  // Telegram Script Injection
   const script = document.createElement('script');
   script.src = "https://telegram.org/js/telegram-web-app.js";
   document.head.appendChild(script);
@@ -526,7 +531,6 @@ onUnmounted(() => { if (highlightInterval) clearInterval(highlightInterval); sto
 /* FONTS */
 @font-face { font-family: 'Kollektif'; src: local('Kollektif'), url('https://fonts.cdnfonts.com/s/16912/Kollektif.woff') format('woff'); font-weight: normal; font-style: normal; }
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
-/* HANDWRITTEN FONT FOR LOADING */
 @import url('https://fonts.googleapis.com/css2?family=Mrs+Saint+Delafield&display=swap');
 
 .eng-font { font-family: 'Kollektif', 'Segoe UI', sans-serif; }
@@ -593,7 +597,6 @@ onUnmounted(() => { if (highlightInterval) clearInterval(highlightInterval); sto
 .scroll-widget-noir {
   position: fixed; right: 0; top: 50%; transform: translateY(-50%); width: 34px;
   display: flex; flex-direction: column; align-items: center; gap: 4px; z-index: 1000; opacity: 0.9;
-  /* Added touch action to prevent browser swipe gestures on the widget */
   touch-action: none;
 }
 .s-btn {
@@ -609,7 +612,8 @@ onUnmounted(() => { if (highlightInterval) clearInterval(highlightInterval); sto
 /* STICKY NAV */
 .sticky-nav-group { position: sticky; top: 0; z-index: 500; background: var(--sticky-bg); backdrop-filter: blur(15px); border-bottom: 1px solid var(--text); margin-bottom: 0; }
 .controls-luxury { padding: 12px 0; border-bottom: 0.5px solid var(--border); }
-.top-bar-controls-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; }
+/* 3 COLUMNS NOW */
+.top-bar-controls-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; }
 .control-item { display: flex; justify-content: center; align-items: center; width: 100%; }
 
 .main-ctrl-btn { width: 100%; background: var(--btn-ctrl-bg); border: none; color: var(--text); padding: 10px 0; border-radius: 30px; font-size: 10px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; transition: all 0.2s; letter-spacing: 0.5px; white-space: nowrap; text-transform: none; }
@@ -635,6 +639,8 @@ onUnmounted(() => { if (highlightInterval) clearInterval(highlightInterval); sto
 .brand-row-btn { display: flex; justify-content: space-between; align-items: center; background: transparent; color: var(--text); border: none; padding: 8px 10px; border-radius: 6px; cursor: pointer; font-size: 11px; text-transform: capitalize; text-align: left; transition: 0.2s; opacity: 0.8; }
 .all-brand-btn { opacity: 1; font-weight: 700; margin-bottom: 5px; border-bottom: 1px solid var(--border); padding-bottom: 10px; border-radius: 0; }
 .brand-row-btn:hover { background: var(--seg-bg); opacity: 1; }
+/* Brand menu font fix to match Aroma Brand style */
+.brand-font-fix { font-weight: 900; font-size: 10px; opacity: 0.8; }
 .brand-left-group { display: flex; align-items: center; gap: 8px; overflow: hidden; }
 .brand-txt-truncate { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px; }
 .aroma-sug-brand { font-weight: 900; opacity: 0.5; margin-right: 5px; font-size: 10px; }
@@ -687,9 +693,9 @@ onUnmounted(() => { if (highlightInterval) clearInterval(highlightInterval); sto
 /* COMPACT TOP LIST STYLES */
 .top-row-flex { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
 .mode-switch { background: none; border: 1px solid var(--border); color: var(--text); cursor: pointer; border-radius: 4px; font-size: 10px; padding: 2px 5px; }
-.top-list-scroll-container { max-height: 120px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; padding-right: 2px; }
+/* COMPRESSED HEIGHT */
+.top-list-scroll-container { max-height: 60px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; padding-right: 2px; }
 
-/* Новый компактный ряд для мобилки */
 .top-row-compact { display: flex; justify-content: space-between; align-items: center; font-size: 10px; padding: 2px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
 .tr-left { display: flex; align-items: center; max-width: 60%; overflow: hidden; }
 .top-num { color: var(--dim); margin-right: 5px; font-size: 9px; min-width: 12px; }
@@ -754,14 +760,12 @@ onUnmounted(() => { if (highlightInterval) clearInterval(highlightInterval); sto
   .p-col { padding: 0; font-size: 12px; border-right: 0.5px solid var(--border) !important; }
   .p-col.last { border-right: none !important; }
   .aura-text { font-size: 9px; letter-spacing: 2px; }
-  .top-bar-controls-grid-4 { gap: 5px; }
+  .top-bar-controls-grid-3 { gap: 5px; }
   .main-ctrl-btn { font-size: 9px; padding: 6px 0; }
   .btn-txt-fixed { max-width: 65px; }
   .desk-only-new { display: none; }
   .bahur-popup-menu.list-mode { left: 0 !important; right: 0 !important; margin: auto !important; transform: none !important; width: 220px !important; }
-  /* MOBILE OPTIMIZATION FOR TOP LIST SCROLL */
   .custom-scroll-minimal::-webkit-scrollbar { width: 1px !important; }
-  /* Padding to ensure text isn't hidden by global scroll widget */
   .container { padding-right: 35px; }
 }
 </style>
