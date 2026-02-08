@@ -56,7 +56,10 @@
                      <div class="st-item">
                         <label class="d-label">АРОМАТЫ</label>
                         <div class="v mono">{{ stats.total }}</div>
-                        <div class="mini-stat-row left-align">В наличии: {{ stats.countAvail }} <span class="dim-slash">|</span> Нет: {{ stats.countOut }}</div>
+                        <div class="stock-stack-info">
+                           <div class="ss-row">В наличии: <span class="mono">{{ stats.countAvail }}</span></div>
+                           <div class="ss-row">Нет: <span class="mono">{{ stats.countOut }}</span></div>
+                        </div>
                      </div>
                      <div class="st-sep"></div>
                      <div class="st-price-box">
@@ -71,11 +74,18 @@
                 </div>
 
                 <div class="stat-card span-full">
-                   <div class="stock-head">
-                      <label class="d-label">СКЛАД</label>
-                      <span class="v-small mono">{{ stats.availability }}%</span>
+                   <div class="stock-layout">
+                      <div class="stock-left">
+                         <label class="d-label">СКЛАД</label>
+                         <div class="stock-big-num mono">{{ stats.availability }}%</div>
+                      </div>
+                      <div class="stock-right">
+                         <div class="q-track-neon-thick">
+                            <div class="q-fill-neon-thick white-part" :style="{ width: stats.availability + '%' }"></div>
+                         </div>
+                         <div class="stock-missing-text">Отсутствует: {{ 100 - stats.availability }}%</div>
+                      </div>
                    </div>
-                   <div class="q-track-neon mb-1"><div class="q-fill-neon white-part" :style="{ width: stats.availability + '%' }"></div></div>
                 </div>
 
                 <div class="stat-card">
@@ -100,8 +110,9 @@
 
                 <div class="stat-card relative-zone span-full">
                   <div class="top-header-center">
-                    <button @click="toggleStatsMode" class="top-switch-btn rus-font">
-                       РЕЙТИНГ: {{ statsMode === '6m' ? '6 МЕСЯЦЕВ' : 'ЗА ВСЕ ВРЕМЯ' }} ⇄
+                    <button @click="toggleStatsMode" class="top-switch-btn-subtle rus-font">
+                       <span class="btn-subtle-label">РЕЙТИНГ:</span> {{ statsMode === '6m' ? '6 МЕС' : 'ВСЕ ВРЕМЯ' }} 
+                       <span class="arrow-indicator">⇄</span>
                     </button>
                   </div>
                   
@@ -139,7 +150,7 @@
                 
                 <div class="left-group">
                   <div class="control-item relative-zone">
-                     <button @click="toggleBrandMenu" :class="['main-ctrl-btn', { 'active': showBrandMenu || selectedBrands.length > 0 }]">
+                     <button @click="toggleBrandMenu" :class="['main-ctrl-btn', { 'active-mode': showBrandMenu || selectedBrands.length > 0 }]">
                         <span class="btn-txt-fixed rus-font ctrl-text-bold">{{ brandLabel }}</span>
                         <svg class="pill-arrow" viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 8.59L12 13.17L16.59 8.59L18 10L12 16L6 10L7.41 8.59Z"/></svg>
                      </button>
@@ -168,7 +179,7 @@
                   </div>
 
                   <div class="control-item relative-zone">
-                     <button @click="toggleAromaMenu" :class="['main-ctrl-btn', { 'active': showAromaMenu || selectedAromas.length > 0 }]">
+                     <button @click="toggleAromaMenu" :class="['main-ctrl-btn', { 'active-mode': showAromaMenu || selectedAromas.length > 0 }]">
                         <span class="btn-txt-fixed rus-font ctrl-text-bold">{{ aromaLabel }}</span>
                         <svg class="pill-arrow" viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 8.59L12 13.17L16.59 8.59L18 10L12 16L6 10L7.41 8.59Z"/></svg>
                      </button>
@@ -200,13 +211,20 @@
                   </div>
 
                   <div class="control-item">
-                    <button @click="toggleNew" :class="['main-ctrl-btn', { 'active': isNewOnly }]"><span class="rus-font ctrl-text-bold">Новинки</span></button>
+                    <button @click="toggleNew" :class="['main-ctrl-btn', { 'active-mode': isNewOnly }]">
+                       <span class="rus-font ctrl-text-bold">Новинки</span>
+                       <div class="toggle-switch-wrapper">
+                          <div class="toggle-track">
+                             <div class="toggle-thumb"></div>
+                          </div>
+                       </div>
+                    </button>
                   </div>
                 </div>
 
                 <div class="right-group">
                   <div class="control-item relative-zone">
-                    <button @click="toggleFilterMenu" :class="['main-ctrl-btn', { 'active': showFilters }]">
+                    <button @click="toggleFilterMenu" :class="['main-ctrl-btn', { 'active-mode': showFilters }]">
                       <span class="rus-font ctrl-text-bold">{{ showFilters ? 'Закрыть' : 'Фильтр' }}</span>
                       <svg class="pill-arrow" viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 8.59L12 13.17L16.59 8.59L18 10L12 16L6 10L7.41 8.59Z"/></svg>
                     </button>
@@ -587,7 +605,7 @@ onUnmounted(() => {
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100;300;400;700&display=swap');
 
 .eng-font { font-family: 'Kollektif', 'Segoe UI', sans-serif; }
-.kollektif-font { font-family: 'Kollektif', sans-serif; } /* Specifically for perfume names */
+.kollektif-font { font-family: 'Kollektif', sans-serif; } 
 .rus-font { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
 .mono { font-family: 'JetBrains Mono', monospace; }
 
@@ -621,12 +639,26 @@ onUnmounted(() => {
 
 .container { max-width: 1400px; margin: 0 auto; padding: 15px; }
 
-/* LOADING SCREEN (DIAGONAL LINES) */
-.loading-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 2000; display: flex; justify-content: center; align-items: center; overflow: hidden; }
+/* LOADING SCREEN (WHITE LINES ON BLACK) */
+.loading-overlay { 
+  position: fixed; inset: 0; background: #000; z-index: 2000; 
+  display: flex; justify-content: center; align-items: center; overflow: hidden; 
+}
 .diagonal-bg {
   position: absolute; inset: 0;
-  background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(125,125,125,0.05) 10px, rgba(125,125,125,0.05) 20px);
+  /* Thicker lines (3px), brighter white */
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 10px,
+    rgba(255, 255, 255, 0.3) 10px, 
+    rgba(255, 255, 255, 0.3) 13px
+  );
+  background-size: 200% 200%;
+  animation: bg-move 4s linear infinite;
 }
+@keyframes bg-move { 0% { background-position: 0% 0%; } 100% { background-position: 100% 100%; } }
+
 .intro-content { position: relative; z-index: 10; text-align: center; }
 /* HELVETICA LOGO + GLOW FOR LOADING */
 .intro-text { 
@@ -671,12 +703,12 @@ onUnmounted(() => {
 .strip.top { top: 0; } .strip.bottom { bottom: 0; }
 .logo-text { 
   font-size: 36px; 
-  font-weight: 100; /* Ultra thin like fashion brands */
+  font-weight: 100; 
   margin: 0; 
   letter-spacing: 0.25em; 
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; /* HELVETICA NEUE */
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; 
   line-height: 1.2; 
-  text-shadow: 0 0 10px rgba(255,255,255,0.5); /* BACKLIGHT/GLOW */
+  text-shadow: 0 0 10px rgba(255,255,255,0.5); 
 }
 .logo-url { font-size: 9px; color: var(--dim); font-weight: 700; letter-spacing: 2px; margin-top: 5px; font-family: 'Kollektif', sans-serif; text-transform: lowercase; }
 .header-icon-btn { position: absolute; top: 50%; transform: translateY(-50%); background: none; border: 1px solid var(--border); color: var(--text); width: 28px; height: 28px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; z-index: 10; }
@@ -693,13 +725,63 @@ onUnmounted(() => {
 .right-group { width: auto; }
 .control-item { width: auto; min-width: 100px; }
 
-/* BUTTONS */
-.main-ctrl-btn { width: 100%; background: var(--btn-ctrl-bg); border: none; color: var(--text); padding: 14px 20px; border-radius: 30px; font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s; letter-spacing: 0.5px; white-space: nowrap; text-transform: none; }
-.ctrl-text-bold { font-weight: 700; }
+/* NEW BUTTON STYLE (LIKE RATING) */
+.main-ctrl-btn { 
+  width: 100%; 
+  background: transparent; 
+  border: 1px solid var(--border); 
+  color: var(--text); 
+  padding: 10px 20px; 
+  border-radius: 30px; 
+  font-size: 11px; 
+  font-weight: 700; 
+  cursor: pointer; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  gap: 8px; 
+  transition: all 0.2s; 
+  letter-spacing: 0.5px; 
+  white-space: nowrap; 
+  text-transform: none; 
+}
+.main-ctrl-btn:hover { background: rgba(255,255,255,0.05); }
+.main-ctrl-btn.active-mode { 
+  background: var(--text); 
+  color: var(--bg); 
+  border-color: var(--text);
+  font-weight: 800;
+}
+.ctrl-text-bold { font-weight: 600; }
 .btn-txt-fixed { max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.main-ctrl-btn:hover { background: rgba(125,125,125,0.15); }
-.main-ctrl-btn.active { background: var(--text); color: var(--bg); }
 .pill-arrow { width: 10px; height: 10px; opacity: 0.8; } 
+
+/* TOGGLE SWITCH STYLE INSIDE BUTTON */
+.toggle-switch-wrapper { display: flex; align-items: center; }
+.toggle-track {
+  width: 24px; height: 14px;
+  background: #000; /* Black background */
+  border: 1px solid #fff; /* White border */
+  border-radius: 10px;
+  position: relative;
+  transition: 0.3s;
+}
+.toggle-thumb {
+  width: 8px; height: 8px;
+  background: #fff; /* White circle */
+  border-radius: 50%;
+  position: absolute; top: 2px; left: 2px;
+  transition: 0.3s;
+}
+/* Active State for Toggle */
+.active-mode .toggle-track {
+  background: #fff; /* Invert: White background */
+  border-color: #000; /* Black border */
+}
+.active-mode .toggle-thumb {
+  background: #000; /* Invert: Black circle */
+  transform: translateX(10px);
+}
 
 .relative-zone { position: relative; }
 .click-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 800; background: transparent; }
@@ -759,11 +841,9 @@ onUnmounted(() => {
 .q-fill-neon { height: 100%; background: var(--text); box-shadow: 0 0 5px var(--text); transition: 1s ease-out; }
 .white-part { background: #fff; box-shadow: 0 0 5px #fff; } 
 .v-small { font-size: 16px; font-weight: 700; margin-bottom: 5px; }
-.mini-stat-row { font-size: 9px; font-weight: 700; margin-top: 5px; }
-.left-align { text-align: left; margin-top: 8px; }
 .dim-slash { margin: 0 5px; opacity: 0.3; }
 
-/* CARD 1: SPLIT AROMAS + PRICE */
+/* CARD 1: SPLIT AROMAS + PRICE + STOCK VERTICAL */
 .split-top-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; }
 .st-item { flex: 1; }
 .st-sep { width: 1px; background: var(--border); margin: 0 10px; opacity: 0.5; align-self: stretch; }
@@ -772,22 +852,34 @@ onUnmounted(() => {
 .ap-item { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--dim); }
 .ap-item .val { color: var(--text); font-weight: 700; font-size: 12px; margin-left: 5px; }
 
-/* CARD 2: STOCK */
-.stock-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px; }
-.mb-1 { margin-bottom: 8px; }
-.center-text { text-align: center; }
+/* Stock Vertical Stack in Card 1 */
+.stock-stack-info { display: flex; flex-direction: column; margin-top: 10px; gap: 2px; }
+.ss-row { font-size: 10px; color: var(--dim); font-weight: 600; }
+.ss-row span { color: var(--text); margin-left: 4px; }
 
-/* BIG CENTER TOGGLE BUTTON */
-.top-header-center { display: flex; justify-content: center; margin-bottom: 15px; }
-.top-switch-btn {
-  background: var(--btn-ctrl-bg); border: 1px solid var(--border); color: var(--text);
-  padding: 12px 24px; border-radius: 8px; font-size: 11px; font-weight: 800;
-  cursor: pointer; width: 100%; text-transform: uppercase; letter-spacing: 1px;
+/* CARD 2: STOCK (REDESIGNED) */
+.stock-layout { display: flex; justify-content: space-between; align-items: center; }
+.stock-left { flex-shrink: 0; margin-right: 15px; }
+.stock-big-num { font-size: 32px; font-weight: 700; line-height: 1; }
+.stock-right { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
+.q-track-neon-thick { height: 6px; background: rgba(125,125,125,0.2); width: 100%; border-radius: 3px; overflow: hidden; margin-bottom: 6px; }
+.q-fill-neon-thick { height: 100%; background: #fff; box-shadow: 0 0 8px #fff; }
+.stock-missing-text { font-size: 9px; color: var(--dim); text-align: right; }
+
+/* SUBTLE TOP BUTTON */
+.top-header-center { display: flex; justify-content: center; margin-bottom: 12px; }
+.top-switch-btn-subtle {
+  background: transparent; border: 1px solid var(--border); color: var(--text);
+  padding: 6px 12px; border-radius: 20px; font-size: 10px; font-weight: 600;
+  cursor: pointer; opacity: 0.7; transition: 0.2s;
+  display: flex; align-items: center; gap: 6px;
 }
-.top-switch-btn:hover { background: rgba(125,125,125,0.1); }
+.top-switch-btn-subtle:hover { opacity: 1; background: rgba(255,255,255,0.05); }
+.btn-subtle-label { color: var(--dim); }
+.arrow-indicator { font-size: 12px; }
 
 /* COMPACT TOP LIST STYLES (DARK SCROLLBAR) */
-.top-row-flex { display: none; } /* Hidden, replaced by big button */
+.top-row-flex { display: none; }
 .top-list-scroll-container { max-height: 60px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; padding-right: 0px; }
 /* Dark Scrollbar for Top List */
 .custom-scroll-minimal::-webkit-scrollbar { width: 3px; }
@@ -833,7 +925,7 @@ onUnmounted(() => {
 .price-container { width: calc(var(--p-cols) * 80px); }
 .price-section { display: grid; height: 100%; width: 100%; align-items: center; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
 .p-col { text-align: center; font-size: 15px; height: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden; white-space: nowrap; box-sizing: border-box; }
-.p-col.line { border-right: 1px solid rgba(255, 255, 255, 0.2); } /* STRONGER BORDER */
+.p-col.line { border-right: 1px solid rgba(255, 255, 255, 0.6); } /* STRONGER BORDER */
 .head-p .p-col { font-size: 8px; font-weight: 700; color: var(--dim); letter-spacing: 1.5px; text-transform: uppercase; }
 .row-aura-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; opacity: 0; backdrop-filter: blur(0px); background: transparent; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: 10; pointer-events: none; }
 .clickable-row:hover .row-aura-overlay, .clickable-row.simulated-hover .row-aura-overlay { opacity: 1; backdrop-filter: blur(8px); background: var(--aura-bg); }
