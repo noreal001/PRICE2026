@@ -3,16 +3,18 @@
     <div class="container">
       
       <header class="header-manifest">
-        <div class="logo-strip-box">
-          <div class="strip top"></div>
-          <h1 class="logo-text">BAHUR</h1>
-          <div class="strip bottom"></div>
-          <div class="logo-url">www.bahur.store</div>
-          
-          <button @click="isDark = !isDark" class="header-icon-btn theme-pos">
-            <svg v-if="isDark" class="h-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,2L14.39,5.42C13.65,5.15 12.84,5 12,5C11.16,5 10.35,5.15 9.61,5.42L12,2M3.34,7L7.5,7.46C7.18,8.14 7,8.89 7,9.67V14.33C7,15.11 7.18,15.86 7.5,16.54L3.34,17L5.36,12L3.34,7M12,22L9.61,18.58C10.35,18.85 11.16,19 12,19C12.84,19 13.65,18.85 14.39,18.58L12,22M20.66,7L18.64,12L20.66,17L16.5,16.54C16.82,15.86 17,15.11 17,14.33V9.67C17,8.89 16.82,8.14 16.5,7.46L20.66,7Z" /></svg>
-            <svg v-else class="h-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M17.75,4.09L15.22,6.03L16.13,9.09L13.5,7.28L10.87,9.09L11.78,6.03L9.25,4.09L12.44,4L13.5,1L14.56,4L17.75,4.09M21.25,11L19.61,12.25L20.2,14.23L18.5,13.06L16.8,14.23L17.39,12.25L15.75,11L17.81,10.95L18.5,9L19.19,10.95L21.25,11M18.97,15.95C19.8,15.87 20.69,17.05 20.16,17.8C19.84,18.25 19.5,18.67 19.08,19.07C15.17,23 8.84,23 4.94,19.07C1.03,15.17 1.03,8.83 4.94,4.93C5.34,4.53 5.76,4.17 6.21,3.85C6.96,3.32 8.14,4.21 8.06,5.04C6.93,8.39 8.5,12.5 12.31,14.31C14.12,15.17 16.5,15.2 18.97,15.95M17.33,17.97C14.5,17.81 11.7,16.64 9.53,14.5C7.3,12.23 6.13,9.3 5.96,6.38C3.2,10.12 3.66,15.29 7.15,18.78C10.63,22.27 15.8,22.73 19.54,19.97C18.86,19.43 18.12,18.77 17.33,17.97Z" /></svg>
-          </button>
+        <div class="header-inner">
+           <button @click="isDark = !isDark" class="header-icon-btn theme-pos">
+              <svg v-if="isDark" class="h-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,2L14.39,5.42C13.65,5.15 12.84,5 12,5C11.16,5 10.35,5.15 9.61,5.42L12,2M3.34,7L7.5,7.46C7.18,8.14 7,8.89 7,9.67V14.33C7,15.11 7.18,15.86 7.5,16.54L3.34,17L5.36,12L3.34,7M12,22L9.61,18.58C10.35,18.85 11.16,19 12,19C12.84,19 13.65,18.85 14.39,18.58L12,22M20.66,7L18.64,12L20.66,17L16.5,16.54C16.82,15.86 17,15.11 17,14.33V9.67C17,8.89 16.82,8.14 16.5,7.46L20.66,7Z" /></svg>
+              <svg v-else class="h-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M17.75,4.09L15.22,6.03L16.13,9.09L13.5,7.28L10.87,9.09L11.78,6.03L9.25,4.09L12.44,4L13.5,1L14.56,4L17.75,4.09M21.25,11L19.61,12.25L20.2,14.23L18.5,13.06L16.8,14.23L17.39,12.25L15.75,11L17.81,10.95L18.5,9L19.19,10.95L21.25,11M18.97,15.95C19.8,15.87 20.69,17.05 20.16,17.8C19.84,18.25 19.5,18.67 19.08,19.07C15.17,23 8.84,23 4.94,19.07C1.03,15.17 1.03,8.83 4.94,4.93C5.34,4.53 5.76,4.17 6.21,3.85C6.96,3.32 8.14,4.21 8.06,5.04C6.93,8.39 8.5,12.5 12.31,14.31C14.12,15.17 16.5,15.2 18.97,15.95M17.33,17.97C14.5,17.81 11.7,16.64 9.53,14.5C7.3,12.23 6.13,9.3 5.96,6.38C3.2,10.12 3.66,15.29 7.15,18.78C10.63,22.27 15.8,22.73 19.54,19.97C18.86,19.43 18.12,18.77 17.33,17.97Z" /></svg>
+           </button>
+
+           <div class="logo-strip-box">
+             <div class="strip top"></div>
+             <h1 class="logo-text">BAHUR</h1>
+             <div class="strip bottom"></div>
+             <div class="logo-url">www.bahur.store</div>
+           </div>
         </div>
       </header>
 
@@ -633,18 +635,31 @@ onUnmounted(() => {
 .retry-btn-noir { background: var(--text); border: none; color: var(--bg); padding: 12px 24px; font-family: 'JetBrains Mono', monospace; font-size: 11px; cursor: pointer; transition: 0.3s; text-transform: uppercase; font-weight: 700; }
 .retry-btn-noir:hover { opacity: 0.8; }
 
-/* CUSTOM SCROLL WIDGET (TRACK) */
+/* CUSTOM SCROLL WIDGET (TRACK) - LOWER & BOLDER */
 .scroll-widget-track {
-  position: fixed; right: 2px; top: 0; bottom: 0; width: 20px; z-index: 1000;
+  position: fixed; right: 2px; top: 15px; bottom: 15px; width: 16px; z-index: 1000;
   display: flex; justify-content: center; touch-action: none;
 }
 .scroll-widget-thumb {
-  position: absolute; width: 4px; background: var(--text); border-radius: 2px;
-  box-shadow: 0 0 8px var(--text); transition: opacity 0.2s;
+  position: absolute; width: 6px; background: var(--text); border-radius: 3px;
+  box-shadow: 0 0 5px rgba(255,255,255,0.2); transition: opacity 0.2s;
 }
 .scroll-widget-track::before {
   content: ''; position: absolute; top: 0; bottom: 0; width: 1px; background: var(--border); opacity: 0.3;
 }
+
+/* HEADER STYLES REPAIRED */
+.header-manifest { margin-bottom: 30px; position: relative; }
+.header-inner { display: flex; justify-content: center; align-items: center; position: relative; padding: 12px 0; }
+.logo-strip-box { position: relative; padding: 5px 60px; display: inline-block; text-align: center; }
+.strip { height: 0.5px; background: var(--text); width: 100%; position: absolute; left: 0; opacity: 0.3; }
+.strip.top { top: 0; } .strip.bottom { bottom: 0; }
+.logo-text { font-size: 36px; font-weight: 300; margin: 0; letter-spacing: 0.25em; font-family: 'Kollektif', sans-serif; line-height: 1.2; }
+.logo-url { font-size: 9px; color: var(--dim); font-weight: 700; letter-spacing: 2px; margin-top: 5px; font-family: 'Kollektif', sans-serif; text-transform: lowercase; }
+.header-icon-btn { position: absolute; top: 50%; transform: translateY(-50%); background: none; border: 1px solid var(--border); color: var(--text); width: 28px; height: 28px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; z-index: 10; }
+.header-icon-btn:hover { background: rgba(125,125,125,0.1); }
+.theme-pos { right: 0; } 
+/* Stats btn is handled in dash-control-bar */
 
 /* STICKY NAV */
 .sticky-nav-group { position: sticky; top: 0; z-index: 500; background: var(--sticky-bg); backdrop-filter: blur(15px); border-bottom: 1px solid var(--text); margin-bottom: 0; }
@@ -698,6 +713,11 @@ onUnmounted(() => {
 .pop-enter-active, .pop-leave-active { transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
 .pop-enter-from, .pop-leave-to { opacity: 0; transform: translateY(-10px) scale(0.95); }
 
+.dash-control-bar { padding-left: 2px; display: flex; justify-content: flex-start; margin-bottom: 5px; }
+.stats-pos { left: 0; position: relative; transform: none; top: auto; }
+.h-icon { width: 16px; height: 16px; }
+.closed-arrow { transform: rotate(180deg); transition: 0.3s; }
+
 .dash-collapsible-wrapper { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
 .dash-collapsible-wrapper.open { grid-template-rows: 1fr; }
 .dash-inner-content { overflow: hidden; }
@@ -741,7 +761,7 @@ onUnmounted(() => {
 /* Dark Scrollbar for Top List */
 .custom-scroll-minimal::-webkit-scrollbar { width: 3px; }
 .custom-scroll-minimal::-webkit-scrollbar-track { background: transparent; }
-.custom-scroll-minimal::-webkit-scrollbar-thumb { background: #222; border-radius: 4px; } /* Dark Grey */
+.custom-scroll-minimal::-webkit-scrollbar-thumb { background: #222; border-radius: 4px; } 
 
 .top-row-compact { display: flex; justify-content: space-between; align-items: center; font-size: 10px; padding: 2px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
 .tr-left-main { display: flex; align-items: center; width: 40%; overflow: hidden; }
@@ -820,9 +840,9 @@ onUnmounted(() => {
   /* MOBILE BUTTON STYLING (Larger, Bolder) */
   .main-ctrl-btn { 
     font-size: 11px; 
-    padding: 18px 0; /* Taller buttons */
-    font-weight: 800; /* Bolder text */
-    border-radius: 12px; /* Smoother */
+    padding: 18px 0; /* Taller */
+    font-weight: 800; /* Bolder */
+    border-radius: 12px;
   }
   .btn-txt-fixed { max-width: 65px; }
   
