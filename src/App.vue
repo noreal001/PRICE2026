@@ -19,9 +19,9 @@
       </header>
 
       <div v-if="loading" class="loading-overlay">
-         <div class="action-loader">
-            <span class="thin-hero-text">BAHUR</span>
-            <div class="scan-line"></div>
+         <div class="diagonal-bg"></div>
+         <div class="intro-content">
+            <span class="intro-text">BAHUR</span>
          </div>
       </div>
 
@@ -56,6 +56,7 @@
                      <div class="st-item">
                         <label class="d-label">АРОМАТЫ</label>
                         <div class="v mono">{{ stats.total }}</div>
+                        <div class="mini-stat-row left-align">В наличии: {{ stats.countAvail }} <span class="dim-slash">|</span> Нет: {{ stats.countOut }}</div>
                      </div>
                      <div class="st-sep"></div>
                      <div class="st-price-box">
@@ -75,7 +76,6 @@
                       <span class="v-small mono">{{ stats.availability }}%</span>
                    </div>
                    <div class="q-track-neon mb-1"><div class="q-fill-neon white-part" :style="{ width: stats.availability + '%' }"></div></div>
-                   <div class="mini-stat-row center-text">В наличии: {{ stats.countAvail }} | Нет: {{ stats.countOut }}</div>
                 </div>
 
                 <div class="stat-card">
@@ -99,15 +99,17 @@
                 </div>
 
                 <div class="stat-card relative-zone span-full">
-                  <div class="top-row-flex">
-                    <label class="d-label">ТОП: {{ statsMode === '6m' ? '6 МЕС' : 'ВСЕ' }}</label>
-                    <button @click="toggleStatsMode" class="mini-arrow-btn mode-switch" title="Переключить">⇄</button>
+                  <div class="top-header-center">
+                    <button @click="toggleStatsMode" class="top-switch-btn rus-font">
+                       РЕЙТИНГ: {{ statsMode === '6m' ? '6 МЕСЯЦЕВ' : 'ЗА ВСЕ ВРЕМЯ' }} ⇄
+                    </button>
                   </div>
+                  
                   <div class="top-list-scroll-container custom-scroll-minimal">
                      <div v-for="(item, idx) in stats.topListFull" :key="idx" class="top-row-compact">
                         <div class="tr-left-main">
                            <span class="top-num mono">{{ idx + 1 }}.</span>
-                           <span class="top-name rus-font" :title="item.name">{{ item.name }}</span>
+                           <span class="top-name kollektif-font" :title="item.name">{{ item.name }}</span>
                         </div>
                         <div class="tr-mid-graph">
                            <div class="mini-bar-track">
@@ -279,7 +281,7 @@
                 <div class="cell name border-right-mobile">
                   <div class="scent-info">
                     <span class="brand-code eng-font">{{ p.brand }}</span>
-                    <span class="scent-title rus-font">{{ p.name }}</span>
+                    <span class="scent-title kollektif-font">{{ p.name }}</span>
                     <div class="mobile-only-meta">
                       <span class="m-square-matte">{{ getSex(p.gender) }}</span> 
                       <span class="m-square-matte">{{ p.factory }}</span> 
@@ -585,6 +587,7 @@ onUnmounted(() => {
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100;300;400;700&display=swap');
 
 .eng-font { font-family: 'Kollektif', 'Segoe UI', sans-serif; }
+.kollektif-font { font-family: 'Kollektif', sans-serif; } /* Specifically for perfume names */
 .rus-font { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
 .mono { font-family: 'JetBrains Mono', monospace; }
 
@@ -618,13 +621,25 @@ onUnmounted(() => {
 
 .container { max-width: 1400px; margin: 0 auto; padding: 15px; }
 
-/* LOADING SCREEN */
-.loading-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 2000; display: flex; justify-content: center; align-items: center; }
-.action-loader { position: relative; text-align: center; }
-.thin-hero-text { font-family: 'Kollektif', sans-serif; font-weight: 100; font-size: 60px; color: var(--text); letter-spacing: 5px; opacity: 0; animation: tracking-in 1.2s cubic-bezier(0.215, 0.610, 0.355, 1.000) forwards; }
-.scan-line { width: 0; height: 1px; background: var(--text); margin: 10px auto 0; animation: scan-expand 1s cubic-bezier(0.23, 1, 0.32, 1) forwards 0.5s; }
-@keyframes tracking-in { 0% { letter-spacing: 20px; opacity: 0; filter: blur(10px); } 100% { letter-spacing: 5px; opacity: 1; filter: blur(0px); } }
-@keyframes scan-expand { to { width: 100%; } }
+/* LOADING SCREEN (DIAGONAL LINES) */
+.loading-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 2000; display: flex; justify-content: center; align-items: center; overflow: hidden; }
+.diagonal-bg {
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(125,125,125,0.05) 10px, rgba(125,125,125,0.05) 20px);
+}
+.intro-content { position: relative; z-index: 10; text-align: center; }
+/* HELVETICA LOGO + GLOW FOR LOADING */
+.intro-text { 
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; 
+  font-weight: 100; 
+  font-size: 70px; 
+  color: var(--text); 
+  letter-spacing: 5px; 
+  opacity: 0; 
+  text-shadow: 0 0 15px rgba(255,255,255,0.6);
+  animation: scale-in 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; 
+}
+@keyframes scale-in { 0% { transform: scale(0.8); opacity: 0; filter: blur(10px); } 100% { transform: scale(1); opacity: 1; filter: blur(0); } }
 
 /* ERROR ZONE */
 .error-zone { display: flex; justify-content: center; align-items: center; height: 50vh; }
@@ -648,18 +663,25 @@ onUnmounted(() => {
   content: ''; position: absolute; top: 0; bottom: 0; width: 1px; background: var(--border); opacity: 0.3;
 }
 
-/* HEADER STYLES REPAIRED */
+/* HEADER STYLES (HELVETICA NEUE + GLOW) */
 .header-manifest { margin-bottom: 30px; position: relative; }
 .header-inner { display: flex; justify-content: center; align-items: center; position: relative; padding: 12px 0; }
 .logo-strip-box { position: relative; padding: 5px 60px; display: inline-block; text-align: center; }
 .strip { height: 0.5px; background: var(--text); width: 100%; position: absolute; left: 0; opacity: 0.3; }
 .strip.top { top: 0; } .strip.bottom { bottom: 0; }
-.logo-text { font-size: 36px; font-weight: 300; margin: 0; letter-spacing: 0.25em; font-family: 'Kollektif', sans-serif; line-height: 1.2; }
+.logo-text { 
+  font-size: 36px; 
+  font-weight: 100; /* Ultra thin like fashion brands */
+  margin: 0; 
+  letter-spacing: 0.25em; 
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; /* HELVETICA NEUE */
+  line-height: 1.2; 
+  text-shadow: 0 0 10px rgba(255,255,255,0.5); /* BACKLIGHT/GLOW */
+}
 .logo-url { font-size: 9px; color: var(--dim); font-weight: 700; letter-spacing: 2px; margin-top: 5px; font-family: 'Kollektif', sans-serif; text-transform: lowercase; }
 .header-icon-btn { position: absolute; top: 50%; transform: translateY(-50%); background: none; border: 1px solid var(--border); color: var(--text); width: 28px; height: 28px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; z-index: 10; }
 .header-icon-btn:hover { background: rgba(125,125,125,0.1); }
 .theme-pos { right: 0; } 
-/* Stats btn is handled in dash-control-bar */
 
 /* STICKY NAV */
 .sticky-nav-group { position: sticky; top: 0; z-index: 500; background: var(--sticky-bg); backdrop-filter: blur(15px); border-bottom: 1px solid var(--text); margin-bottom: 0; }
@@ -738,6 +760,7 @@ onUnmounted(() => {
 .white-part { background: #fff; box-shadow: 0 0 5px #fff; } 
 .v-small { font-size: 16px; font-weight: 700; margin-bottom: 5px; }
 .mini-stat-row { font-size: 9px; font-weight: 700; margin-top: 5px; }
+.left-align { text-align: left; margin-top: 8px; }
 .dim-slash { margin: 0 5px; opacity: 0.3; }
 
 /* CARD 1: SPLIT AROMAS + PRICE */
@@ -754,9 +777,17 @@ onUnmounted(() => {
 .mb-1 { margin-bottom: 8px; }
 .center-text { text-align: center; }
 
+/* BIG CENTER TOGGLE BUTTON */
+.top-header-center { display: flex; justify-content: center; margin-bottom: 15px; }
+.top-switch-btn {
+  background: var(--btn-ctrl-bg); border: 1px solid var(--border); color: var(--text);
+  padding: 12px 24px; border-radius: 8px; font-size: 11px; font-weight: 800;
+  cursor: pointer; width: 100%; text-transform: uppercase; letter-spacing: 1px;
+}
+.top-switch-btn:hover { background: rgba(125,125,125,0.1); }
+
 /* COMPACT TOP LIST STYLES (DARK SCROLLBAR) */
-.top-row-flex { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
-.mode-switch { background: none; border: 1px solid var(--border); color: var(--text); cursor: pointer; border-radius: 4px; font-size: 10px; padding: 2px 5px; }
+.top-row-flex { display: none; } /* Hidden, replaced by big button */
 .top-list-scroll-container { max-height: 60px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; padding-right: 0px; }
 /* Dark Scrollbar for Top List */
 .custom-scroll-minimal::-webkit-scrollbar { width: 3px; }
@@ -802,7 +833,7 @@ onUnmounted(() => {
 .price-container { width: calc(var(--p-cols) * 80px); }
 .price-section { display: grid; height: 100%; width: 100%; align-items: center; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
 .p-col { text-align: center; font-size: 15px; height: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden; white-space: nowrap; box-sizing: border-box; }
-.p-col.line { border-right: 0.5px solid var(--border); }
+.p-col.line { border-right: 1px solid rgba(255, 255, 255, 0.2); } /* STRONGER BORDER */
 .head-p .p-col { font-size: 8px; font-weight: 700; color: var(--dim); letter-spacing: 1.5px; text-transform: uppercase; }
 .row-aura-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; opacity: 0; backdrop-filter: blur(0px); background: transparent; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: 10; pointer-events: none; }
 .clickable-row:hover .row-aura-overlay, .clickable-row.simulated-hover .row-aura-overlay { opacity: 1; backdrop-filter: blur(8px); background: var(--aura-bg); }
