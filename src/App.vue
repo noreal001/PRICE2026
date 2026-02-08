@@ -709,7 +709,8 @@ onUnmounted(() => { if (highlightInterval) clearInterval(highlightInterval); sto
 .dim-slash { margin: 0 5px; opacity: 0.3; }
 
 /* MEGA CARD STYLES */
-.mega-split-row { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 15px; }
+/* Changed align-items to flex-start for top alignment of labels */
+.mega-split-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
 .mega-half { display: flex; flex-direction: column; width: 48%; }
 .mega-half.right { align-items: flex-end; }
 .text-right { text-align: right; }
