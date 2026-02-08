@@ -48,21 +48,29 @@
           <section v-if="showDash" class="dashboard">
             <div class="dash-grid">
               
-              <div class="stat-card">
-                <label class="d-label">АРОМАТОВ</label>
-                <div class="v mono">{{ stats.total }}</div>
-                <div class="mini-stat-row">
-                    <span>Есть: {{ stats.countAvail }}</span>
-                    <span class="dim-slash">|</span>
-                    <span>Нет: {{ stats.countOut }}</span>
+              <div class="stat-card span-full">
+                <div class="mega-split-row">
+                   <div class="mega-half left">
+                      <label class="d-label">АРОМАТЫ</label>
+                      <div class="v mono">{{ stats.total }}</div>
+                      <div class="mini-stat-row">Есть: {{ stats.countAvail }} | Нет: {{ stats.countOut }}</div>
+                   </div>
+                   <div class="mega-half right">
+                      <label class="d-label text-right">СКЛАД</label>
+                      <div class="v mono text-right">{{ stats.availability }}%</div>
+                      <div class="q-track-neon mt-1"><div class="q-fill-neon white-part" :style="{ width: stats.availability + '%' }"></div></div>
+                   </div>
                 </div>
-              </div>
+                
+                <div class="mega-sep-line"></div>
 
-              <div class="stat-card">
-                <label class="d-label">СКЛАД %</label>
-                <div class="stock-box-stacked">
-                  <div class="v-small mono">{{ stats.availability }}%</div>
-                  <div class="q-track-neon"><div class="q-fill-neon white-part" :style="{ width: stats.availability + '%' }"></div></div>
+                <div class="mega-bottom-row">
+                   <label class="d-label inline-label">СРЕДНЯЯ ЦЕНА:</label>
+                   <div class="avg-price-flex">
+                      <div v-if="showPrices.p50" class="ap-item">50г <span class="val">{{ stats.avg50 }}₽</span></div>
+                      <div v-if="showPrices.p500" class="ap-item">500г <span class="val">{{ stats.avg500 }}₽</span></div>
+                      <div v-if="showPrices.p1000" class="ap-item">1кг <span class="val">{{ stats.avg1000 }}₽</span></div>
+                   </div>
                 </div>
               </div>
 
@@ -86,16 +94,7 @@
                 </div>
               </div>
 
-              <div class="stat-card">
-                <label class="d-label">СРЕДНЯЯ ЦЕНА</label>
-                <div class="avg-list mono responsive-text">
-                  <div v-if="showPrices.p50" class="avg-row">50г:<span class="val">{{ stats.avg50 }}₽</span></div>
-                  <div v-if="showPrices.p500" class="avg-row">500г:<span class="val">{{ stats.avg500 }}₽</span></div>
-                  <div v-if="showPrices.p1000" class="avg-row">1кг:<span class="val">{{ stats.avg1000 }}₽</span></div>
-                </div>
-              </div>
-
-              <div class="stat-card relative-zone">
+              <div class="stat-card relative-zone span-full">
                 <div class="top-row-flex">
                   <label class="d-label">ТОП: {{ statsMode === '6m' ? '6 МЕС' : 'ВСЕ' }}</label>
                   <button @click="toggleStatsMode" class="mini-arrow-btn mode-switch" title="Переключить">⇄</button>
@@ -107,10 +106,12 @@
                          <span class="top-num mono">{{ idx + 1 }}.</span>
                          <span class="top-name rus-font" :title="item.name">{{ item.name }}</span>
                       </div>
-                      <div class="tr-right">
+                      <div class="tr-right-bars">
                          <div class="badge-mini">{{ item.factory }}</div>
                          <div class="badge-mini">{{ item.quality }}</div>
-                         <span class="top-val mono">{{ statsMode === '6m' ? item.sales6m : item.salesAll }}%</span>
+                         <div class="mini-bar-track">
+                           <div class="mini-bar-fill" :style="{ width: (statsMode === '6m' ? item.sales6m : item.salesAll) + '%' }"></div>
+                         </div>
                       </div>
                    </div>
                    <div v-if="stats.topListFull.length === 0" class="op-5 mono" style="font-size: 10px;">НЕТ ДАННЫХ</div>
@@ -125,7 +126,7 @@
           <div class="sticky-nav-group">
             
             <section class="controls-luxury relative-zone">
-              <div class="top-bar-controls-grid-3">
+              <div class="top-bar-controls-grid-4">
                 
                 <div class="control-item relative-zone">
                    <button @click="toggleBrandMenu" :class="['main-ctrl-btn', { 'active': showBrandMenu || selectedBrands.length > 0 }]">
@@ -139,11 +140,15 @@
                          </div>
                          <div class="brands-scroll-area custom-scroll-minimal">
                             <div class="brands-list-vertical">
-                              <button @click="clearBrands" class="brand-row-btn rus-font all-brand-btn"><div class="brand-left-group"><span>Все</span></div></button>
-                              
+                              <button @click="clearBrands" class="brand-row-btn rus-font all-brand-btn">
+                                <div class="brand-left-group">
+                                   <svg class="circle-check-icon left" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.5 2 2 6.5 2 12S6.5 22 12 22 22 17.5 22 12 17.5 2 12 2M10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" /></svg>
+                                   <span>Все</span>
+                                </div>
+                              </button>
                               <button v-for="b in filteredBrandsDropdown" :key="b" @click="toggleBrandSelection(b)" class="brand-row-btn eng-font brand-font-fix">
                                 <div class="brand-left-group"><span class="brand-txt-truncate">{{ b }}</span></div>
-                                <svg v-if="selectedBrands.includes(b)" class="check-status" viewBox="0 0 24 24"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z" /></svg>
+                                <svg v-if="selectedBrands.includes(b)" class="check-status right" viewBox="0 0 24 24"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z" /></svg>
                               </button>
                               <div v-if="filteredBrandsDropdown.length === 0" class="no-results rus-font">Нет совпадений</div>
                             </div>
@@ -164,19 +169,28 @@
                          </div>
                          <div class="brands-scroll-area custom-scroll-minimal">
                             <div class="brands-list-vertical">
-                              <button @click="clearAromas" class="brand-row-btn rus-font all-brand-btn"><div class="brand-left-group"><span>Все</span></div></button>
+                              <button @click="clearAromas" class="brand-row-btn rus-font all-brand-btn">
+                                <div class="brand-left-group">
+                                   <svg class="circle-check-icon left" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.5 2 2 6.5 2 12S6.5 22 12 22 22 17.5 22 12 17.5 2 12 2M10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" /></svg>
+                                   <span>Все</span>
+                                </div>
+                              </button>
                               <button v-for="(item, index) in aromaSuggestions" :key="index" @click="toggleAromaSelection(item.name)" class="brand-row-btn">
                                 <div class="brand-left-group">
                                   <span class="aroma-sug-brand eng-font">{{ item.brand }}</span>
                                   <span class="aroma-sug-name rus-font">{{ item.name }}</span>
                                 </div>
-                                <svg v-if="selectedAromas.includes(item.name)" class="check-status" viewBox="0 0 24 24"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z" /></svg>
+                                <svg v-if="selectedAromas.includes(item.name)" class="check-status right" viewBox="0 0 24 24"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z" /></svg>
                               </button>
                               <div v-if="aromaSuggestions.length === 0 && tempAromaInput" class="no-results rus-font">Нет совпадений</div>
                             </div>
                          </div>
                       </div>
                    </transition>
+                </div>
+
+                <div class="control-item">
+                  <button @click="toggleNew" :class="['main-ctrl-btn', { 'active': isNewOnly }]"><span class="rus-font">Новинки</span></button>
                 </div>
 
                 <div class="control-item relative-zone">
@@ -217,13 +231,6 @@
                         <span class="popup-label rus-font">Столбцы</span>
                         <div class="segmented-control">
                           <button v-for="(val, key) in priceLabels" :key="key" @click="togglePrice(key)" :class="['segment-btn', { active: showPrices[key] }]"><span class="rus-font">{{ val }}</span></button>
-                        </div>
-                      </div>
-                      <div class="popup-section">
-                        <span class="popup-label rus-font">Статус</span>
-                        <div class="segmented-control">
-                           <button @click="isNewOnly = false" :class="['segment-btn', { active: !isNewOnly }]">Все</button>
-                           <button @click="isNewOnly = true" :class="['segment-btn', { active: isNewOnly }]">New</button>
                         </div>
                       </div>
                     </div>
@@ -398,9 +405,8 @@ const toggleBrandMenu = () => {
 const toggleBrandSelection = (b) => {
   const idx = selectedBrands.value.indexOf(b);
   if (idx === -1) selectedBrands.value.push(b); else selectedBrands.value.splice(idx, 1);
-  closeAllMenus(); 
 }
-const clearBrands = () => { selectedBrands.value = []; closeAllMenus(); }
+const clearBrands = () => { selectedBrands.value = []; }
 const toggleAromaMenu = () => { 
   if (showAromaMenu.value) { closeAllMenus(); return; } 
   closeAllMenus(); showAromaMenu.value = true; tempAromaInput.value = ''; 
@@ -408,9 +414,8 @@ const toggleAromaMenu = () => {
 const toggleAromaSelection = (a) => {
   const idx = selectedAromas.value.indexOf(a);
   if (idx === -1) selectedAromas.value.push(a); else selectedAromas.value.splice(idx, 1);
-  closeAllMenus();
 }
-const clearAromas = () => { selectedAromas.value = []; closeAllMenus(); }
+const clearAromas = () => { selectedAromas.value = []; }
 const closeAllMenus = () => { showFilters.value = false; showBrandMenu.value = false; showAromaMenu.value = false; }
 const brandLabel = computed(() => { const len = selectedBrands.value.length; if (len === 0) return 'Бренды'; if (len === 1) return selectedBrands.value[0]; return `${len} Бренда`; });
 const aromaLabel = computed(() => { const len = selectedAromas.value.length; if (len === 0) return 'Ароматы'; if (len === 1) return selectedAromas.value[0]; return `${len} Аромата`; });
@@ -501,7 +506,6 @@ const stats = computed(() => {
     if (f.includes('LUZI')) factories['LUZI']++; else if (f.includes('EPS')) factories['EPS']++; else if (f.includes('SELUZ')) factories['SELUZ']++;
   });
   
-  // TOP LIST LIMITED TO 50
   const topListFull = [...p]
       .sort((a,b) => { const valA = statsMode.value === '6m' ? a.sales6m : a.salesAll; const valB = statsMode.value === '6m' ? b.sales6m : b.salesAll; return valB - valA; })
       .slice(0, 50);
@@ -519,6 +523,15 @@ const stats = computed(() => {
 const getSex = (g) => ({ m: 'Муж', w: 'Жен', y: 'Уни' }[g] || '—');
 const open = (u) => window.open(u.startsWith('http') ? u : `https://${u}`, '_blank');
 onMounted(() => {
+  // META TAG FOR NO ZOOM
+  let meta = document.querySelector('meta[name=viewport]');
+  if (!meta) {
+    meta = document.createElement('meta');
+    meta.name = 'viewport';
+    document.head.appendChild(meta);
+  }
+  meta.content = "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no";
+
   const script = document.createElement('script');
   script.src = "https://telegram.org/js/telegram-web-app.js";
   document.head.appendChild(script);
@@ -543,7 +556,8 @@ onUnmounted(() => { if (highlightInterval) clearInterval(highlightInterval); sto
   --sticky-bg: rgba(0,0,0,0.9); 
   --seg-bg: #1c1c1e; --seg-active: #ffffff; --seg-txt: #8e8e93; --seg-txt-active: #000000;
   --btn-ctrl-bg: rgba(255,255,255,0.05);
-  min-height: 100vh; background: var(--bg); color: var(--text); font-family: 'Helvetica Neue', sans-serif; 
+  min-height: 100vh; background: var(--bg); color: var(--text); font-family: 'Helvetica Neue', sans-serif;
+  touch-action: pan-y; /* DISALLOW ZOOM */
 }
 .noir { 
   --bg: #000; --text: #fff; --aura-bg: rgba(0,0,0,0.4); 
@@ -566,7 +580,7 @@ onUnmounted(() => { if (highlightInterval) clearInterval(highlightInterval); sto
 
 .container { max-width: 1400px; margin: 0 auto; padding: 15px; }
 
-/* LOADING SCREEN (HANDWRITTEN) */
+/* LOADING SCREEN */
 .loading-overlay {
   position: fixed; inset: 0; background: var(--bg); z-index: 2000;
   display: flex; justify-content: center; align-items: center;
@@ -612,11 +626,12 @@ onUnmounted(() => { if (highlightInterval) clearInterval(highlightInterval); sto
 /* STICKY NAV */
 .sticky-nav-group { position: sticky; top: 0; z-index: 500; background: var(--sticky-bg); backdrop-filter: blur(15px); border-bottom: 1px solid var(--text); margin-bottom: 0; }
 .controls-luxury { padding: 12px 0; border-bottom: 0.5px solid var(--border); }
-/* 3 COLUMNS NOW */
-.top-bar-controls-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; }
+/* 4 COLUMNS RESTORED */
+.top-bar-controls-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
 .control-item { display: flex; justify-content: center; align-items: center; width: 100%; }
 
-.main-ctrl-btn { width: 100%; background: var(--btn-ctrl-bg); border: none; color: var(--text); padding: 10px 0; border-radius: 30px; font-size: 10px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; transition: all 0.2s; letter-spacing: 0.5px; white-space: nowrap; text-transform: none; }
+/* BUTTONS MADE BIGGER */
+.main-ctrl-btn { width: 100%; background: var(--btn-ctrl-bg); border: none; color: var(--text); padding: 14px 0; border-radius: 30px; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; transition: all 0.2s; letter-spacing: 0.5px; white-space: nowrap; text-transform: none; }
 .btn-txt-fixed { max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .main-ctrl-btn:hover { background: rgba(125,125,125,0.15); }
 .main-ctrl-btn.active { background: var(--text); color: var(--bg); }
@@ -625,7 +640,7 @@ onUnmounted(() => { if (highlightInterval) clearInterval(highlightInterval); sto
 .relative-zone { position: relative; }
 .click-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 800; background: transparent; }
 
-.bahur-popup-menu { position: absolute; top: 50px; background: var(--panel-bg); border: 0.5px solid var(--border); border-radius: 16px; padding: 15px; box-shadow: 0 30px 60px rgba(0,0,0,0.95); display: flex; flex-direction: column; gap: 10px; z-index: 999; }
+.bahur-popup-menu { position: absolute; top: 60px; background: var(--panel-bg); border: 0.5px solid var(--border); border-radius: 16px; padding: 15px; box-shadow: 0 30px 60px rgba(0,0,0,0.95); display: flex; flex-direction: column; gap: 10px; z-index: 999; }
 .bahur-popup-menu.list-mode { left: 50%; transform: translateX(-50%); width: 240px !important; max-width: 240px !important; }
 .bahur-popup-menu.filter-mode { right: 0; width: 220px; }
 
@@ -636,15 +651,18 @@ onUnmounted(() => { if (highlightInterval) clearInterval(highlightInterval); sto
 .custom-scroll-minimal::-webkit-scrollbar { width: 2px; }
 .custom-scroll-minimal::-webkit-scrollbar-thumb { background: var(--dim); }
 .brands-list-vertical { display: flex; flex-direction: column; gap: 4px; }
-.brand-row-btn { display: flex; justify-content: space-between; align-items: center; background: transparent; color: var(--text); border: none; padding: 8px 10px; border-radius: 6px; cursor: pointer; font-size: 11px; text-transform: capitalize; text-align: left; transition: 0.2s; opacity: 0.8; }
+.brand-row-btn { display: flex; justify-content: space-between; align-items: center; background: transparent; color: var(--text); border: none; padding: 10px 10px; border-radius: 6px; cursor: pointer; font-size: 11px; text-transform: capitalize; text-align: left; transition: 0.2s; opacity: 0.8; }
 .all-brand-btn { opacity: 1; font-weight: 700; margin-bottom: 5px; border-bottom: 1px solid var(--border); padding-bottom: 10px; border-radius: 0; }
 .brand-row-btn:hover { background: var(--seg-bg); opacity: 1; }
-/* Brand menu font fix to match Aroma Brand style */
 .brand-font-fix { font-weight: 900; font-size: 10px; opacity: 0.8; }
 .brand-left-group { display: flex; align-items: center; gap: 8px; overflow: hidden; }
 .brand-txt-truncate { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px; }
 .aroma-sug-brand { font-weight: 900; opacity: 0.5; margin-right: 5px; font-size: 10px; }
 .aroma-sug-name { font-weight: 700; font-size: 11px; }
+
+/* CHECKS LEFT/RIGHT */
+.circle-check-icon.left { margin-right: 5px; width: 16px; height: 16px; }
+.check-status.right { width: 14px; height: 14px; }
 
 .popup-section { margin-bottom: 5px; }
 .popup-label { display: block; font-size: 8px; font-weight: 700; color: var(--dim); margin-bottom: 4px; letter-spacing: 1px; }
@@ -690,19 +708,34 @@ onUnmounted(() => { if (highlightInterval) clearInterval(highlightInterval); sto
 .mini-stat-row { font-size: 9px; font-weight: 700; margin-top: 5px; }
 .dim-slash { margin: 0 5px; opacity: 0.3; }
 
+/* MEGA CARD STYLES */
+.mega-split-row { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 15px; }
+.mega-half { display: flex; flex-direction: column; width: 48%; }
+.mega-half.right { align-items: flex-end; }
+.text-right { text-align: right; }
+.mt-1 { margin-top: 5px; }
+.mega-sep-line { width: 100%; height: 1px; background: var(--border); margin-bottom: 15px; opacity: 0.5; }
+.mega-bottom-row { display: flex; flex-direction: column; gap: 8px; }
+.inline-label { margin-bottom: 0 !important; }
+.avg-price-flex { display: flex; justify-content: space-between; width: 100%; }
+.ap-item { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--dim); }
+.ap-item .val { color: var(--text); font-weight: 700; font-size: 12px; margin-left: 2px; }
+
 /* COMPACT TOP LIST STYLES */
 .top-row-flex { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
 .mode-switch { background: none; border: 1px solid var(--border); color: var(--text); cursor: pointer; border-radius: 4px; font-size: 10px; padding: 2px 5px; }
-/* COMPRESSED HEIGHT */
 .top-list-scroll-container { max-height: 60px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; padding-right: 2px; }
 
 .top-row-compact { display: flex; justify-content: space-between; align-items: center; font-size: 10px; padding: 2px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
 .tr-left { display: flex; align-items: center; max-width: 60%; overflow: hidden; }
 .top-num { color: var(--dim); margin-right: 5px; font-size: 9px; min-width: 12px; }
 .top-name { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-weight: 500; font-size: 10px; }
-.tr-right { display: flex; align-items: center; gap: 4px; }
+.tr-right-bars { display: flex; align-items: center; gap: 4px; width: 40%; justify-content: flex-end; }
 .badge-mini { border: 1px solid var(--border); padding: 1px 3px; font-size: 8px; color: var(--text); opacity: 0.8; border-radius: 2px; }
-.top-val { font-weight: 700; margin-left: 4px; }
+
+/* MINI LINE PROGRESS IN TOP LIST */
+.mini-bar-track { width: 30px; height: 2px; background: var(--border); overflow: hidden; }
+.mini-bar-fill { height: 100%; background: var(--text); box-shadow: 0 0 4px var(--text); }
 
 .grid-table { display: flex; flex-direction: column; width: 100%; min-width: 1000px; border: 0.5px solid var(--border); border-top: none; }
 .grid-layout-def { display: grid; grid-template-columns: 60px 1fr 80px 120px 120px calc(var(--p-cols) * 80px); align-items: center; box-sizing: border-box; width: 100%; }
@@ -744,6 +777,8 @@ onUnmounted(() => { if (highlightInterval) clearInterval(highlightInterval); sto
 
 @media (max-width: 900px) {
   .dash-grid { grid-template-columns: 1fr 1fr; }
+  .span-full { grid-column: span 2; } /* Full width items */
+  
   .grid-table { min-width: 100%; border: none; }
   .cell { border-right: none; }
   .desk-only { display: none; }
@@ -760,8 +795,8 @@ onUnmounted(() => { if (highlightInterval) clearInterval(highlightInterval); sto
   .p-col { padding: 0; font-size: 12px; border-right: 0.5px solid var(--border) !important; }
   .p-col.last { border-right: none !important; }
   .aura-text { font-size: 9px; letter-spacing: 2px; }
-  .top-bar-controls-grid-3 { gap: 5px; }
-  .main-ctrl-btn { font-size: 9px; padding: 6px 0; }
+  .top-bar-controls-grid-4 { gap: 5px; } /* Gap on mobile */
+  .main-ctrl-btn { font-size: 10px; padding: 12px 0; } /* Bigger buttons */
   .btn-txt-fixed { max-width: 65px; }
   .desk-only-new { display: none; }
   .bahur-popup-menu.list-mode { left: 0 !important; right: 0 !important; margin: auto !important; transform: none !important; width: 220px !important; }
