@@ -57,7 +57,7 @@
                         <label class="d-label">АРОМАТЫ</label>
                         <div class="v mono">{{ stats.total }}</div>
                         <div class="stock-stack-info">
-                           <div class="ss-row">В наличии: <span class="mono">{{ stats.countAvail }}</span></div>
+                           <div class="ss-row">Есть: <span class="mono">{{ stats.countAvail }}</span></div>
                            <div class="ss-row">Нет: <span class="mono">{{ stats.countOut }}</span></div>
                         </div>
                      </div>
@@ -89,7 +89,7 @@
                 </div>
 
                 <div class="stat-card">
-                  <label class="d-label">ФАБРИКИ %</label>
+                  <label class="d-label">ФАБРИКИ</label>
                   <div class="q-list">
                     <div v-for="f in ['Luzi', 'Eps', 'Seluz']" :key="f" class="q-row-stacked">
                       <div class="q-meta"><span class="mono">{{ f }}</span><span class="mono op-5">{{ stats.factoryPerc[f.toUpperCase()] }}%</span></div>
@@ -99,7 +99,7 @@
                 </div>
 
                 <div class="stat-card">
-                  <label class="d-label">КАЧЕСТВО %</label>
+                  <label class="d-label">КАЧЕСТВО</label>
                   <div class="q-list">
                     <div v-for="q in ['Top', 'Q1', 'Q2']" :key="q" class="q-row-stacked">
                       <div class="q-meta"><span class="mono">{{ q }}</span><span class="mono op-5">{{ stats.qualityPerc[q.toUpperCase()] }}%</span></div>
@@ -760,26 +760,26 @@ onUnmounted(() => {
 .toggle-switch-wrapper { display: flex; align-items: center; }
 .toggle-track {
   width: 24px; height: 14px;
-  background: #000; /* Black background */
-  border: 1px solid #fff; /* White border */
+  background: #000; /* Default Black */
+  border: 1px solid #fff; /* White Border */
   border-radius: 10px;
   position: relative;
   transition: 0.3s;
 }
 .toggle-thumb {
   width: 8px; height: 8px;
-  background: #fff; /* White circle */
+  background: #fff; /* Default White */
   border-radius: 50%;
   position: absolute; top: 2px; left: 2px;
   transition: 0.3s;
 }
-/* Active State for Toggle */
+/* Active State: Invert Colors */
 .active-mode .toggle-track {
-  background: #fff; /* Invert: White background */
-  border-color: #000; /* Black border */
+  background: #fff; /* Active White Background */
+  border-color: #000; /* Active Black Border */
 }
 .active-mode .toggle-thumb {
-  background: #000; /* Invert: Black circle */
+  background: #000; /* Active Black Circle */
   transform: translateX(10px);
 }
 
@@ -941,16 +941,16 @@ onUnmounted(() => {
   .cell { border-right: none; }
   .desk-only { display: none; }
   .mobile-only-meta { display: flex; }
-  .grid-layout-def { grid-template-columns: 30px 1fr calc(var(--p-cols) * 55px); border-bottom: 0.5px solid var(--border); }
+  .grid-layout-def { grid-template-columns: 30px 1fr calc(var(--p-cols) * 55px); border-bottom: 1px solid rgba(255,255,255,0.6) !important; }
   .id-zone-square { border-right: none; padding: 2px 0 !important; align-items: center; justify-content: flex-start; padding-top: 15px !important; }
   .id-sq-top { font-size: 10px; margin-bottom: 4px; }
   .lamp-sq { width: 6px; height: 6px; border-radius: 50%; }
-  .border-right-mobile { border-right: 0.5px solid var(--border) !important; padding-right: 5px; }
+  .border-right-mobile { border-right: 1px solid rgba(255,255,255,0.6) !important; padding-right: 5px; }
   .scent-info { padding-left: 2px; }
   .scent-title { font-size: 13px; }
   .price-container { width: calc(var(--p-cols) * 55px); }
   .price-section { border-right: none; }
-  .p-col { padding: 0; font-size: 12px; border-right: 0.5px solid var(--border) !important; }
+  .p-col { padding: 0; font-size: 12px; border-right: 1px solid rgba(255,255,255,0.6) !important; }
   .p-col.last { border-right: none !important; }
   .aura-text { font-size: 9px; letter-spacing: 2px; }
   
