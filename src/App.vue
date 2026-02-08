@@ -304,26 +304,9 @@
       </div>
     </div>
 
-    <div v-if="!loading && !errorMsg" class="scroll-widget-noir">
-       <button class="s-btn up" 
-               @mousedown="startScroll('up')" @touchstart.prevent="startScroll('up')" 
-               @mouseup="stopScroll" @mouseleave="stopScroll" @touchend="stopScroll" @touchcancel="stopScroll"
-               @click="scrollPage('top')">
-         <svg viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 15.41L12 10.83L16.59 15.41L18 14L12 8L6 14L7.41 15.41Z"/></svg>
-       </button>
-       
-       <div class="s-track">
-         <div class="s-mark m-20" @click="scrollPage(0.2)"></div>
-         <div class="s-mark m-50" @click="scrollPage(0.5)"></div>
-         <div class="s-mark m-80" @click="scrollPage(0.8)"></div>
-       </div>
-
-       <button class="s-btn down" 
-               @mousedown="startScroll('down')" @touchstart.prevent="startScroll('down')" 
-               @mouseup="stopScroll" @mouseleave="stopScroll" @touchend="stopScroll" @touchcancel="stopScroll"
-               @click="scrollPage('bottom')">
-         <svg viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 8.59L12 13.17L16.59 8.59L18 10L12 16L6 10L7.41 8.59Z"/></svg>
-       </button>
+    <div v-if="!loading && !errorMsg" class="scroll-widget-track" ref="scrollTrack" 
+         @mousedown.prevent="startDrag" @touchstart.prevent="startDrag" @click="trackClick">
+       <div class="scroll-widget-thumb" :style="{ top: thumbTop + '%', height: thumbHeight + '%' }"></div>
     </div>
 
   </div>
@@ -337,39 +320,6 @@ const loading = ref(true);
 const errorMsg = ref(null);
 const products = ref([]); 
 const showDash = ref(true);
-
-let isScrolling = false;
-let scrollDir = 0;
-let animationFrameId = null;
-
-const smoothScrollLoop = () => {
-  if (isScrolling) {
-    window.scrollBy(0, scrollDir * 15);
-    animationFrameId = requestAnimationFrame(smoothScrollLoop);
-  }
-}
-
-const startScroll = (dir) => {
-  if (isScrolling) return;
-  isScrolling = true;
-  scrollDir = dir === 'up' ? -1 : 1;
-  smoothScrollLoop();
-}
-
-const stopScroll = () => {
-  isScrolling = false;
-  if (animationFrameId) cancelAnimationFrame(animationFrameId);
-}
-
-const scrollPage = (target) => {
-  stopScroll();
-  if (target === 'top') window.scrollTo({ top: 0, behavior: 'smooth' });
-  else if (target === 'bottom') window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-  else {
-    const h = document.documentElement.scrollHeight - window.innerHeight;
-    window.scrollTo({ top: h * target, behavior: 'smooth' });
-  }
-}
 
 const statsMode = ref('6m'); 
 const toggleStatsMode = () => statsMode.value = statsMode.value === '6m' ? 'all' : '6m';
@@ -429,19 +379,79 @@ const toggleAromaSelection = (a) => {
 const clearAromas = () => { selectedAromas.value = []; closeAllMenus(); }
 const closeAllMenus = () => { showFilters.value = false; showBrandMenu.value = false; showAromaMenu.value = false; }
 
-// --- FIXED LABEL LOGIC ---
 const brandLabel = computed(() => { 
   const len = selectedBrands.value.length; 
   if (len === 0) return 'Бренды'; 
-  return `${len} Бренд${len > 1 ? 'а' : ''}`; // "1 Бренд" or "2 Бренда"
+  return `${len} Бренд${len > 1 ? 'а' : ''}`; 
 });
 const aromaLabel = computed(() => { 
   const len = selectedAromas.value.length; 
   if (len === 0) return 'Ароматы'; 
-  return `${len} Аромат${len > 1 ? 'а' : ''}`; // "1 Аромат" or "2 Аромата"
+  return `${len} Аромат${len > 1 ? 'а' : ''}`; 
 });
 
 const priceSubGridStyle = computed(() => ({ gridTemplateColumns: `repeat(${activePriceCount.value}, 1fr)` }));
+
+// SCROLL WIDGET LOGIC
+const scrollTrack = ref(null);
+const thumbTop = ref(0);
+const thumbHeight = ref(10); // Percent
+
+const updateThumb = () => {
+  const winH = window.innerHeight;
+  const docH = document.documentElement.scrollHeight;
+  const scrollY = window.scrollY;
+  const ratio = winH / docH;
+  thumbHeight.value = Math.max(ratio * 100, 5); 
+  const maxScroll = docH - winH;
+  if (maxScroll <= 0) { thumbTop.value = 0; return; }
+  const percent = scrollY / maxScroll;
+  const trackAvailable = 100 - thumbHeight.value;
+  thumbTop.value = percent * trackAvailable;
+}
+
+const handleDrag = (clientY) => {
+  const track = scrollTrack.value;
+  if (!track) return;
+  const rect = track.getBoundingClientRect();
+  const relY = clientY - rect.top;
+  const trackH = rect.height;
+  
+  const percent = Math.min(Math.max(relY / trackH, 0), 1);
+  
+  const docH = document.documentElement.scrollHeight;
+  const winH = window.innerHeight;
+  const targetScroll = percent * (docH - winH);
+  
+  window.scrollTo({ top: targetScroll, behavior: 'auto' });
+}
+
+let isDragging = false;
+
+const startDrag = (e) => {
+  isDragging = true;
+  const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+  handleDrag(clientY);
+  window.addEventListener('mousemove', onMouseMove);
+  window.addEventListener('touchmove', onTouchMove, { passive: false });
+  window.addEventListener('mouseup', stopDrag);
+  window.addEventListener('touchend', stopDrag);
+}
+
+const onMouseMove = (e) => { if(isDragging) handleDrag(e.clientY); }
+const onTouchMove = (e) => { if(isDragging) { e.preventDefault(); handleDrag(e.touches[0].clientY); } }
+
+const stopDrag = () => {
+  isDragging = false;
+  window.removeEventListener('mousemove', onMouseMove);
+  window.removeEventListener('touchmove', onTouchMove);
+  window.removeEventListener('mouseup', stopDrag);
+  window.removeEventListener('touchend', stopDrag);
+}
+
+const trackClick = (e) => {
+  handleDrag(e.clientY);
+}
 
 const parseCSV = (data) => {
   try {
@@ -557,8 +567,14 @@ onMounted(() => {
   script.src = "https://telegram.org/js/telegram-web-app.js";
   document.head.appendChild(script);
   loadData();
+  window.addEventListener('scroll', updateThumb);
+  window.addEventListener('resize', updateThumb);
 });
-onUnmounted(() => { if (highlightInterval) clearInterval(highlightInterval); stopScroll(); });
+onUnmounted(() => { 
+  if (highlightInterval) clearInterval(highlightInterval); 
+  window.removeEventListener('scroll', updateThumb);
+  window.removeEventListener('resize', updateThumb);
+});
 </script>
 
 <style scoped>
@@ -617,13 +633,18 @@ onUnmounted(() => { if (highlightInterval) clearInterval(highlightInterval); sto
 .retry-btn-noir { background: var(--text); border: none; color: var(--bg); padding: 12px 24px; font-family: 'JetBrains Mono', monospace; font-size: 11px; cursor: pointer; transition: 0.3s; text-transform: uppercase; font-weight: 700; }
 .retry-btn-noir:hover { opacity: 0.8; }
 
-/* SCROLL WIDGET */
-.scroll-widget-noir { position: fixed; right: 0; top: 50%; transform: translateY(-50%); width: 34px; display: flex; flex-direction: column; align-items: center; gap: 4px; z-index: 1000; opacity: 0.9; touch-action: none; }
-.s-btn { background: rgba(0,0,0,0.9); border: 1px solid var(--border); color: var(--text); border-radius: 4px 0 0 4px; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; user-select: none; }
-.s-btn svg { width: 14px; height: 14px; }
-.s-track { width: 100%; height: 120px; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 5px 0; position: relative; }
-.s-mark { width: 12px; height: 1px; background: var(--text); opacity: 0.5; cursor: pointer; transition: 0.2s; }
-.s-mark:hover { width: 18px; opacity: 1; height: 2px; }
+/* CUSTOM SCROLL WIDGET (TRACK) */
+.scroll-widget-track {
+  position: fixed; right: 2px; top: 0; bottom: 0; width: 20px; z-index: 1000;
+  display: flex; justify-content: center; touch-action: none;
+}
+.scroll-widget-thumb {
+  position: absolute; width: 4px; background: var(--text); border-radius: 2px;
+  box-shadow: 0 0 8px var(--text); transition: opacity 0.2s;
+}
+.scroll-widget-track::before {
+  content: ''; position: absolute; top: 0; bottom: 0; width: 1px; background: var(--border); opacity: 0.3;
+}
 
 /* STICKY NAV */
 .sticky-nav-group { position: sticky; top: 0; z-index: 500; background: var(--sticky-bg); backdrop-filter: blur(15px); border-bottom: 1px solid var(--text); margin-bottom: 0; }
@@ -631,9 +652,9 @@ onUnmounted(() => { if (highlightInterval) clearInterval(highlightInterval); sto
 
 /* CONTROLS LAYOUT - FLEX FOR DESKTOP */
 .ctrl-wrapper-desktop { display: flex; justify-content: space-between; align-items: center; width: 100%; }
-.left-group { display: flex; gap: 10px; width: auto; }
+.left-group { display: flex; gap: 10px; width: auto; align-items: center; }
 .right-group { width: auto; }
-.control-item { width: auto; min-width: 100px; } /* Fixed width on desktop */
+.control-item { width: auto; min-width: 100px; }
 
 /* BUTTONS */
 .main-ctrl-btn { width: 100%; background: var(--btn-ctrl-bg); border: none; color: var(--text); padding: 14px 20px; border-radius: 30px; font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s; letter-spacing: 0.5px; white-space: nowrap; text-transform: none; }
@@ -677,23 +698,6 @@ onUnmounted(() => { if (highlightInterval) clearInterval(highlightInterval); sto
 .pop-enter-active, .pop-leave-active { transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
 .pop-enter-from, .pop-leave-to { opacity: 0; transform: translateY(-10px) scale(0.95); }
 
-/* HEADER */
-.header-manifest { text-align: center; margin-bottom: 30px; position: relative; }
-.logo-strip-box { display: inline-block; position: relative; padding: 12px 60px; }
-.strip { height: 0.5px; background: var(--text); width: 100%; position: absolute; left: 0; opacity: 0.3; }
-.strip.top { top: 0; } .strip.bottom { bottom: 0; }
-.logo-text { font-size: 36px; font-weight: 300; margin: 0; letter-spacing: 0.25em; font-family: 'Kollektif', sans-serif; }
-.logo-url { font-size: 9px; color: var(--dim); font-weight: 700; letter-spacing: 2px; margin-top: 5px; font-family: 'Kollektif', sans-serif; text-transform: lowercase; }
-.header-icon-btn { position: absolute; top: 50%; transform: translateY(-50%); background: none; border: 1px solid var(--border); color: var(--text); width: 28px; height: 28px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
-.header-icon-btn:hover { background: rgba(125,125,125,0.1); }
-.theme-pos { right: 10px; }
-.stats-pos { left: 0; position: relative; transform: none; top: auto; margin-bottom: 15px; }
-.h-icon { width: 16px; height: 16px; }
-.closed-arrow { transform: rotate(180deg); transition: 0.3s; }
-.dash-control-bar { padding-left: 2px; display: flex; justify-content: flex-start; }
-.slide-fade-enter-active, .slide-fade-leave-active { transition: all 0.3s ease; max-height: 500px; opacity: 1; overflow: hidden; }
-.slide-fade-enter-from, .slide-fade-leave-to { max-height: 0; opacity: 0; margin-bottom: 0; }
-
 .dash-collapsible-wrapper { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
 .dash-collapsible-wrapper.open { grid-template-rows: 1fr; }
 .dash-inner-content { overflow: hidden; }
@@ -730,10 +734,15 @@ onUnmounted(() => { if (highlightInterval) clearInterval(highlightInterval); sto
 .mb-1 { margin-bottom: 8px; }
 .center-text { text-align: center; }
 
-/* COMPACT TOP LIST STYLES */
+/* COMPACT TOP LIST STYLES (DARK SCROLLBAR) */
 .top-row-flex { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
 .mode-switch { background: none; border: 1px solid var(--border); color: var(--text); cursor: pointer; border-radius: 4px; font-size: 10px; padding: 2px 5px; }
-.top-list-scroll-container { max-height: 60px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; padding-right: 2px; }
+.top-list-scroll-container { max-height: 60px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; padding-right: 0px; }
+/* Dark Scrollbar for Top List */
+.custom-scroll-minimal::-webkit-scrollbar { width: 3px; }
+.custom-scroll-minimal::-webkit-scrollbar-track { background: transparent; }
+.custom-scroll-minimal::-webkit-scrollbar-thumb { background: #222; border-radius: 4px; } /* Dark Grey */
+
 .top-row-compact { display: flex; justify-content: space-between; align-items: center; font-size: 10px; padding: 2px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
 .tr-left-main { display: flex; align-items: center; width: 40%; overflow: hidden; }
 .top-num { color: var(--dim); margin-right: 5px; font-size: 9px; min-width: 12px; }
@@ -770,7 +779,7 @@ onUnmounted(() => { if (highlightInterval) clearInterval(highlightInterval); sto
 .scent-title { font-size: 17px; font-weight: 500; line-height: 1.2; letter-spacing: 0.5px; }
 .mobile-only-meta { display: none; margin-top: 8px; gap: 5px; align-items: center; }
 .new-mobile { display: block; background: var(--text); color: var(--bg); border: none; font-weight: 900; }
-.price-container { display: flex; flex-direction: column; height: 100%; width: 100%; }
+.price-container { width: calc(var(--p-cols) * 80px); }
 .price-section { display: grid; height: 100%; width: 100%; align-items: center; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
 .p-col { text-align: center; font-size: 15px; height: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden; white-space: nowrap; box-sizing: border-box; }
 .p-col.line { border-right: 0.5px solid var(--border); }
@@ -802,12 +811,19 @@ onUnmounted(() => { if (highlightInterval) clearInterval(highlightInterval); sto
   .p-col.last { border-right: none !important; }
   .aura-text { font-size: 9px; letter-spacing: 2px; }
   
-  /* MOBILE CONTROL LAYOUT - GRID */
+  /* MOBILE CONTROL LAYOUT */
   .ctrl-wrapper-desktop { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
   .left-group { display: contents; }
   .right-group { display: contents; }
   .control-item { min-width: 0; width: 100%; }
-  .main-ctrl-btn { font-size: 9px; padding: 12px 0; }
+  
+  /* MOBILE BUTTON STYLING (Larger, Bolder) */
+  .main-ctrl-btn { 
+    font-size: 11px; 
+    padding: 18px 0; /* Taller buttons */
+    font-weight: 800; /* Bolder text */
+    border-radius: 12px; /* Smoother */
+  }
   .btn-txt-fixed { max-width: 65px; }
   
   .desk-only-new { display: none; }
