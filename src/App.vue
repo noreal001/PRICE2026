@@ -17,9 +17,9 @@
       </header>
 
       <div v-if="loading" class="loading-overlay">
-         <div class="handwriting-container">
-            <span class="handwritten-text">Bahur</span>
-            <div class="loading-sub">Загрузка каталога...</div>
+         <div class="action-loader">
+            <span class="thin-hero-text">BAHUR</span>
+            <div class="scan-line"></div>
          </div>
       </div>
 
@@ -44,198 +44,208 @@
            </button>
         </div>
 
-        <transition name="slide-fade">
-          <section v-if="showDash" class="dashboard">
-            <div class="dash-grid">
-              
-              <div class="stat-card span-full">
-                <div class="mega-split-row">
-                   <div class="mega-half left">
-                      <label class="d-label">АРОМАТЫ</label>
-                      <div class="v mono">{{ stats.total }}</div>
-                      <div class="mini-stat-row">Есть: {{ stats.countAvail }} | Нет: {{ stats.countOut }}</div>
-                   </div>
-                   <div class="mega-half right">
-                      <label class="d-label text-right">СКЛАД</label>
-                      <div class="v mono text-right">{{ stats.availability }}%</div>
-                      <div class="q-track-neon mt-1"><div class="q-fill-neon white-part" :style="{ width: stats.availability + '%' }"></div></div>
-                   </div>
-                </div>
+        <div :class="['dash-collapsible-wrapper', { 'open': showDash }]">
+          <div class="dash-inner-content">
+            <section class="dashboard">
+              <div class="dash-grid">
                 
-                <div class="mega-sep-line"></div>
-
-                <div class="mega-bottom-row">
-                   <label class="d-label inline-label">СРЕДНЯЯ ЦЕНА:</label>
-                   <div class="avg-price-flex">
-                      <div v-if="showPrices.p50" class="ap-item">50г <span class="val">{{ stats.avg50 }}₽</span></div>
-                      <div v-if="showPrices.p500" class="ap-item">500г <span class="val">{{ stats.avg500 }}₽</span></div>
-                      <div v-if="showPrices.p1000" class="ap-item">1кг <span class="val">{{ stats.avg1000 }}₽</span></div>
-                   </div>
-                </div>
-              </div>
-
-              <div class="stat-card">
-                <label class="d-label">ФАБРИКИ %</label>
-                <div class="q-list">
-                  <div v-for="f in ['Luzi', 'Eps', 'Seluz']" :key="f" class="q-row-stacked">
-                    <div class="q-meta"><span class="mono">{{ f }}</span><span class="mono op-5">{{ stats.factoryPerc[f.toUpperCase()] }}%</span></div>
-                    <div class="q-track-neon"><div class="q-fill-neon" :style="{ width: stats.factoryPerc[f.toUpperCase()] + '%' }"></div></div>
+                <div class="stat-card span-full">
+                  <div class="split-top-row">
+                     <div class="st-item">
+                        <label class="d-label">АРОМАТЫ</label>
+                        <div class="v mono">{{ stats.total }}</div>
+                     </div>
+                     <div class="st-sep"></div>
+                     <div class="st-price-box">
+                        <label class="d-label">СРЕДНЯЯ ЦЕНА</label>
+                        <div class="avg-price-flex">
+                           <div v-if="showPrices.p50" class="ap-item">50г:<span class="val">{{ stats.avg50 }}₽</span></div>
+                           <div v-if="showPrices.p500" class="ap-item">500г:<span class="val">{{ stats.avg500 }}₽</span></div>
+                           <div v-if="showPrices.p1000" class="ap-item">1кг:<span class="val">{{ stats.avg1000 }}₽</span></div>
+                        </div>
+                     </div>
                   </div>
                 </div>
-              </div>
 
-              <div class="stat-card">
-                <label class="d-label">КАЧЕСТВО %</label>
-                <div class="q-list">
-                  <div v-for="q in ['Top', 'Q1', 'Q2']" :key="q" class="q-row-stacked">
-                    <div class="q-meta"><span class="mono">{{ q }}</span><span class="mono op-5">{{ stats.qualityPerc[q.toUpperCase()] }}%</span></div>
-                    <div class="q-track-neon"><div class="q-fill-neon" :style="{ width: stats.qualityPerc[q.toUpperCase()] + '%' }"></div></div>
+                <div class="stat-card span-full">
+                   <div class="stock-head">
+                      <label class="d-label">СКЛАД</label>
+                      <span class="v-small mono">{{ stats.availability }}%</span>
+                   </div>
+                   <div class="q-track-neon mb-1"><div class="q-fill-neon white-part" :style="{ width: stats.availability + '%' }"></div></div>
+                   <div class="mini-stat-row center-text">В наличии: {{ stats.countAvail }} | Нет: {{ stats.countOut }}</div>
+                </div>
+
+                <div class="stat-card">
+                  <label class="d-label">ФАБРИКИ %</label>
+                  <div class="q-list">
+                    <div v-for="f in ['Luzi', 'Eps', 'Seluz']" :key="f" class="q-row-stacked">
+                      <div class="q-meta"><span class="mono">{{ f }}</span><span class="mono op-5">{{ stats.factoryPerc[f.toUpperCase()] }}%</span></div>
+                      <div class="q-track-neon"><div class="q-fill-neon" :style="{ width: stats.factoryPerc[f.toUpperCase()] + '%' }"></div></div>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div class="stat-card relative-zone span-full">
-                <div class="top-row-flex">
-                  <label class="d-label">ТОП: {{ statsMode === '6m' ? '6 МЕС' : 'ВСЕ' }}</label>
-                  <button @click="toggleStatsMode" class="mini-arrow-btn mode-switch" title="Переключить">⇄</button>
+                <div class="stat-card">
+                  <label class="d-label">КАЧЕСТВО %</label>
+                  <div class="q-list">
+                    <div v-for="q in ['Top', 'Q1', 'Q2']" :key="q" class="q-row-stacked">
+                      <div class="q-meta"><span class="mono">{{ q }}</span><span class="mono op-5">{{ stats.qualityPerc[q.toUpperCase()] }}%</span></div>
+                      <div class="q-track-neon"><div class="q-fill-neon" :style="{ width: stats.qualityPerc[q.toUpperCase()] + '%' }"></div></div>
+                    </div>
+                  </div>
                 </div>
-                
-                <div class="top-list-scroll-container custom-scroll-minimal">
-                   <div v-for="(item, idx) in stats.topListFull" :key="idx" class="top-row-compact">
-                      <div class="tr-left">
-                         <span class="top-num mono">{{ idx + 1 }}.</span>
-                         <span class="top-name rus-font" :title="item.name">{{ item.name }}</span>
-                      </div>
-                      <div class="tr-right-bars">
-                         <div class="badge-mini">{{ item.factory }}</div>
-                         <div class="badge-mini">{{ item.quality }}</div>
-                         <div class="mini-bar-track">
-                           <div class="mini-bar-fill" :style="{ width: (statsMode === '6m' ? item.sales6m : item.salesAll) + '%' }"></div>
-                         </div>
-                      </div>
-                   </div>
-                   <div v-if="stats.topListFull.length === 0" class="op-5 mono" style="font-size: 10px;">НЕТ ДАННЫХ</div>
-                </div>
-              </div>
 
-            </div>
-          </section>
-        </transition>
+                <div class="stat-card relative-zone span-full">
+                  <div class="top-row-flex">
+                    <label class="d-label">ТОП: {{ statsMode === '6m' ? '6 МЕС' : 'ВСЕ' }}</label>
+                    <button @click="toggleStatsMode" class="mini-arrow-btn mode-switch" title="Переключить">⇄</button>
+                  </div>
+                  <div class="top-list-scroll-container custom-scroll-minimal">
+                     <div v-for="(item, idx) in stats.topListFull" :key="idx" class="top-row-compact">
+                        <div class="tr-left-main">
+                           <span class="top-num mono">{{ idx + 1 }}.</span>
+                           <span class="top-name rus-font" :title="item.name">{{ item.name }}</span>
+                        </div>
+                        <div class="tr-mid-graph">
+                           <div class="mini-bar-track">
+                             <div class="mini-bar-fill" :style="{ width: (statsMode === '6m' ? item.sales6m : item.salesAll) + '%' }"></div>
+                           </div>
+                        </div>
+                        <div class="tr-right-meta">
+                           <div class="badge-mini">{{ item.factory }}</div>
+                           <div class="badge-mini">{{ item.quality }}</div>
+                           <span class="top-val mono">{{ statsMode === '6m' ? item.sales6m : item.salesAll }}%</span>
+                        </div>
+                     </div>
+                     <div v-if="stats.topListFull.length === 0" class="op-5 mono" style="font-size: 10px;">НЕТ ДАННЫХ</div>
+                  </div>
+                </div>
+
+              </div>
+            </section>
+          </div>
+        </div>
 
         <div class="table-frame">
           <div class="sticky-nav-group">
             
             <section class="controls-luxury relative-zone">
-              <div class="top-bar-controls-grid-4">
+              <div class="ctrl-wrapper-desktop">
                 
-                <div class="control-item relative-zone">
-                   <button @click="toggleBrandMenu" :class="['main-ctrl-btn', { 'active': showBrandMenu || selectedBrands.length > 0 }]">
-                      <span class="btn-txt-fixed rus-font">{{ brandLabel }}</span>
+                <div class="left-group">
+                  <div class="control-item relative-zone">
+                     <button @click="toggleBrandMenu" :class="['main-ctrl-btn', { 'active': showBrandMenu || selectedBrands.length > 0 }]">
+                        <span class="btn-txt-fixed rus-font ctrl-text-bold">{{ brandLabel }}</span>
+                        <svg class="pill-arrow" viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 8.59L12 13.17L16.59 8.59L18 10L12 16L6 10L7.41 8.59Z"/></svg>
+                     </button>
+                     <transition name="pop">
+                        <div v-if="showBrandMenu" class="bahur-popup-menu list-mode">
+                           <div class="search-input-box">
+                              <input v-model="tempBrandInput" type="text" inputmode="search" placeholder="Поиск бренда..." class="popup-input rus-font" />
+                           </div>
+                           <div class="brands-scroll-area custom-scroll-minimal">
+                              <div class="brands-list-vertical">
+                                <button @click="clearBrands" class="brand-row-btn rus-font all-brand-btn">
+                                  <div class="brand-left-group">
+                                     <svg class="circle-check-icon left" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.5 2 2 6.5 2 12S6.5 22 12 22 22 17.5 22 12 17.5 2 12 2M10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" /></svg>
+                                     <span>Все</span>
+                                  </div>
+                                </button>
+                                <button v-for="b in filteredBrandsDropdown" :key="b" @click="toggleBrandSelection(b)" class="brand-row-btn eng-font brand-font-fix">
+                                  <div class="brand-left-group"><span class="brand-txt-truncate">{{ b }}</span></div>
+                                  <svg v-if="selectedBrands.includes(b)" class="check-status right" viewBox="0 0 24 24"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z" /></svg>
+                                </button>
+                                <div v-if="filteredBrandsDropdown.length === 0" class="no-results rus-font">Нет совпадений</div>
+                              </div>
+                           </div>
+                        </div>
+                     </transition>
+                  </div>
+
+                  <div class="control-item relative-zone">
+                     <button @click="toggleAromaMenu" :class="['main-ctrl-btn', { 'active': showAromaMenu || selectedAromas.length > 0 }]">
+                        <span class="btn-txt-fixed rus-font ctrl-text-bold">{{ aromaLabel }}</span>
+                        <svg class="pill-arrow" viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 8.59L12 13.17L16.59 8.59L18 10L12 16L6 10L7.41 8.59Z"/></svg>
+                     </button>
+                     <transition name="pop">
+                        <div v-if="showAromaMenu" class="bahur-popup-menu list-mode">
+                           <div class="search-input-box">
+                              <input v-model="tempAromaInput" type="text" inputmode="search" placeholder="Поиск аромата..." class="popup-input rus-font" />
+                           </div>
+                           <div class="brands-scroll-area custom-scroll-minimal">
+                              <div class="brands-list-vertical">
+                                <button @click="clearAromas" class="brand-row-btn rus-font all-brand-btn">
+                                  <div class="brand-left-group">
+                                     <svg class="circle-check-icon left" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.5 2 2 6.5 2 12S6.5 22 12 22 22 17.5 22 12 17.5 2 12 2M10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" /></svg>
+                                     <span>Все</span>
+                                  </div>
+                                </button>
+                                <button v-for="(item, index) in aromaSuggestions" :key="index" @click="toggleAromaSelection(item.name)" class="brand-row-btn">
+                                  <div class="brand-left-group">
+                                    <span class="aroma-sug-brand eng-font">{{ item.brand }}</span>
+                                    <span class="aroma-sug-name rus-font">{{ item.name }}</span>
+                                  </div>
+                                  <svg v-if="selectedAromas.includes(item.name)" class="check-status right" viewBox="0 0 24 24"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z" /></svg>
+                                </button>
+                                <div v-if="aromaSuggestions.length === 0 && tempAromaInput" class="no-results rus-font">Нет совпадений</div>
+                              </div>
+                           </div>
+                        </div>
+                     </transition>
+                  </div>
+
+                  <div class="control-item">
+                    <button @click="toggleNew" :class="['main-ctrl-btn', { 'active': isNewOnly }]"><span class="rus-font ctrl-text-bold">Новинки</span></button>
+                  </div>
+                </div>
+
+                <div class="right-group">
+                  <div class="control-item relative-zone">
+                    <button @click="toggleFilterMenu" :class="['main-ctrl-btn', { 'active': showFilters }]">
+                      <span class="rus-font ctrl-text-bold">{{ showFilters ? 'Закрыть' : 'Фильтр' }}</span>
                       <svg class="pill-arrow" viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 8.59L12 13.17L16.59 8.59L18 10L12 16L6 10L7.41 8.59Z"/></svg>
-                   </button>
-                   <transition name="pop">
-                      <div v-if="showBrandMenu" class="bahur-popup-menu list-mode">
-                         <div class="search-input-box">
-                            <input v-model="tempBrandInput" type="text" inputmode="search" placeholder="Поиск бренда..." class="popup-input rus-font" />
-                         </div>
-                         <div class="brands-scroll-area custom-scroll-minimal">
-                            <div class="brands-list-vertical">
-                              <button @click="clearBrands" class="brand-row-btn rus-font all-brand-btn">
-                                <div class="brand-left-group">
-                                   <svg class="circle-check-icon left" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.5 2 2 6.5 2 12S6.5 22 12 22 22 17.5 22 12 17.5 2 12 2M10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" /></svg>
-                                   <span>Все</span>
-                                </div>
-                              </button>
-                              <button v-for="b in filteredBrandsDropdown" :key="b" @click="toggleBrandSelection(b)" class="brand-row-btn eng-font brand-font-fix">
-                                <div class="brand-left-group"><span class="brand-txt-truncate">{{ b }}</span></div>
-                                <svg v-if="selectedBrands.includes(b)" class="check-status right" viewBox="0 0 24 24"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z" /></svg>
-                              </button>
-                              <div v-if="filteredBrandsDropdown.length === 0" class="no-results rus-font">Нет совпадений</div>
-                            </div>
-                         </div>
+                    </button>
+                     <transition name="pop">
+                      <div v-if="showFilters" class="bahur-popup-menu filter-mode">
+                        <div class="popup-section">
+                          <span class="popup-label rus-font">Пол</span>
+                          <div class="segmented-control">
+                            <button v-for="g in genderOptions" :key="g.val" @click="activeGender = g.val" :class="['segment-btn', { active: activeGender === g.val }]"><span class="rus-font">{{ g.label }}</span></button>
+                          </div>
+                        </div>
+                        <div class="popup-section">
+                          <span class="popup-label rus-font">Фабрика</span>
+                          <div class="segmented-control">
+                            <button v-for="f in factoryOptions" :key="f.val" @click="activeFactory = f.val" :class="['segment-btn', { active: activeFactory === f.val }]"><span class="eng-font">{{ f.label }}</span></button>
+                          </div>
+                        </div>
+                        <div class="popup-section">
+                          <span class="popup-label rus-font">Качество</span>
+                          <div class="segmented-control">
+                            <button v-for="q in qualityOptions" :key="q.val" @click="activeQuality = q.val" :class="['segment-btn', { active: activeQuality === q.val }]"><span class="eng-font">{{ q.label }}</span></button>
+                          </div>
+                        </div>
+                        <div class="popup-section">
+                          <span class="popup-label rus-font">Цена</span>
+                          <div class="segmented-control">
+                            <button v-for="s in sortOptions" :key="s.val" @click="sortBy = s.val" :class="['segment-btn', { active: sortBy === s.val }]">
+                               <span v-if="s.val === 'id'" class="rus-font">ID</span>
+                               <span v-else class="arrows-horn"><b>{{ s.label }}</b>{{ s.val === 'asc' ? '▲' : '▼' }}</span>
+                            </button>
+                          </div>
+                        </div>
+                        <div class="popup-section">
+                          <span class="popup-label rus-font">Столбцы</span>
+                          <div class="segmented-control">
+                            <button v-for="(val, key) in priceLabels" :key="key" @click="togglePrice(key)" :class="['segment-btn', { active: showPrices[key] }]"><span class="rus-font">{{ val }}</span></button>
+                          </div>
+                        </div>
                       </div>
-                   </transition>
+                    </transition>
+                  </div>
                 </div>
 
-                <div class="control-item relative-zone">
-                   <button @click="toggleAromaMenu" :class="['main-ctrl-btn', { 'active': showAromaMenu || selectedAromas.length > 0 }]">
-                      <span class="btn-txt-fixed rus-font">{{ aromaLabel }}</span>
-                      <svg class="pill-arrow" viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 8.59L12 13.17L16.59 8.59L18 10L12 16L6 10L7.41 8.59Z"/></svg>
-                   </button>
-                   <transition name="pop">
-                      <div v-if="showAromaMenu" class="bahur-popup-menu list-mode">
-                         <div class="search-input-box">
-                            <input v-model="tempAromaInput" type="text" inputmode="search" placeholder="Поиск аромата..." class="popup-input rus-font" />
-                         </div>
-                         <div class="brands-scroll-area custom-scroll-minimal">
-                            <div class="brands-list-vertical">
-                              <button @click="clearAromas" class="brand-row-btn rus-font all-brand-btn">
-                                <div class="brand-left-group">
-                                   <svg class="circle-check-icon left" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.5 2 2 6.5 2 12S6.5 22 12 22 22 17.5 22 12 17.5 2 12 2M10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" /></svg>
-                                   <span>Все</span>
-                                </div>
-                              </button>
-                              <button v-for="(item, index) in aromaSuggestions" :key="index" @click="toggleAromaSelection(item.name)" class="brand-row-btn">
-                                <div class="brand-left-group">
-                                  <span class="aroma-sug-brand eng-font">{{ item.brand }}</span>
-                                  <span class="aroma-sug-name rus-font">{{ item.name }}</span>
-                                </div>
-                                <svg v-if="selectedAromas.includes(item.name)" class="check-status right" viewBox="0 0 24 24"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z" /></svg>
-                              </button>
-                              <div v-if="aromaSuggestions.length === 0 && tempAromaInput" class="no-results rus-font">Нет совпадений</div>
-                            </div>
-                         </div>
-                      </div>
-                   </transition>
-                </div>
-
-                <div class="control-item">
-                  <button @click="toggleNew" :class="['main-ctrl-btn', { 'active': isNewOnly }]"><span class="rus-font">Новинки</span></button>
-                </div>
-
-                <div class="control-item relative-zone">
-                  <button @click="toggleFilterMenu" :class="['main-ctrl-btn', { 'active': showFilters }]">
-                    <span class="rus-font">{{ showFilters ? 'Закрыть' : 'Фильтр' }}</span>
-                    <svg class="pill-arrow" viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 8.59L12 13.17L16.59 8.59L18 10L12 16L6 10L7.41 8.59Z"/></svg>
-                  </button>
-                   <transition name="pop">
-                    <div v-if="showFilters" class="bahur-popup-menu filter-mode">
-                      <div class="popup-section">
-                        <span class="popup-label rus-font">Пол</span>
-                        <div class="segmented-control">
-                          <button v-for="g in genderOptions" :key="g.val" @click="activeGender = g.val" :class="['segment-btn', { active: activeGender === g.val }]"><span class="rus-font">{{ g.label }}</span></button>
-                        </div>
-                      </div>
-                      <div class="popup-section">
-                        <span class="popup-label rus-font">Фабрика</span>
-                        <div class="segmented-control">
-                          <button v-for="f in factoryOptions" :key="f.val" @click="activeFactory = f.val" :class="['segment-btn', { active: activeFactory === f.val }]"><span class="eng-font">{{ f.label }}</span></button>
-                        </div>
-                      </div>
-                      <div class="popup-section">
-                        <span class="popup-label rus-font">Качество</span>
-                        <div class="segmented-control">
-                          <button v-for="q in qualityOptions" :key="q.val" @click="activeQuality = q.val" :class="['segment-btn', { active: activeQuality === q.val }]"><span class="eng-font">{{ q.label }}</span></button>
-                        </div>
-                      </div>
-                      <div class="popup-section">
-                        <span class="popup-label rus-font">Цена</span>
-                        <div class="segmented-control">
-                          <button v-for="s in sortOptions" :key="s.val" @click="sortBy = s.val" :class="['segment-btn', { active: sortBy === s.val }]">
-                             <span v-if="s.val === 'id'" class="rus-font">ID</span>
-                             <span v-else class="arrows-horn"><b>{{ s.label }}</b>{{ s.val === 'asc' ? '▲' : '▼' }}</span>
-                          </button>
-                        </div>
-                      </div>
-                      <div class="popup-section">
-                        <span class="popup-label rus-font">Столбцы</span>
-                        <div class="segmented-control">
-                          <button v-for="(val, key) in priceLabels" :key="key" @click="togglePrice(key)" :class="['segment-btn', { active: showPrices[key] }]"><span class="rus-font">{{ val }}</span></button>
-                        </div>
-                      </div>
-                    </div>
-                  </transition>
-                </div>
               </div>
               <div v-if="showFilters || showBrandMenu || showAromaMenu" class="click-overlay" @click="closeAllMenus"></div>
             </section>
@@ -328,7 +338,6 @@ const errorMsg = ref(null);
 const products = ref([]); 
 const showDash = ref(true);
 
-// --- SCROLL WIDGET LOGIC ---
 let isScrolling = false;
 let scrollDir = 0;
 let animationFrameId = null;
@@ -405,8 +414,9 @@ const toggleBrandMenu = () => {
 const toggleBrandSelection = (b) => {
   const idx = selectedBrands.value.indexOf(b);
   if (idx === -1) selectedBrands.value.push(b); else selectedBrands.value.splice(idx, 1);
+  closeAllMenus();
 }
-const clearBrands = () => { selectedBrands.value = []; }
+const clearBrands = () => { selectedBrands.value = []; closeAllMenus(); }
 const toggleAromaMenu = () => { 
   if (showAromaMenu.value) { closeAllMenus(); return; } 
   closeAllMenus(); showAromaMenu.value = true; tempAromaInput.value = ''; 
@@ -414,11 +424,23 @@ const toggleAromaMenu = () => {
 const toggleAromaSelection = (a) => {
   const idx = selectedAromas.value.indexOf(a);
   if (idx === -1) selectedAromas.value.push(a); else selectedAromas.value.splice(idx, 1);
+  closeAllMenus();
 }
-const clearAromas = () => { selectedAromas.value = []; }
+const clearAromas = () => { selectedAromas.value = []; closeAllMenus(); }
 const closeAllMenus = () => { showFilters.value = false; showBrandMenu.value = false; showAromaMenu.value = false; }
-const brandLabel = computed(() => { const len = selectedBrands.value.length; if (len === 0) return 'Бренды'; if (len === 1) return selectedBrands.value[0]; return `${len} Бренда`; });
-const aromaLabel = computed(() => { const len = selectedAromas.value.length; if (len === 0) return 'Ароматы'; if (len === 1) return selectedAromas.value[0]; return `${len} Аромата`; });
+
+// --- FIXED LABEL LOGIC ---
+const brandLabel = computed(() => { 
+  const len = selectedBrands.value.length; 
+  if (len === 0) return 'Бренды'; 
+  return `${len} Бренд${len > 1 ? 'а' : ''}`; // "1 Бренд" or "2 Бренда"
+});
+const aromaLabel = computed(() => { 
+  const len = selectedAromas.value.length; 
+  if (len === 0) return 'Ароматы'; 
+  return `${len} Аромат${len > 1 ? 'а' : ''}`; // "1 Аромат" or "2 Аромата"
+});
+
 const priceSubGridStyle = computed(() => ({ gridTemplateColumns: `repeat(${activePriceCount.value}, 1fr)` }));
 
 const parseCSV = (data) => {
@@ -523,7 +545,6 @@ const stats = computed(() => {
 const getSex = (g) => ({ m: 'Муж', w: 'Жен', y: 'Уни' }[g] || '—');
 const open = (u) => window.open(u.startsWith('http') ? u : `https://${u}`, '_blank');
 onMounted(() => {
-  // META TAG FOR NO ZOOM
   let meta = document.querySelector('meta[name=viewport]');
   if (!meta) {
     meta = document.createElement('meta');
@@ -543,8 +564,7 @@ onUnmounted(() => { if (highlightInterval) clearInterval(highlightInterval); sto
 <style scoped>
 /* FONTS */
 @font-face { font-family: 'Kollektif'; src: local('Kollektif'), url('https://fonts.cdnfonts.com/s/16912/Kollektif.woff') format('woff'); font-weight: normal; font-style: normal; }
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Mrs+Saint+Delafield&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100;300;400;700&display=swap');
 
 .eng-font { font-family: 'Kollektif', 'Segoe UI', sans-serif; }
 .rus-font { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
@@ -557,7 +577,7 @@ onUnmounted(() => { if (highlightInterval) clearInterval(highlightInterval); sto
   --seg-bg: #1c1c1e; --seg-active: #ffffff; --seg-txt: #8e8e93; --seg-txt-active: #000000;
   --btn-ctrl-bg: rgba(255,255,255,0.05);
   min-height: 100vh; background: var(--bg); color: var(--text); font-family: 'Helvetica Neue', sans-serif;
-  touch-action: pan-y; /* DISALLOW ZOOM */
+  touch-action: pan-y;
 }
 .noir { 
   --bg: #000; --text: #fff; --aura-bg: rgba(0,0,0,0.4); 
@@ -581,24 +601,14 @@ onUnmounted(() => { if (highlightInterval) clearInterval(highlightInterval); sto
 .container { max-width: 1400px; margin: 0 auto; padding: 15px; }
 
 /* LOADING SCREEN */
-.loading-overlay {
-  position: fixed; inset: 0; background: var(--bg); z-index: 2000;
-  display: flex; justify-content: center; align-items: center;
-}
-.handwriting-container { text-align: center; }
-.handwritten-text {
-  font-family: 'Mrs Saint Delafield', cursive;
-  font-size: 80px; color: var(--text);
-  display: inline-block;
-  overflow: hidden;
-  white-space: nowrap;
-  animation: write 1.5s steps(40, end);
-}
-.loading-sub { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--dim); margin-top: -10px; opacity: 0; animation: fadein 0.5s forwards 1s; }
-@keyframes write { from { width: 0; } to { width: 100%; } }
-@keyframes fadein { to { opacity: 1; } }
+.loading-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 2000; display: flex; justify-content: center; align-items: center; }
+.action-loader { position: relative; text-align: center; }
+.thin-hero-text { font-family: 'Kollektif', sans-serif; font-weight: 100; font-size: 60px; color: var(--text); letter-spacing: 5px; opacity: 0; animation: tracking-in 1.2s cubic-bezier(0.215, 0.610, 0.355, 1.000) forwards; }
+.scan-line { width: 0; height: 1px; background: var(--text); margin: 10px auto 0; animation: scan-expand 1s cubic-bezier(0.23, 1, 0.32, 1) forwards 0.5s; }
+@keyframes tracking-in { 0% { letter-spacing: 20px; opacity: 0; filter: blur(10px); } 100% { letter-spacing: 5px; opacity: 1; filter: blur(0px); } }
+@keyframes scan-expand { to { width: 100%; } }
 
-/* ERROR NOIR STYLE */
+/* ERROR ZONE */
 .error-zone { display: flex; justify-content: center; align-items: center; height: 50vh; }
 .error-box-noir { text-align: center; border: 1px solid var(--text); padding: 40px 60px; border-radius: 4px; background: var(--bg); box-shadow: 0 0 20px rgba(255,255,255,0.05); max-width: 400px; }
 .err-icon { font-size: 30px; margin-bottom: 15px; color: var(--text); opacity: 0.8; }
@@ -608,16 +618,8 @@ onUnmounted(() => { if (highlightInterval) clearInterval(highlightInterval); sto
 .retry-btn-noir:hover { opacity: 0.8; }
 
 /* SCROLL WIDGET */
-.scroll-widget-noir {
-  position: fixed; right: 0; top: 50%; transform: translateY(-50%); width: 34px;
-  display: flex; flex-direction: column; align-items: center; gap: 4px; z-index: 1000; opacity: 0.9;
-  touch-action: none;
-}
-.s-btn {
-  background: rgba(0,0,0,0.9); border: 1px solid var(--border); color: var(--text); border-radius: 4px 0 0 4px;
-  width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0;
-  user-select: none;
-}
+.scroll-widget-noir { position: fixed; right: 0; top: 50%; transform: translateY(-50%); width: 34px; display: flex; flex-direction: column; align-items: center; gap: 4px; z-index: 1000; opacity: 0.9; touch-action: none; }
+.s-btn { background: rgba(0,0,0,0.9); border: 1px solid var(--border); color: var(--text); border-radius: 4px 0 0 4px; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0; user-select: none; }
 .s-btn svg { width: 14px; height: 14px; }
 .s-track { width: 100%; height: 120px; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 5px 0; position: relative; }
 .s-mark { width: 12px; height: 1px; background: var(--text); opacity: 0.5; cursor: pointer; transition: 0.2s; }
@@ -626,13 +628,17 @@ onUnmounted(() => { if (highlightInterval) clearInterval(highlightInterval); sto
 /* STICKY NAV */
 .sticky-nav-group { position: sticky; top: 0; z-index: 500; background: var(--sticky-bg); backdrop-filter: blur(15px); border-bottom: 1px solid var(--text); margin-bottom: 0; }
 .controls-luxury { padding: 12px 0; border-bottom: 0.5px solid var(--border); }
-/* 4 COLUMNS RESTORED */
-.top-bar-controls-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
-.control-item { display: flex; justify-content: center; align-items: center; width: 100%; }
 
-/* BUTTONS MADE BIGGER */
-.main-ctrl-btn { width: 100%; background: var(--btn-ctrl-bg); border: none; color: var(--text); padding: 14px 0; border-radius: 30px; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; transition: all 0.2s; letter-spacing: 0.5px; white-space: nowrap; text-transform: none; }
-.btn-txt-fixed { max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* CONTROLS LAYOUT - FLEX FOR DESKTOP */
+.ctrl-wrapper-desktop { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+.left-group { display: flex; gap: 10px; width: auto; }
+.right-group { width: auto; }
+.control-item { width: auto; min-width: 100px; } /* Fixed width on desktop */
+
+/* BUTTONS */
+.main-ctrl-btn { width: 100%; background: var(--btn-ctrl-bg); border: none; color: var(--text); padding: 14px 20px; border-radius: 30px; font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s; letter-spacing: 0.5px; white-space: nowrap; text-transform: none; }
+.ctrl-text-bold { font-weight: 700; }
+.btn-txt-fixed { max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .main-ctrl-btn:hover { background: rgba(125,125,125,0.15); }
 .main-ctrl-btn.active { background: var(--text); color: var(--bg); }
 .pill-arrow { width: 10px; height: 10px; opacity: 0.8; } 
@@ -641,7 +647,7 @@ onUnmounted(() => { if (highlightInterval) clearInterval(highlightInterval); sto
 .click-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 800; background: transparent; }
 
 .bahur-popup-menu { position: absolute; top: 60px; background: var(--panel-bg); border: 0.5px solid var(--border); border-radius: 16px; padding: 15px; box-shadow: 0 30px 60px rgba(0,0,0,0.95); display: flex; flex-direction: column; gap: 10px; z-index: 999; }
-.bahur-popup-menu.list-mode { left: 50%; transform: translateX(-50%); width: 240px !important; max-width: 240px !important; }
+.bahur-popup-menu.list-mode { left: 0; transform: none; width: 240px; }
 .bahur-popup-menu.filter-mode { right: 0; width: 220px; }
 
 .popup-input { width: 100%; background: var(--seg-bg); border: none; padding: 10px; border-radius: 8px; color: var(--text); font-size: 13px; outline: none; margin-bottom: 5px; box-sizing: border-box; }
@@ -659,8 +665,6 @@ onUnmounted(() => { if (highlightInterval) clearInterval(highlightInterval); sto
 .brand-txt-truncate { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px; }
 .aroma-sug-brand { font-weight: 900; opacity: 0.5; margin-right: 5px; font-size: 10px; }
 .aroma-sug-name { font-weight: 700; font-size: 11px; }
-
-/* CHECKS LEFT/RIGHT */
 .circle-check-icon.left { margin-right: 5px; width: 16px; height: 16px; }
 .check-status.right { width: 14px; height: 14px; }
 
@@ -690,6 +694,10 @@ onUnmounted(() => { if (highlightInterval) clearInterval(highlightInterval); sto
 .slide-fade-enter-active, .slide-fade-leave-active { transition: all 0.3s ease; max-height: 500px; opacity: 1; overflow: hidden; }
 .slide-fade-enter-from, .slide-fade-leave-to { max-height: 0; opacity: 0; margin-bottom: 0; }
 
+.dash-collapsible-wrapper { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+.dash-collapsible-wrapper.open { grid-template-rows: 1fr; }
+.dash-inner-content { overflow: hidden; }
+
 .dashboard { margin-bottom: 20px; }
 .dash-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
 .stat-card { border: 0.5px solid var(--border); padding: 18px; background: var(--bg); border-left: 3.5px solid var(--text); }
@@ -708,41 +716,39 @@ onUnmounted(() => { if (highlightInterval) clearInterval(highlightInterval); sto
 .mini-stat-row { font-size: 9px; font-weight: 700; margin-top: 5px; }
 .dim-slash { margin: 0 5px; opacity: 0.3; }
 
-/* MEGA CARD STYLES */
-/* Changed align-items to flex-start for top alignment of labels */
-.mega-split-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
-.mega-half { display: flex; flex-direction: column; width: 48%; }
-.mega-half.right { align-items: flex-end; }
-.text-right { text-align: right; }
-.mt-1 { margin-top: 5px; }
-.mega-sep-line { width: 100%; height: 1px; background: var(--border); margin-bottom: 15px; opacity: 0.5; }
-.mega-bottom-row { display: flex; flex-direction: column; gap: 8px; }
-.inline-label { margin-bottom: 0 !important; }
-.avg-price-flex { display: flex; justify-content: space-between; width: 100%; }
+/* CARD 1: SPLIT AROMAS + PRICE */
+.split-top-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; }
+.st-item { flex: 1; }
+.st-sep { width: 1px; background: var(--border); margin: 0 10px; opacity: 0.5; align-self: stretch; }
+.st-price-box { flex: 1.5; }
+.avg-price-flex { display: flex; flex-direction: column; gap: 4px; }
 .ap-item { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--dim); }
-.ap-item .val { color: var(--text); font-weight: 700; font-size: 12px; margin-left: 2px; }
+.ap-item .val { color: var(--text); font-weight: 700; font-size: 12px; margin-left: 5px; }
+
+/* CARD 2: STOCK */
+.stock-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px; }
+.mb-1 { margin-bottom: 8px; }
+.center-text { text-align: center; }
 
 /* COMPACT TOP LIST STYLES */
 .top-row-flex { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
 .mode-switch { background: none; border: 1px solid var(--border); color: var(--text); cursor: pointer; border-radius: 4px; font-size: 10px; padding: 2px 5px; }
 .top-list-scroll-container { max-height: 60px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; padding-right: 2px; }
-
 .top-row-compact { display: flex; justify-content: space-between; align-items: center; font-size: 10px; padding: 2px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
-.tr-left { display: flex; align-items: center; max-width: 60%; overflow: hidden; }
+.tr-left-main { display: flex; align-items: center; width: 40%; overflow: hidden; }
 .top-num { color: var(--dim); margin-right: 5px; font-size: 9px; min-width: 12px; }
 .top-name { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-weight: 500; font-size: 10px; }
-.tr-right-bars { display: flex; align-items: center; gap: 4px; width: 40%; justify-content: flex-end; }
-.badge-mini { border: 1px solid var(--border); padding: 1px 3px; font-size: 8px; color: var(--text); opacity: 0.8; border-radius: 2px; }
-
-/* MINI LINE PROGRESS IN TOP LIST */
-.mini-bar-track { width: 30px; height: 2px; background: var(--border); overflow: hidden; }
+.tr-mid-graph { flex-grow: 1; margin: 0 8px; display: flex; align-items: center; }
+.mini-bar-track { width: 100%; height: 2px; background: var(--border); overflow: hidden; }
 .mini-bar-fill { height: 100%; background: var(--text); box-shadow: 0 0 4px var(--text); }
+.tr-right-meta { display: flex; align-items: center; gap: 4px; }
+.badge-mini { border: 1px solid var(--border); padding: 1px 3px; font-size: 8px; color: var(--text); opacity: 0.8; border-radius: 2px; }
+.top-val { font-weight: 700; margin-left: 4px; font-size: 9px; min-width: 25px; text-align: right; }
 
 .grid-table { display: flex; flex-direction: column; width: 100%; min-width: 1000px; border: 0.5px solid var(--border); border-top: none; }
 .grid-layout-def { display: grid; grid-template-columns: 60px 1fr 80px 120px 120px calc(var(--p-cols) * 80px); align-items: center; box-sizing: border-box; width: 100%; }
 .grid-layout-def.head { border-bottom: none; background: transparent; }
 .grid-layout-def:not(.head) { background: var(--bg); border-bottom: 0.5px solid var(--border); position: relative; overflow: hidden; }
-
 .cell { height: 100%; display: flex; align-items: center; padding: 15px; border-right: 0.5px solid var(--border); box-sizing: border-box; overflow: hidden; }
 .head-txt { font-size: 8px; font-weight: 700; color: var(--dim); text-transform: uppercase; letter-spacing: 1.5px; font-family: 'Helvetica Neue', sans-serif;}
 .center { justify-content: center; text-align: center; }
@@ -778,8 +784,7 @@ onUnmounted(() => { if (highlightInterval) clearInterval(highlightInterval); sto
 
 @media (max-width: 900px) {
   .dash-grid { grid-template-columns: 1fr 1fr; }
-  .span-full { grid-column: span 2; } /* Full width items */
-  
+  .span-full { grid-column: span 2; } 
   .grid-table { min-width: 100%; border: none; }
   .cell { border-right: none; }
   .desk-only { display: none; }
@@ -796,9 +801,15 @@ onUnmounted(() => { if (highlightInterval) clearInterval(highlightInterval); sto
   .p-col { padding: 0; font-size: 12px; border-right: 0.5px solid var(--border) !important; }
   .p-col.last { border-right: none !important; }
   .aura-text { font-size: 9px; letter-spacing: 2px; }
-  .top-bar-controls-grid-4 { gap: 5px; } /* Gap on mobile */
-  .main-ctrl-btn { font-size: 10px; padding: 12px 0; } /* Bigger buttons */
+  
+  /* MOBILE CONTROL LAYOUT - GRID */
+  .ctrl-wrapper-desktop { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
+  .left-group { display: contents; }
+  .right-group { display: contents; }
+  .control-item { min-width: 0; width: 100%; }
+  .main-ctrl-btn { font-size: 9px; padding: 12px 0; }
   .btn-txt-fixed { max-width: 65px; }
+  
   .desk-only-new { display: none; }
   .bahur-popup-menu.list-mode { left: 0 !important; right: 0 !important; margin: auto !important; transform: none !important; width: 220px !important; }
   .custom-scroll-minimal::-webkit-scrollbar { width: 1px !important; }
