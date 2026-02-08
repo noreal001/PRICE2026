@@ -4,7 +4,7 @@
       
       <header class="header-manifest">
         <div class="header-inner">
-           <button @click="isDark = !isDark" class="header-icon-btn theme-pos">
+           <button @click="isDark = !isDark" class="header-pill-btn theme-pos">
               <svg v-if="isDark" class="h-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,2L14.39,5.42C13.65,5.15 12.84,5 12,5C11.16,5 10.35,5.15 9.61,5.42L12,2M3.34,7L7.5,7.46C7.18,8.14 7,8.89 7,9.67V14.33C7,15.11 7.18,15.86 7.5,16.54L3.34,17L5.36,12L3.34,7M12,22L9.61,18.58C10.35,18.85 11.16,19 12,19C12.84,19 13.65,18.85 14.39,18.58L12,22M20.66,7L18.64,12L20.66,17L16.5,16.54C16.82,15.86 17,15.11 17,14.33V9.67C17,8.89 16.82,8.14 16.5,7.46L20.66,7Z" /></svg>
               <svg v-else class="h-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M17.75,4.09L15.22,6.03L16.13,9.09L13.5,7.28L10.87,9.09L11.78,6.03L9.25,4.09L12.44,4L13.5,1L14.56,4L17.75,4.09M21.25,11L19.61,12.25L20.2,14.23L18.5,13.06L16.8,14.23L17.39,12.25L15.75,11L17.81,10.95L18.5,9L19.19,10.95L21.25,11M18.97,15.95C19.8,15.87 20.69,17.05 20.16,17.8C19.84,18.25 19.5,18.67 19.08,19.07C15.17,23 8.84,23 4.94,19.07C1.03,15.17 1.03,8.83 4.94,4.93C5.34,4.53 5.76,4.17 6.21,3.85C6.96,3.32 8.14,4.21 8.06,5.04C6.93,8.39 8.5,12.5 12.31,14.31C14.12,15.17 16.5,15.2 18.97,15.95M17.33,17.97C14.5,17.81 11.7,16.64 9.53,14.5C7.3,12.23 6.13,9.3 5.96,6.38C3.2,10.12 3.66,15.29 7.15,18.78C10.63,22.27 15.8,22.73 19.54,19.97C18.86,19.43 18.12,18.77 17.33,17.97Z" /></svg>
            </button>
@@ -41,7 +41,8 @@
       <div v-else-if="!loading">
         
         <div class="dash-control-bar">
-           <button @click="showDash = !showDash" class="header-icon-btn stats-pos" title="Статистика">
+           <button @click="showDash = !showDash" class="header-pill-btn stats-pos" title="Статистика">
+             <span class="rus-font" style="letter-spacing: 0.5px;">СТАТИСТИКА</span>
              <svg :class="['h-icon', { 'closed-arrow': !showDash }]" viewBox="0 0 24 24"><path fill="currentColor" d="M13,9H18.5L13,3.5V9M6,2H14L20,8V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V4C4,2.89 4.89,2 6,2M7,20H9V14H7V20M11,20H13V12H11V20M15,20H17V16H15V20Z" /></svg>
            </button>
         </div>
@@ -211,12 +212,10 @@
                   </div>
 
                   <div class="control-item">
-                    <button @click="toggleNew" :class="['main-ctrl-btn', { 'active-mode': isNewOnly }]">
+                    <button @click="toggleNew" :class="['main-ctrl-btn', 'toggle-btn-wrapper', { 'active-mode': isNewOnly }]">
                        <span class="rus-font ctrl-text-bold">Новинки</span>
-                       <div class="toggle-switch-wrapper">
-                          <div class="toggle-track">
-                             <div class="toggle-thumb"></div>
-                          </div>
+                       <div class="art-toggle">
+                          <div class="art-thumb"></div>
                        </div>
                     </button>
                   </div>
@@ -711,9 +710,23 @@ onUnmounted(() => {
   text-shadow: 0 0 10px rgba(255,255,255,0.5); 
 }
 .logo-url { font-size: 9px; color: var(--dim); font-weight: 700; letter-spacing: 2px; margin-top: 5px; font-family: 'Kollektif', sans-serif; text-transform: lowercase; }
-.header-icon-btn { position: absolute; top: 50%; transform: translateY(-50%); background: none; border: 1px solid var(--border); color: var(--text); width: 28px; height: 28px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; z-index: 10; }
-.header-icon-btn:hover { background: rgba(125,125,125,0.1); }
-.theme-pos { right: 0; } 
+
+/* HEADER PILL BUTTON STYLE (Shared with Dashboard Toggle) */
+.header-pill-btn {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 20px;
+  padding: 6px 12px;
+  font-size: 10px; font-weight: 600; /* Match Rating Button */
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 5px;
+  transition: 0.2s; z-index: 10;
+}
+.header-pill-btn:hover { background: rgba(255,255,255,0.05); }
+.theme-pos { right: 0; }
+/* Stats pos handled below in dash-control-bar */
 
 /* STICKY NAV */
 .sticky-nav-group { position: sticky; top: 0; z-index: 500; background: var(--sticky-bg); backdrop-filter: blur(15px); border-bottom: 1px solid var(--text); margin-bottom: 0; }
@@ -752,35 +765,42 @@ onUnmounted(() => {
   border-color: var(--text);
   font-weight: 800;
 }
+/* ART TOGGLE EXCEPTION: Button BG doesn't change, only toggle does */
+.main-ctrl-btn.toggle-btn-wrapper.active-mode {
+  background: transparent;
+  color: var(--text);
+  font-weight: 700;
+}
+
 .ctrl-text-bold { font-weight: 600; }
 .btn-txt-fixed { max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .pill-arrow { width: 10px; height: 10px; opacity: 0.8; } 
 
-/* TOGGLE SWITCH STYLE INSIDE BUTTON */
-.toggle-switch-wrapper { display: flex; align-items: center; }
-.toggle-track {
-  width: 24px; height: 14px;
-  background: #000; /* Default Black */
-  border: 1px solid #fff; /* White Border */
-  border-radius: 10px;
+/* ART TOGGLE SWITCH STYLE (CAPSULE) */
+.art-toggle {
+  width: 28px; height: 16px;
+  border: 1px solid currentColor; /* Takes text color */
+  border-radius: 99px;
   position: relative;
-  transition: 0.3s;
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  display: inline-flex; align-items: center;
+  box-shadow: 0 0 5px rgba(255,255,255,0.1);
+  background: transparent; /* Default off */
 }
-.toggle-thumb {
-  width: 8px; height: 8px;
-  background: #fff; /* Default White */
+.art-thumb {
+  width: 10px; height: 10px;
+  background: currentColor; /* Matches text (White in dark) */
   border-radius: 50%;
-  position: absolute; top: 2px; left: 2px;
-  transition: 0.3s;
+  position: absolute; left: 2px;
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
 }
-/* Active State: Invert Colors */
-.active-mode .toggle-track {
-  background: #fff; /* Active White Background */
-  border-color: #000; /* Active Black Border */
+/* Active State for Art Toggle */
+.active-mode .art-toggle {
+  background: currentColor; /* Fills with white */
 }
-.active-mode .toggle-thumb {
-  background: #000; /* Active Black Circle */
-  transform: translateX(10px);
+.active-mode .art-thumb {
+  background: var(--bg); /* Dot becomes black */
+  transform: translateX(12px);
 }
 
 .relative-zone { position: relative; }
@@ -818,7 +838,7 @@ onUnmounted(() => {
 .pop-enter-from, .pop-leave-to { opacity: 0; transform: translateY(-10px) scale(0.95); }
 
 .dash-control-bar { padding-left: 2px; display: flex; justify-content: flex-start; margin-bottom: 5px; }
-.stats-pos { left: 0; position: relative; transform: none; top: auto; }
+.stats-pos { position: relative; transform: none; top: auto; } /* Reset absolute pos for dash button */
 .h-icon { width: 16px; height: 16px; }
 .closed-arrow { transform: rotate(180deg); transition: 0.3s; }
 
@@ -898,10 +918,21 @@ onUnmounted(() => {
 .top-val { font-weight: 700; margin-left: 4px; font-size: 9px; min-width: 25px; text-align: right; }
 
 .grid-table { display: flex; flex-direction: column; width: 100%; min-width: 1000px; border: 0.5px solid var(--border); border-top: none; }
-.grid-layout-def { display: grid; grid-template-columns: 60px 1fr 80px 120px 120px calc(var(--p-cols) * 80px); align-items: center; box-sizing: border-box; width: 100%; }
+/* KEY: align-items: stretch to force full height borders */
+.grid-layout-def { 
+  display: grid; 
+  grid-template-columns: 60px 1fr 80px 120px 120px calc(var(--p-cols) * 80px); 
+  align-items: stretch; /* FIX FOR CONTINUOUS LINES */
+  box-sizing: border-box; width: 100%; 
+}
 .grid-layout-def.head { border-bottom: none; background: transparent; }
 .grid-layout-def:not(.head) { background: var(--bg); border-bottom: 0.5px solid var(--border); position: relative; overflow: hidden; }
-.cell { height: 100%; display: flex; align-items: center; padding: 15px; border-right: 0.5px solid var(--border); box-sizing: border-box; overflow: hidden; }
+.cell { 
+  height: auto; /* Allow grow */
+  display: flex; align-items: center; padding: 15px; 
+  border-right: 0.5px solid var(--border); 
+  box-sizing: border-box; overflow: hidden; 
+}
 .head-txt { font-size: 8px; font-weight: 700; color: var(--dim); text-transform: uppercase; letter-spacing: 1.5px; font-family: 'Helvetica Neue', sans-serif;}
 .center { justify-content: center; text-align: center; }
 .row-visual-layer { display: contents; }
@@ -923,9 +954,14 @@ onUnmounted(() => {
 .mobile-only-meta { display: none; margin-top: 8px; gap: 5px; align-items: center; }
 .new-mobile { display: block; background: var(--text); color: var(--bg); border: none; font-weight: 900; }
 .price-container { width: calc(var(--p-cols) * 80px); }
-.price-section { display: grid; height: 100%; width: 100%; align-items: center; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
-.p-col { text-align: center; font-size: 15px; height: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden; white-space: nowrap; box-sizing: border-box; }
-.p-col.line { border-right: 1px solid rgba(255, 255, 255, 0.6); } /* STRONGER BORDER */
+.price-section { display: grid; height: 100%; width: 100%; align-items: stretch; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+.p-col { 
+  text-align: center; font-size: 15px; 
+  height: auto; /* fill parent */
+  display: flex; align-items: center; justify-content: center; 
+  overflow: hidden; white-space: nowrap; box-sizing: border-box; 
+}
+.p-col.line { border-right: 1px solid rgba(255, 255, 255, 0.15); } /* CONTINUOUS BORDER */
 .head-p .p-col { font-size: 8px; font-weight: 700; color: var(--dim); letter-spacing: 1.5px; text-transform: uppercase; }
 .row-aura-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; opacity: 0; backdrop-filter: blur(0px); background: transparent; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: 10; pointer-events: none; }
 .clickable-row:hover .row-aura-overlay, .clickable-row.simulated-hover .row-aura-overlay { opacity: 1; backdrop-filter: blur(8px); background: var(--aura-bg); }
@@ -941,17 +977,33 @@ onUnmounted(() => {
   .cell { border-right: none; }
   .desk-only { display: none; }
   .mobile-only-meta { display: flex; }
-  .grid-layout-def { grid-template-columns: 30px 1fr calc(var(--p-cols) * 55px); border-bottom: 1px solid rgba(255,255,255,0.6) !important; }
+  .grid-layout-def { grid-template-columns: 30px 1fr calc(var(--p-cols) * 55px); border-bottom: 0.5px solid var(--border); }
   .id-zone-square { border-right: none; padding: 2px 0 !important; align-items: center; justify-content: flex-start; padding-top: 15px !important; }
   .id-sq-top { font-size: 10px; margin-bottom: 4px; }
   .lamp-sq { width: 6px; height: 6px; border-radius: 50%; }
-  .border-right-mobile { border-right: 1px solid rgba(255,255,255,0.6) !important; padding-right: 5px; }
+  .border-right-mobile { border-right: 0.5px solid var(--border) !important; padding-right: 5px; }
   .scent-info { padding-left: 2px; }
   .scent-title { font-size: 13px; }
-  .price-container { width: calc(var(--p-cols) * 55px); }
-  .price-section { border-right: none; }
-  .p-col { padding: 0; font-size: 12px; border-right: 1px solid rgba(255,255,255,0.6) !important; }
+  
+  /* CONTINUOUS BORDER FIX MOBILE */
+  .price-container { 
+    width: calc(var(--p-cols) * 55px); 
+    display: flex; flex-direction: column; 
+    height: auto; 
+  }
+  .price-section { 
+    border-right: none; 
+    height: 100%; 
+  }
+  .p-col { 
+    padding: 0; font-size: 12px; 
+    border-right: 0.5px solid var(--border) !important; 
+    height: auto; 
+    display: flex; align-items: center; justify-content: center;
+  }
+  .p-col.line { border-right: 1px solid rgba(255, 255, 255, 0.15) !important; }
   .p-col.last { border-right: none !important; }
+  
   .aura-text { font-size: 9px; letter-spacing: 2px; }
   
   /* MOBILE CONTROL LAYOUT */
