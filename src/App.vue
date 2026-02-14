@@ -168,14 +168,6 @@
                         </div>
                      </transition>
                   </div>
-
-                  <div class="control-item relative-zone search-item">
-                     <div class="search-input-container">
-                        <svg class="search-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z" /></svg>
-                        <input v-model="searchQuery" type="text" placeholder="Поиск..." class="main-ctrl-btn search-direct-input rus-font" />
-                        <button v-if="searchQuery" @click="searchQuery = ''" class="clear-search">✕</button>
-                     </div>
-                  </div>
                   
                   <div class="control-item relative-zone pos-center-mobile">
                     <button @click="toggleNewMenu" :class="['main-ctrl-btn', { 'active-mode': showNewMenu || filterPlus || filterStar || showOut }]">
@@ -251,9 +243,17 @@
               <div v-if="showFilters || showBrandMenu || showNewMenu" class="click-overlay" @click="closeAllMenus"></div>
             </section>
 
-            <div class="grid-layout-def head no-click">
+            <div class="grid-layout-def head">
               <div class="cell id head-txt center">№</div>
-              <div class="cell name name-header"><span class="head-txt">Ароматы</span></div>
+              
+              <div class="cell name name-header" style="padding: 0;">
+                 <div class="header-search-container">
+                    <svg class="search-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z" /></svg>
+                    <input v-model="searchQuery" type="text" placeholder="АРОМАТЫ / ПОИСК..." class="header-search-input rus-font" />
+                    <button v-if="searchQuery" @click="searchQuery = ''" class="clear-search">✕</button>
+                 </div>
+              </div>
+
               <div class="cell desk-only head-txt center">Пол</div>
               <div class="cell desk-only head-txt center">Фабрика</div>
               <div class="cell desk-only head-txt center">Качество</div>
@@ -272,13 +272,11 @@
               <div class="row-visual-layer">
                 <div class="cell id-zone-square center">
                   <div class="id-sq-top mono">{{ p.id }}</div>
-                  
                   <div class="status-symbol mono">
                     <span v-if="p.isOut" class="sym-minus watermelon-txt">-</span>
                     <span v-else-if="p.hasPlus" class="sym-plus jade-txt">+</span>
                     <span v-else-if="p.hasStar" class="sym-star purple-txt">*</span>
                   </div>
-
                 </div>
                 <div class="cell name border-right-mobile">
                   <div class="scent-info">
@@ -333,7 +331,6 @@ const selectedBrands = ref([]);
 const tempBrandInput = ref('');
 const showBrandMenu = ref(false);
 
-// Единый глобальный поиск (вместо меню)
 const searchQuery = ref('');
 
 const showFilters = ref(false);
@@ -341,7 +338,7 @@ const showFilters = ref(false);
 const showNewMenu = ref(false);
 const filterPlus = ref(false);
 const filterStar = ref(false);
-const showOut = ref(false); // Изначально скрыты минусы
+const showOut = ref(false); 
 
 const activeGender = ref('ВСЕ'); 
 const activeQuality = ref('ВСЕ'); 
@@ -505,7 +502,6 @@ const filteredBrandsDropdown = computed(() => { const s = tempBrandInput.value.t
 const filteredProducts = computed(() => {
   return products.value.filter(p => {
     const matchesBrand = selectedBrands.value.length === 0 || selectedBrands.value.includes(p.brand);
-    // Живой поиск по ароматам/брендам
     const searchLow = searchQuery.value.toLowerCase();
     const matchesSearch = !searchLow || p.name.toLowerCase().includes(searchLow) || p.brand.toLowerCase().includes(searchLow);
     
@@ -515,7 +511,7 @@ const filteredProducts = computed(() => {
     
     if (filterPlus.value && !p.hasPlus) return false;
     if (filterStar.value && !p.hasStar) return false;
-    if (!showOut.value && p.isOut) return false;
+    if (!showOut.value && p.isOut) return false; 
 
     return matchesBrand && matchesSearch && matchesGender && matchesQuality && matchesFactory;
   });
@@ -594,11 +590,11 @@ onUnmounted(() => {
 
 /* GLOBALS & THEME */
 .bahur-terminal {
-  --bg: #19191b; /* Темный красивый фон */
+  --bg: #19191b; 
   --text: #fff; --border: rgba(255,255,255,0.06); --dim: #888; 
-  --panel-bg: rgba(35, 35, 38, 0.98); 
-  --card-bg: #121214; /* Карточки чуть темнее фона (утоплены/глубокие) */
-  --card-border: rgba(255, 255, 255, 0.03); /* Очень мягкая линия для карточек */
+  --panel-bg: #121214; /* Всплывающие меню теперь темные как карточки */
+  --card-bg: #121214; 
+  --card-border: rgba(255, 255, 255, 0.03); 
   --aura-bg: rgba(0,0,0,0.4); --aura-text: #fff;
   --sticky-bg: rgba(25, 25, 27, 0.95);
   --seg-bg: #1c1c1e; --seg-active: #ffffff; --seg-txt: #8e8e93; --seg-txt-active: #000000;
@@ -609,14 +605,14 @@ onUnmounted(() => {
 .noir { 
   --bg: #19191b;
   --text: #fff; --aura-bg: rgba(0,0,0,0.4); --border: rgba(255,255,255,0.06);
-  --sticky-bg: rgba(25, 25, 27, 0.95); --panel-bg: rgba(35, 35, 38, 0.98); 
+  --sticky-bg: rgba(25, 25, 27, 0.95); --panel-bg: #121214; 
   --card-bg: #121214; --card-border: rgba(255, 255, 255, 0.03);
   --seg-bg: #1c1c1e; --seg-active: #fff; --seg-txt: #8e8e93; --seg-txt-active: #000;
   --btn-ctrl-bg: rgba(255,255,255,0.08);
 }
 .bahur-terminal:not(.noir) { 
   --bg: #f4f4f7; --text: #000; --border: rgba(0,0,0,0.1); --dim: #666; 
-  --panel-bg: rgba(240, 240, 245, 0.98); --aura-bg: rgba(255,255,255,0.5); --aura-text: #000; 
+  --panel-bg: #ffffff; --aura-bg: rgba(255,255,255,0.5); --aura-text: #000; 
   --card-bg: #ffffff; --card-border: rgba(0, 0, 0, 0.05);
   --sticky-bg: rgba(244, 244, 247, 0.95); --seg-bg: #e5e5ea; --seg-active: #000000; --seg-txt: #8e8e93; --seg-txt-active: #ffffff;
   --btn-ctrl-bg: #f2f2f7; 
@@ -630,7 +626,7 @@ onUnmounted(() => {
 
 .container { max-width: 1400px; margin: 0 auto; padding: 15px; }
 
-/* LOADING SCREEN (ЧИСТО ЧЕРНЫЙ ФОН) */
+/* LOADING SCREEN */
 .loading-overlay { 
   position: fixed; inset: 0; background: #000; z-index: 2000; 
   display: flex; justify-content: center; align-items: center; overflow: hidden; 
@@ -682,24 +678,13 @@ onUnmounted(() => {
 .right-group { flex-shrink: 0; }
 .control-item { min-width: 120px; position: relative; }
 
-/* DIRECT SEARCH BAR (UX Design) */
-.search-input-container { position: relative; width: 100%; height: 100%; display: flex; align-items: center; }
-.search-icon { position: absolute; left: 14px; width: 14px; height: 14px; color: var(--dim); pointer-events: none; }
-.search-direct-input { 
-  padding-left: 36px !important; padding-right: 32px !important; 
-  text-align: left !important; justify-content: flex-start !important;
-  outline: none; color: var(--text);
-}
-.search-direct-input::placeholder { color: var(--dim); font-weight: 600; }
-.search-direct-input:focus { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.02); }
-.clear-search { position: absolute; right: 14px; background: transparent; border: none; color: var(--dim); cursor: pointer; font-size: 10px; font-weight: bold; transition: 0.2s; }
-.clear-search:hover { color: var(--text); }
-
-/* BUTTONS */
+/* НОВЫЙ ДИЗАЙН КНОПОК УПРАВЛЕНИЯ (Как Статистика) */
 .main-ctrl-btn { 
-  width: 100%; background: transparent; border: 1px solid var(--border); color: var(--text); 
-  padding: 10px 20px; border-radius: 30px; font-size: 11px; font-weight: 700; cursor: pointer; 
+  width: 100%; background: var(--card-bg); /* Темный фон как у карточек */
+  border: 1px solid var(--border); color: var(--text); 
+  padding: 8px 16px; border-radius: 20px; font-size: 10px; font-weight: 600; cursor: pointer; 
   display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; 
+  text-transform: uppercase; letter-spacing: 0.5px;
 }
 .main-ctrl-btn:hover { background: rgba(255,255,255,0.05); }
 .main-ctrl-btn.active-mode { background: var(--text); color: var(--bg); border-color: var(--text); }
@@ -718,13 +703,13 @@ onUnmounted(() => {
 /* ТУМБЛЕРЫ */
 .toggle-row { display: flex; justify-content: space-between; align-items: center; width: 100%; cursor: pointer; padding: 6px 0; border-bottom: 1px solid var(--border); }
 .toggle-row:last-child { border-bottom: none; }
-.toggle-label { font-size: 10px; color: var(--text); font-weight: 600; }
+.toggle-label { font-size: 10px; color: var(--text); font-weight: 600; text-transform: none; letter-spacing: 0;}
 .bw-toggle { width: 36px; height: 20px; border: 1px solid var(--border); border-radius: 20px; position: relative; transition: 0.3s; background: transparent; }
 .bw-thumb { width: 14px; height: 14px; background: var(--text); border-radius: 50%; position: absolute; left: 2px; top: 2px; transition: 0.3s; }
 .bw-toggle.on .bw-thumb { transform: translateX(16px); }
 
 /* INPUT & LISTS IN POPUPS */
-.popup-input { width: 100%; background: var(--seg-bg); border: 1px solid var(--border); padding: 10px; border-radius: 8px; color: var(--text); font-size: 12px; outline: none; margin-bottom: 5px; box-sizing: border-box; }
+.popup-input { width: 100%; background: var(--seg-bg); border: 1px solid var(--border); padding: 10px; border-radius: 8px; color: var(--text); font-size: 12px; outline: none; margin-bottom: 5px; box-sizing: border-box; text-transform: none; }
 .popup-input::placeholder { opacity: 0.5; }
 .search-input-box { width: 100%; }
 .brands-scroll-area { max-height: 280px; overflow-y: auto; }
@@ -732,7 +717,7 @@ onUnmounted(() => {
 .custom-scroll-minimal::-webkit-scrollbar-thumb { background: var(--dim); }
 .brands-list-vertical { display: flex; flex-direction: column; gap: 4px; }
 .brand-row-btn { display: flex; justify-content: space-between; align-items: center; background: transparent; color: var(--text); border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-size: 11px; text-transform: capitalize; text-align: left; transition: 0.2s; opacity: 0.8; }
-.all-brand-btn { opacity: 1; font-weight: 700; margin-bottom: 5px; border-bottom: 1px solid var(--border); padding-bottom: 10px; border-radius: 0; }
+.all-brand-btn { opacity: 1; font-weight: 700; margin-bottom: 5px; border-bottom: 1px solid var(--border); padding-bottom: 10px; border-radius: 0; text-transform: none;}
 .brand-row-btn:hover { background: var(--seg-bg); opacity: 1; }
 .brand-font-fix { font-weight: 700; font-size: 11px; opacity: 0.9; }
 .brand-left-group { display: flex; align-items: center; gap: 8px; overflow: hidden; }
@@ -744,7 +729,7 @@ onUnmounted(() => {
 .popup-section { margin-bottom: 5px; }
 .popup-label { display: block; font-size: 9px; font-weight: 700; color: var(--dim); margin-bottom: 6px; letter-spacing: 1px; text-transform: uppercase; }
 .segmented-control { display: flex; background: var(--seg-bg); padding: 3px; border-radius: 8px; border: 1px solid var(--border); }
-.segment-btn { flex: 1; background: transparent; border: none; color: var(--seg-txt); padding: 6px 0; font-size: 10px; font-weight: 600; border-radius: 6px; cursor: pointer; transition: 0.2s; }
+.segment-btn { flex: 1; background: transparent; border: none; color: var(--seg-txt); padding: 6px 0; font-size: 10px; font-weight: 600; border-radius: 6px; cursor: pointer; transition: 0.2s; text-transform: none;}
 .segment-btn.active { background: var(--seg-active); color: var(--seg-txt-active); box-shadow: 0 2px 5px rgba(0,0,0,0.2); font-weight: 700; }
 .arrows-horn { font-size: 10px; display: inline-flex; gap: 2px; } 
 
@@ -797,7 +782,7 @@ onUnmounted(() => {
 .badge-mini { border: 1px solid var(--border); padding: 1px 3px; font-size: 8px; color: var(--text); border-radius: 2px; }
 .top-val { font-weight: 700; margin-left: 4px; min-width: 25px; text-align: right; }
 
-/* TABLE HEADER */
+/* TABLE HEADER (С ПОИСКОМ ВНУТРИ) */
 .grid-layout-def.head { 
   display: grid; 
   grid-template-columns: 60px 1fr 80px 120px 120px calc(var(--p-cols) * 80px); 
@@ -805,13 +790,33 @@ onUnmounted(() => {
   border: none; background: transparent; border-bottom: 1px solid var(--border); 
 }
 
+/* СТИЛИ ИНТЕГРИРОВАННОГО ПОИСКА */
+.header-search-container {
+  display: flex; align-items: center; width: 100%; height: 100%; position: relative;
+}
+.header-search-container .search-icon {
+  position: absolute; left: 14px; width: 14px; height: 14px; color: var(--dim); pointer-events: none;
+}
+.header-search-input {
+  width: 100%; height: 100%; background: transparent; border: none;
+  padding: 0 35px; outline: none; color: var(--text);
+  font-family: 'Helvetica Neue', sans-serif; font-size: 9px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+}
+.header-search-input::placeholder { color: var(--dim); font-weight: 700; }
+.header-search-input:focus { background: rgba(255,255,255,0.02); }
+.header-search-container .clear-search {
+  position: absolute; right: 14px; background: transparent; border: none; color: var(--dim);
+  cursor: pointer; font-size: 10px; font-weight: bold; transition: 0.2s;
+}
+.header-search-container .clear-search:hover { color: var(--text); }
+
+
 /* CARDS TABLE (Горизонтальные карточки с UI/UX дизайном) */
 .grid-table { 
   display: flex; flex-direction: column; gap: 6px; 
   width: 100%; min-width: 1000px; border: none; padding-top: 5px;
 }
 
-/* КРАСИВЫЕ КАРТОЧКИ С ТЕНЬЮ И ХОВЕРОМ */
 .grid-layout-def:not(.head) { 
   display: grid; 
   grid-template-columns: 60px 1fr 80px 120px 120px calc(var(--p-cols) * 80px); 
@@ -823,15 +828,13 @@ onUnmounted(() => {
   transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
-/* ЭФФЕКТ ПРИ НАВЕДЕНИИ (Плавный подъем и подсветка) */
 .grid-layout-def.clickable-row:hover, .grid-layout-def.clickable-row.simulated-hover {
   border-color: rgba(255,255,255,0.1);
   box-shadow: 0 8px 24px rgba(0,0,0,0.6);
   transform: translateY(-2px);
-  background: #161619; /* Легкое высветление при наведении */
+  background: #161619; 
 }
 
-/* Внутренние линии карточки сделаны мягче */
 .cell { 
   height: auto; display: flex; align-items: center; padding: 12px; 
   border-right: 1px solid var(--card-border); box-sizing: border-box; overflow: hidden; 
@@ -909,17 +912,18 @@ onUnmounted(() => {
   
   .aura-text { font-size: 9px; letter-spacing: 2px; }
   
-  /* Мобильный поиск */
-  .search-item { grid-column: span 2; }
-  .search-direct-input { padding-left: 30px !important; padding-right: 10px !important; }
-  .search-icon { left: 10px; }
+  /* Мобильный поиск в шапке (уменьшенные отступы) */
+  .header-search-container .search-icon { left: 8px; width: 12px; height: 12px; }
+  .header-search-input { padding: 0 20px 0 24px; font-size: 8px; }
+  .header-search-container .clear-search { right: 5px; }
 
-  .ctrl-wrapper-desktop { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
+  /* Кнопки управления для мобилки теперь таблеточками */
+  .ctrl-wrapper-desktop { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
   .left-group { display: contents; }
   .right-group { display: contents; }
   .control-item { min-width: 0; width: 100%; position: static; }
   
-  .main-ctrl-btn { font-size: 11px; padding: 15px 0; font-weight: 800; border-radius: 12px; }
+  .main-ctrl-btn { font-size: 10px; padding: 10px 0; border-radius: 20px; text-transform: none; }
   .btn-txt-fixed { max-width: 65px; }
   
   .bahur-popup-menu { width: calc(100vw - 30px) !important; max-width: 300px; left: 50% !important; right: auto !important; transform: translateX(-50%) !important; }
