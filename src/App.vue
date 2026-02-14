@@ -1,5 +1,5 @@
 <template>
-  <div :class="['bahur-terminal', { 'noir': isDark }]" :style="{ '--p-cols': activePriceCount }">
+  <div class="bahur-terminal" :style="{ '--p-cols': activePriceCount }">
     <div class="container">
 
       <header class="header-manifest">
@@ -7,31 +7,39 @@
           <button @click="showDash = !showDash" class="header-pill-btn">
             <span class="main-font">СТАТИСТИКА</span>
           </button>
+          <div class="logo-bahur">BAHUR</div>
           <button @click="toggleThemeMenu" ref="themeBtnRef" class="header-pill-btn">
-            <span class="main-font">ТЕМЫ</span>
+            <span class="main-font">ДИЗАЙН</span>
           </button>
         </div>
       </header>
 
-      <!-- POPUP ТЕМЫ -->
+      <!-- POPUP ДИЗАЙН -->
       <teleport to="body">
         <transition name="pop">
-          <div v-if="showThemeMenu" class="popup-teleport theme-popup" :style="themeMenuStyle">
-            <div class="theme-section">
-              <span class="popup-label main-font">ТЕМНЫЕ</span>
-              <button v-for="t in darkThemes" :key="t.id" @click="selectTheme(t.id)"
-                :class="['theme-btn main-font',{active:currentTheme===t.id}]">
-                <span class="theme-name">{{ t.name }}</span>
-                <div class="theme-preview" :style="t.preview"></div>
-              </button>
-            </div>
-            <div class="theme-section">
-              <span class="popup-label main-font">СВЕТЛЫЕ</span>
-              <button v-for="t in lightThemes" :key="t.id" @click="selectTheme(t.id)"
-                :class="['theme-btn main-font',{active:currentTheme===t.id}]">
-                <span class="theme-name">{{ t.name }}</span>
-                <div class="theme-preview" :style="t.preview"></div>
-              </button>
+          <div v-if="showThemeMenu" class="popup-teleport design-popup" :style="themeMenuStyle">
+            <div class="design-columns">
+              <!-- Колонка 1: Темы -->
+              <div class="design-col">
+                <span class="popup-label main-font">ТЕМЫ</span>
+                <div class="theme-grid">
+                  <button v-for="t in allThemes" :key="t.id" @click="selectTheme(t.id)"
+                    :class="['theme-compact-btn',{active:currentTheme===t.id}]"
+                    :style="t.preview" :title="t.name">
+                  </button>
+                </div>
+              </div>
+              <!-- Колонка 2: Шрифты -->
+              <div class="design-col">
+                <span class="popup-label main-font">ШРИФТЫ</span>
+                <div class="font-grid">
+                  <button v-for="f in fontOptions" :key="f.id" @click="selectFont(f.id)"
+                    :class="['font-compact-btn main-font',{active:currentFont===f.id}]"
+                    :style="{ fontFamily: f.family }">
+                    {{ f.label }}
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </transition>
@@ -348,25 +356,37 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
 
-// Темы
+// Темы и дизайн
 const currentTheme = ref('уголь')
+const currentFont = ref('nunito')
 const showThemeMenu = ref(false)
 const themeBtnRef = ref(null)
 const themeMenuStyle = ref({})
 
-const darkThemes = [
+const allThemes = [
   { id: 'уголь', name: 'УГОЛЬ', preview: { background: 'linear-gradient(135deg, #19191b 0%, #111113 100%)' } },
   { id: 'ночь', name: 'НОЧЬ', preview: { background: 'linear-gradient(135deg, #0a0a0f 0%, #050508 100%)' } },
   { id: 'мрамор', name: 'МРАМОР', preview: { background: 'linear-gradient(135deg, #2a2a30 0%, #1a1a1f 100%)' } },
   { id: 'графит', name: 'ГРАФИТ', preview: { background: 'linear-gradient(135deg, #1c1c1e 0%, #141416 100%)' } },
-  { id: 'обсидиан', name: 'ОБСИДИАН', preview: { background: 'linear-gradient(135deg, #0f0f11 0%, #080809 100%)' } }
-]
-const lightThemes = [
+  { id: 'обсидиан', name: 'ОБСИДИАН', preview: { background: 'linear-gradient(135deg, #0f0f11 0%, #080809 100%)' } },
   { id: 'облако', name: 'ОБЛАКО', preview: { background: 'linear-gradient(135deg, #f0f0f4 0%, #e5e5ea 100%)' } },
   { id: 'лён', name: 'ЛЁН', preview: { background: 'linear-gradient(135deg, #fafafa 0%, #efefef 100%)' } },
   { id: 'жемчуг', name: 'ЖЕМЧУГ', preview: { background: 'linear-gradient(135deg, #f5f5f7 0%, #e8e8ec 100%)' } },
   { id: 'снег', name: 'СНЕГ', preview: { background: 'linear-gradient(135deg, #ffffff 0%, #f2f2f5 100%)' } },
   { id: 'сливки', name: 'СЛИВКИ', preview: { background: 'linear-gradient(135deg, #fcfcfd 0%, #f0f0f2 100%)' } }
+]
+
+const fontOptions = [
+  { id: 'nunito', label: 'Aa', family: 'Nunito, sans-serif' },
+  { id: 'inter', label: 'Aa', family: 'Inter, sans-serif' },
+  { id: 'roboto', label: 'Aa', family: 'Roboto, sans-serif' },
+  { id: 'opensans', label: 'Aa', family: 'Open Sans, sans-serif' },
+  { id: 'lato', label: 'Aa', family: 'Lato, sans-serif' },
+  { id: 'poppins', label: 'Aa', family: 'Poppins, sans-serif' },
+  { id: 'montserrat', label: 'Aa', family: 'Montserrat, sans-serif' },
+  { id: 'raleway', label: 'Aa', family: 'Raleway, sans-serif' },
+  { id: 'ubuntu', label: 'Aa', family: 'Ubuntu, sans-serif' },
+  { id: 'manrope', label: 'Aa', family: 'Manrope, sans-serif' }
 ]
 
 const loading = ref(true)
@@ -406,11 +426,16 @@ const togglePrice = (key) => {
   showPrices.value[key] = !showPrices.value[key]
 }
 
-// ── Темы ────────────────────────────────────────────────────────────────────
+// ── Темы и шрифты ───────────────────────────────────────────────────────────
 const selectTheme = (themeId) => {
   currentTheme.value = themeId
   applyTheme(themeId)
-  closeAllMenus()
+}
+
+const selectFont = (fontId) => {
+  currentFont.value = fontId
+  const font = fontOptions.find(f => f.id === fontId)
+  if (font) document.documentElement.style.setProperty('--main-font', font.family)
 }
 
 const applyTheme = (themeId) => {
@@ -469,7 +494,13 @@ function calcPopupStyle(btnRef) {
     const w = window.innerWidth - 24
     return { position: 'fixed', top: (r.bottom + 6) + 'px', left: '12px', width: w + 'px', zIndex: 9999 }
   }
-  return { position: 'fixed', top: (r.bottom + 6) + 'px', left: r.left + 'px', zIndex: 9999 }
+  // Проверяем чтобы popup не выходил за правый край экрана
+  let left = r.left
+  const popupWidth = 350 // примерная ширина popup
+  if (left + popupWidth > window.innerWidth) {
+    left = window.innerWidth - popupWidth - 12
+  }
+  return { position: 'fixed', top: (r.bottom + 6) + 'px', left: left + 'px', zIndex: 9999 }
 }
 
 // Пересчет позиции при resize
@@ -625,7 +656,19 @@ const sortedProducts = computed(() => {
 })
 
 const stats = computed(() => {
-  const p = filteredProducts.value, n = p.length || 1
+  // Статистика должна учитывать ВСЕ ароматы, даже те которых нет в наличии
+  const allFiltered = products.value.filter(p => {
+    if (selectedBrands.value.length && !selectedBrands.value.includes(p.brand)) return false
+    const q = searchQuery.value.toLowerCase()
+    if (q && !p.name.toLowerCase().includes(q) && !p.brand.toLowerCase().includes(q)) return false
+    if (activeGender.value !== 'ВСЕ' && p.gender !== activeGender.value) return false
+    if (activeQuality.value !== 'ВСЕ' && p.quality !== activeQuality.value) return false
+    if (activeFactory.value !== 'ВСЕ' && !p.factory.toUpperCase().includes(activeFactory.value)) return false
+    if (filterPlus.value && !p.hasPlus) return false
+    if (filterStar.value && !p.hasStar) return false
+    return true
+  })
+  const p = allFiltered, n = p.length || 1
   let s50=0, s500=0, s1000=0, avail=0, out=0
   const qual = { TOP:0, Q1:0, Q2:0 }
   const fac = { LUZI:0, EPS:0, SELUZ:0 }
@@ -648,7 +691,7 @@ const stats = computed(() => {
   }
 })
 
-const getSex = (g) => ({ m:'Муж', w:'Жен', y:'Уни' }[g] || '—')
+const getSex = (g) => ({ m:'МУЖ', w:'ЖЕН', y:'УНИ' }[g] || '—')
 const open = (u) => window.open(u.startsWith('http') ? u : `https://${u}`, '_blank')
 
 onMounted(() => {
@@ -673,6 +716,7 @@ onMounted(() => {
   meta.content = 'width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no'
 
   applyTheme(currentTheme.value)
+  selectFont(currentFont.value)
   loadData()
 
   window.addEventListener('scroll', updateThumb)
@@ -691,6 +735,8 @@ onUnmounted(() => {
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Kollektif&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Roboto:wght@400;700;900&family=Open+Sans:wght@400;600;700;800&family=Lato:wght@400;700;900&family=Poppins:wght@400;600;700;800&family=Montserrat:wght@400;600;700;800&family=Raleway:wght@400;600;700;800&family=Ubuntu:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap');
 
 .main-font  { font-family: 'Nunito', sans-serif; }
 .kollektif  { font-family: 'Kollektif', 'Nunito', sans-serif; }
@@ -752,7 +798,7 @@ onUnmounted(() => {
 .container { max-width: 1400px; margin: 0 auto; padding: 15px; }
 
 /* ── LOADING ──────────────────────────────────────────── */
-.loading-overlay { position:fixed; inset:0; background:#000; z-index:2000; display:flex; justify-content:center; align-items:center; overflow:hidden; }
+.loading-overlay { position:fixed; inset:0; background:#000; z-index:9999; display:flex; justify-content:center; align-items:center; overflow:hidden; }
 .diagonal-bg { position:absolute; inset:0; background:repeating-linear-gradient(45deg,transparent,transparent 10px,rgba(255,255,255,0.3) 10px,rgba(255,255,255,0.3) 13px); background-size:200% 200%; animation:bg-move 4s linear infinite; }
 @keyframes bg-move { to { background-position:100% 100%; } }
 .intro-content { position:relative; z-index:10; }
@@ -775,9 +821,10 @@ onUnmounted(() => {
 
 /* ── HEADER ───────────────────────────────────────────── */
 .header-manifest { margin-bottom:8px; }
-.header-inner { display:flex; justify-content:space-between; align-items:center; padding:8px 0; }
-.header-pill-btn { background:var(--card-bg); border:1px solid var(--border); color:var(--text); border-radius:20px; padding:7px 16px; font-size:11px; font-weight:800; cursor:pointer; display:flex; align-items:center; gap:5px; letter-spacing:1px; transition:all 0.2s; }
+.header-inner { display:flex; justify-content:space-between; align-items:center; padding:8px 0; gap:12px; }
+.header-pill-btn { background:var(--card-bg); border:1px solid var(--border); color:var(--text); border-radius:18px; padding:6px 12px; font-size:10px; font-weight:800; cursor:pointer; display:flex; align-items:center; gap:4px; letter-spacing:0.8px; transition:all 0.2s; }
 .header-pill-btn:hover { background:var(--text); color:var(--bg); }
+.logo-bahur { font-family:'Kollektif','Nunito',sans-serif; font-size:20px; font-weight:900; letter-spacing:4px; color:var(--text); text-shadow:0 0 20px currentColor; flex:1; text-align:center; user-select:none; }
 
 /* ── DASHBOARD ────────────────────────────────────────── */
 .dash-collapsible-wrapper { display:grid; grid-template-rows:0fr; transition:grid-template-rows 0.3s ease; }
@@ -843,15 +890,15 @@ onUnmounted(() => {
 /* Блок 1: Поиск */
 .search-block { padding:0 0 8px; border-bottom:1px solid var(--border); }
 .search-wrap-inline {
-  display:flex; align-items:center; width:100%; height:44px;
+  display:flex; align-items:center; width:100%; height:42px;
   background:var(--pill-search); border-radius:12px; position:relative;
   border:2px solid transparent; transition:border-color 0.2s;
 }
 .search-wrap-inline:focus-within { border-color:var(--text); }
-.search-wrap-inline .s-ico { position:absolute; left:14px; width:15px; height:15px; color:var(--dim); pointer-events:none; flex-shrink:0; }
-.search-wrap-inline .s-inp { width:100%; height:100%; background:transparent; border:none; outline:none; color:var(--text); padding:0 38px 0 38px; font-size:12px; font-weight:800; letter-spacing:1.2px; }
+.search-wrap-inline .s-ico { position:absolute; left:14px; width:14px; height:14px; color:var(--dim); pointer-events:none; flex-shrink:0; }
+.search-wrap-inline .s-inp { width:100%; height:100%; background:transparent; border:none; outline:none; color:var(--text); padding:0 14px 0 38px; font-size:11px; font-weight:800; letter-spacing:1.1px; }
 .search-wrap-inline .s-inp::placeholder { color:var(--dim); opacity:0.6; }
-.search-wrap-inline .s-clr { position:absolute; right:12px; background:var(--pill-meta); border:none; color:var(--text); cursor:pointer; font-size:14px; font-weight:bold; width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; }
+.search-wrap-inline .s-clr { display:none; }
 
 /* Блок 2: кнопки-триггеры */
 .ctrl-row {
@@ -863,15 +910,15 @@ onUnmounted(() => {
 .ctrl-item { flex-shrink: 0; }
 .main-ctrl-btn {
   background: var(--btn-bg); border: 1px solid var(--btn-brd);
-  color: var(--text); padding: 9px 18px; border-radius: 20px;
-  font-size: 11px; cursor: pointer;
-  display: flex; align-items: center; gap: 6px;
-  white-space: nowrap; transition: all 0.2s; letter-spacing:0.8px;
+  color: var(--text); padding: 8px 14px; border-radius: 18px;
+  font-size: 10px; cursor: pointer;
+  display: flex; align-items: center; gap: 5px;
+  white-space: nowrap; transition: all 0.2s; letter-spacing:0.7px; font-weight:700;
 }
 .main-ctrl-btn:hover { filter: brightness(1.25); }
 .main-ctrl-btn.active { background: var(--text); color: var(--bg); border-color: transparent; }
-.arr { width: 10px; height: 10px; opacity: 0.5; flex-shrink: 0; }
-.truncate { max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.arr { width: 9px; height: 9px; opacity: 0.5; flex-shrink: 0; }
+.truncate { max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 /* click-overlay — z-index < sticky */
 .click-overlay { position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:98; background:transparent; }
@@ -936,15 +983,18 @@ body .popup-teleport {
 .seg-btn { flex:1; background:transparent; border:none; color:var(--seg-txt,#3a3a44); padding:6px 0; font-size:10px; font-weight:800; border-radius:5px; cursor:pointer; transition:background 0.1s,color 0.1s; letter-spacing:0.5px; }
 .seg-btn.active { background:var(--seg-active,#fff); color:var(--seg-txt-active,#000); box-shadow:0 1px 4px rgba(0,0,0,0.5); }
 
-/* Popup темы */
-.theme-popup { max-width:240px; }
-.theme-section { margin-bottom:8px; }
-.theme-section:last-child { margin-bottom:0; }
-.theme-btn { display:flex; justify-content:space-between; align-items:center; background:transparent; color:var(--text,#e8e8ec); border:1px solid var(--border,rgba(255,255,255,0.07)); padding:8px 10px; border-radius:8px; cursor:pointer; font-size:11px; font-weight:700; width:100%; text-align:left; transition:all 0.15s; margin-bottom:4px; letter-spacing:0.5px; }
-.theme-btn:hover { background:rgba(255,255,255,0.05); border-color:rgba(255,255,255,0.12); }
-.theme-btn.active { background:var(--text); color:var(--bg); border-color:transparent; }
-.theme-name { flex:1; }
-.theme-preview { width:32px; height:20px; border-radius:5px; border:1px solid var(--border,rgba(255,255,255,0.1)); }
+/* Popup дизайн */
+.design-popup { max-width:340px; min-width:320px; }
+.design-columns { display:flex; gap:10px; }
+.design-col { flex:1; display:flex; flex-direction:column; gap:6px; }
+.theme-grid, .font-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:4px; }
+.theme-compact-btn { width:100%; aspect-ratio:1; border-radius:8px; border:2px solid transparent; cursor:pointer; transition:all 0.15s; padding:0; }
+.theme-compact-btn:hover { border-color:rgba(255,255,255,0.3); transform:scale(1.05); }
+.theme-compact-btn.active { border-color:var(--text,#fff); box-shadow:0 0 8px currentColor; }
+.font-grid { grid-template-columns:repeat(2,1fr); }
+.font-compact-btn { padding:8px 4px; background:var(--seg-bg,#0a0a0c); border:1px solid var(--border,rgba(255,255,255,0.07)); border-radius:6px; cursor:pointer; font-size:16px; font-weight:700; color:var(--text,#e8e8ec); transition:all 0.15s; }
+.font-compact-btn:hover { background:rgba(255,255,255,0.05); }
+.font-compact-btn.active { background:var(--text,#fff); color:var(--bg,#000); }
 
 /* ── ШАПКА ТАБЛИЦЫ ────────────────────────────────────── */
 /*
@@ -974,7 +1024,7 @@ body .popup-teleport {
 }
 .meta-hp { background: var(--pill-meta); }
 .price-hp { background: var(--pill-price); }
-.name-hp { background: var(--pill-name); display:flex; align-items:center; justify-content:flex-start; padding-left:12px; font-size:9px; letter-spacing:1.2px; }
+.name-hp { background: var(--pill-search); display:flex; align-items:center; justify-content:flex-start; padding-left:12px; font-size:9px; letter-spacing:1.2px; border:2px solid transparent; }
 
 /* ── ТАБЛИЦА ──────────────────────────────────────────── */
 .grid-table { display:flex; flex-direction:column; gap:5px; width:100%; min-width:700px; padding-top:6px; }
@@ -1078,9 +1128,8 @@ body .popup-teleport {
   .span-full { grid-column: span 3; }
   .stat-horiz { grid-column: span 1; }
 
-  /* Кнопки правее на десктопе */
-  .ctrl-row { justify-content:flex-end; }
-  .search-block { max-width:400px; }
+  /* Поиск и кнопки на всю ширину */
+  .search-block { max-width:100%; }
 }
 
 /* ── МОБИЛЬ ───────────────────────────────────────────── */
