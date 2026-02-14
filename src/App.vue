@@ -290,7 +290,7 @@
                   </div>
                 </div>
 
-                <div class="cell desk-only center"><div class="inner-pill-badge">{{ getSex(p.gender) }}</div></div>
+                <div class="cell desk-only center"><div class="inner-pill-badge gender-badge">{{ getSex(p.gender) }}</div></div>
                 <div class="cell desk-only center"><div class="inner-pill-badge">{{ p.factory }}</div></div>
                 <div class="cell desk-only center"><div class="inner-pill-badge">{{ p.quality }}</div></div>
                 
@@ -555,7 +555,8 @@ const stats = computed(() => {
   }
 })
 
-const getSex = (g) => ({ m: 'Муж', w: 'Жен', y: 'Уни' }[g] || '—');
+/* ✅ ИЗМЕНЕНИЕ 1: МУЖ / ЖЕН / УНИ — заглавными буквами */
+const getSex = (g) => ({ m: 'МУЖ', w: 'ЖЕН', y: 'УНИ' }[g] || '—');
 const open = (u) => window.open(u.startsWith('http') ? u : `https://${u}`, '_blank');
 
 onMounted(() => {
@@ -604,6 +605,11 @@ onUnmounted(() => {
   --sticky-bg: rgba(25, 25, 27, 0.95);
   --seg-bg: #1c1c1e; --seg-active: #ffffff; --seg-txt: #8e8e93; --seg-txt-active: #000000;
   --btn-ctrl-bg: rgba(255,255,255,0.05);
+
+  /* ✅ ИЗМЕНЕНИЕ 2: Светлее фон для плашек — наименование и пол */
+  --inner-pill-light: #1e1e21;   /* чуть светлее чем --inner-pill-dark (#0a0a0b) */
+  --gender-pill-bg: #252528;     /* ещё светлее для колонки Пол */
+
   min-height: 100vh; background: var(--bg); color: var(--text); font-family: 'Nunito', sans-serif;
   touch-action: pan-y;
 }
@@ -613,6 +619,8 @@ onUnmounted(() => {
   --sticky-bg: rgba(25, 25, 27, 0.95); --panel-bg: #121214; 
   --card-bg: #121214; --card-border: rgba(255, 255, 255, 0.03);
   --inner-pill-bg: #1f1f22; --inner-pill-dark: #0a0a0b;
+  --inner-pill-light: #1e1e21;
+  --gender-pill-bg: #252528;
   --seg-bg: #1c1c1e; --seg-active: #fff; --seg-txt: #8e8e93; --seg-txt-active: #000;
   --btn-ctrl-bg: rgba(255,255,255,0.08);
 }
@@ -621,6 +629,8 @@ onUnmounted(() => {
   --panel-bg: #ffffff; --aura-bg: rgba(255,255,255,0.5); --aura-text: #000; 
   --card-bg: #ffffff; --card-border: rgba(0, 0, 0, 0.05);
   --inner-pill-bg: #f0f0f5; --inner-pill-dark: #e8e8ed;
+  --inner-pill-light: #ebebf0;
+  --gender-pill-bg: #e2e2e9;
   --sticky-bg: rgba(244, 244, 247, 0.95); --seg-bg: #e5e5ea; --seg-active: #000000; --seg-txt: #8e8e93; --seg-txt-active: #ffffff;
   --btn-ctrl-bg: #f2f2f7; 
 }
@@ -849,13 +859,15 @@ onUnmounted(() => {
 .clickable-row { cursor: pointer; }
 .out { opacity: 0.4; filter: grayscale(50%); } 
 
-/* СТИЛИ ВНУТРЕННИХ ПЛАШЕК (Bubble UI) */
+/* ✅ ИЗМЕНЕНИЕ 2: Плашка наименования — чуть светлее */
 .inner-pill-main {
-  background: var(--inner-pill-dark);
+  background: var(--inner-pill-light);
   border-radius: 16px;
   padding: 10px 16px;
   width: 100%; display: flex; flex-direction: column; justify-content: center;
 }
+
+/* Базовая плашка (фабрика, качество) */
 .inner-pill-badge {
   background: var(--inner-pill-dark);
   border-radius: 14px;
@@ -865,6 +877,12 @@ onUnmounted(() => {
   color: var(--text);
   width: 100%; text-align: center;
 }
+
+/* ✅ ИЗМЕНЕНИЕ 2: Плашка Пол — светлее остальных */
+.inner-pill-badge.gender-badge {
+  background: var(--gender-pill-bg);
+}
+
 .inner-pill-badge-mobile {
   background: var(--inner-pill-dark);
   border-radius: 8px;
@@ -933,7 +951,8 @@ onUnmounted(() => {
   .id-sq-top { font-size: 12px; margin-bottom: 2px; }
   .status-symbol { font-size: 14px; margin-top: 0; }
   
-  .inner-pill-main { padding: 8px 10px; border-radius: 12px;}
+  /* ✅ ИЗМЕНЕНИЕ 3: Мобиль — наименование ближе к ценам (меньше padding справа) */
+  .inner-pill-main { padding: 8px 6px 8px 10px; border-radius: 12px; }
   .scent-title { font-size: 14px; }
   
   .price-container { width: calc(var(--p-cols) * 45px); display: flex; align-items: stretch; justify-content: center; }
