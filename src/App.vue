@@ -370,59 +370,37 @@ const brandMenuStyle = ref({})
 const statusMenuStyle = ref({})
 const filterMenuStyle = ref({})
 
-function calcPopupStyle(btnRef, menuWidth = 220) {
+function calcPopupStyle(btnRef) {
   const el = btnRef?.value
   if (!el) return {}
   const r = el.getBoundingClientRect()
   const isMobile = window.innerWidth <= 900
   if (isMobile) {
-    // на мобиле — снизу экрана, полная ширина
-    return {
-      position: 'fixed',
-      bottom: '12px',
-      left: '12px',
-      right: '12px',
-      width: 'auto',
-      zIndex: '9999'
-    }
+    const w = window.innerWidth - 24
+    return { position: 'fixed', top: (r.bottom + 6) + 'px', left: '12px', width: w + 'px', zIndex: 9999 }
   }
-  // Десктоп: под кнопкой, с учётом края экрана
-  const spaceBelow = window.innerHeight - r.bottom
-  const popH = 320 // примерная макс. высота popup
-  let top, left
-  if (spaceBelow < popH && r.top > popH) {
-    // открыть ВВЕРХ
-    top = r.top - popH - 6
-  } else {
-    top = r.bottom + 6
-  }
-  left = r.left
-  // не выходить за правый край
-  if (left + menuWidth > window.innerWidth - 12) {
-    left = window.innerWidth - menuWidth - 12
-  }
-  return { position: 'fixed', top: top + 'px', left: left + 'px', zIndex: '9999' }
+  return { position: 'fixed', top: (r.bottom + 6) + 'px', left: r.left + 'px', zIndex: 9999 }
 }
 
 const toggleBrandMenu = async () => {
   if (showBrandMenu.value) { closeAllMenus(); return }
   closeAllMenus(); tempBrandInput.value = ''
   await nextTick()
-  brandMenuStyle.value = calcPopupStyle(brandBtnRef, 240)
+  brandMenuStyle.value = calcPopupStyle(brandBtnRef)
   showBrandMenu.value = true
 }
 const toggleNewMenu = async () => {
   if (showNewMenu.value) { closeAllMenus(); return }
   closeAllMenus()
   await nextTick()
-  statusMenuStyle.value = calcPopupStyle(statusBtnRef, 200)
+  statusMenuStyle.value = calcPopupStyle(statusBtnRef)
   showNewMenu.value = true
 }
 const toggleFilterMenu = async () => {
   if (showFilters.value) { closeAllMenus(); return }
   closeAllMenus()
   await nextTick()
-  filterMenuStyle.value = calcPopupStyle(filterBtnRef, 220)
+  filterMenuStyle.value = calcPopupStyle(filterBtnRef)
   showFilters.value = true
 }
 const closeAllMenus = () => { showBrandMenu.value = false; showNewMenu.value = false; showFilters.value = false }
@@ -567,7 +545,7 @@ const stats = computed(() => {
   }
 })
 
-const getSex = (g) => ({ m:'МУЖ', w:'ЖЕН', y:'УНИ' }[g] || '—')
+const getSex = (g) => ({ m:'Муж', w:'Жен', y:'Уни' }[g] || '—')
 const open = (u) => window.open(u.startsWith('http') ? u : `https://${u}`, '_blank')
 
 onMounted(() => {
@@ -626,7 +604,7 @@ onUnmounted(() => {
   /* плашки: тёмная < meta < name (светлее всех) */
   --pill-price: #0b0b0d;
   --pill-meta:  #16161a;
-  --pill-name:  #2c2c38;   /* светлее meta */
+  --pill-name:  #23232a;   /* светлее meta */
   --pill-search:#0d0d10;
   --liquid-bg: rgba(255,255,255,0.06);
   --liquid-brd: rgba(255,255,255,0.12);
@@ -643,7 +621,7 @@ onUnmounted(() => {
 .noir {
   --bg:#19191b; --text:#e8e8ec; --border:rgba(255,255,255,0.06); --dim:#4a4a54;
   --card-bg:#111113; --card-border:rgba(255,255,255,0.04); --panel-bg:#111113;
-  --pill-price:#0b0b0d; --pill-meta:#16161a; --pill-name:#2c2c38; --pill-search:#0d0d10;
+  --pill-price:#0b0b0d; --pill-meta:#16161a; --pill-name:#23232a; --pill-search:#0d0d10;
   --liquid-bg:rgba(255,255,255,0.06); --liquid-brd:rgba(255,255,255,0.12);
   --aura-text:#fff; --hover-bg:#16161a; --sticky-bg:rgba(13,13,15,0.97);
   --seg-bg:#08080a; --seg-active:#fff; --seg-txt:#3a3a44; --seg-txt-active:#000;
@@ -778,17 +756,15 @@ onUnmounted(() => {
 
 /* ── POPUP (teleport в body — position:fixed) ─────────── */
 .popup-teleport {
-  /* позиция задаётся через :style из JS */
+  /* стили переопределяются через :style */
   background: var(--panel-bg);
   border: 1px solid var(--border);
   border-radius: 16px; padding: 14px;
   box-shadow: 0 20px 60px rgba(0,0,0,0.75);
   display: flex; flex-direction: column; gap: 10px;
   min-width: 180px; max-width: 280px;
-  max-height: calc(100vh - 80px); overflow-y: auto;
-  /* скрыть встроенный скролл */
-  scrollbar-width: thin;
-  scrollbar-color: rgba(128,128,128,0.2) transparent;
+  /* предотвращаем выход за экран */
+  max-height: calc(100vh - 120px); overflow-y: auto;
 }
 
 /* popup переменные темы (scoped не работает для teleport, используем глобальные через :root override) */
@@ -852,10 +828,10 @@ body .popup-teleport {
 .h-prices { display:grid; padding: 3px; gap: 4px; }
 .h-prices .h-pill { padding: 0; }
 
-/* плашка заголовка — высота 44px (чуть выше поиска) */
+/* плашка заголовка — одна высота = 40px */
 .hp {
   display: flex; align-items: center; justify-content: center;
-  width: 100%; height: 44px;
+  width: 100%; height: 40px;
   border-radius: 9px;
   font-size: 8px; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase;
   color: var(--dim); box-sizing: border-box; white-space: nowrap;
@@ -863,14 +839,14 @@ body .popup-teleport {
 .meta-hp { background: var(--pill-meta); }
 .price-hp { background: var(--pill-price); }
 
-/* поиск — крупнее */
+/* поиск */
 .search-wrap {
   display:flex; align-items:center; width:100%; height:100%;
   background:var(--pill-search); border-radius:11px; position:relative; overflow:hidden;
-  min-height: 52px;
+  min-height: 40px;
 }
-.s-ico { position:absolute; left:12px; width:14px; height:14px; color:var(--dim); pointer-events:none; flex-shrink:0; }
-.s-inp { width:100%; height:100%; background:transparent; border:none; outline:none; color:var(--text); padding:0 30px 0 34px; font-size:11px; font-weight:800; letter-spacing:1px; text-transform:uppercase; }
+.s-ico { position:absolute; left:11px; width:13px; height:13px; color:var(--dim); pointer-events:none; flex-shrink:0; }
+.s-inp { width:100%; height:100%; background:transparent; border:none; outline:none; color:var(--text); padding:0 28px 0 30px; font-size:10px; font-weight:800; letter-spacing:1px; text-transform:uppercase; }
 .s-inp::placeholder { color:var(--dim); }
 .s-clr { position:absolute; right:9px; background:transparent; border:none; color:var(--dim); cursor:pointer; font-size:11px; font-weight:bold; }
 
@@ -908,31 +884,31 @@ body .popup-teleport {
   background: var(--pill-name);
   border-radius: 11px; padding: 8px 12px;
   width: 100%; display:flex; flex-direction:column; justify-content:center;
-  min-height: 44px; box-sizing:border-box;
+  min-height: 40px; box-sizing:border-box;
 }
 .brand-code { font-size:9px; font-weight:400; opacity:0.4; display:block; text-transform:uppercase; letter-spacing:1px; }
 .scent-title { font-weight:700; font-size:16px; line-height:1.2; letter-spacing:0.2px; }
 .mob-meta { display:none; margin-top:5px; gap:3px; align-items:center; flex-wrap:wrap; }
 .mob-badge { background:var(--pill-meta); border-radius:6px; padding:3px 5px; font-size:8px; font-weight:800; }
 
-/* META pill — 44px высота = как заголовок */
+/* META pill — 40px высота = как заголовок */
 .c-meta { display:flex; align-items:stretch; padding:3px; }
 .pill-meta {
   background: var(--pill-meta);
   border-radius: 9px; padding: 0 3px;
   font-size: 9px; font-weight: 800;
-  width: 100%; height: 44px; min-height: 44px;
+  width: 100%; height: 100%; min-height: 40px;
   display: flex; align-items: center; justify-content: center;
   box-sizing: border-box; text-align: center;
 }
 
-/* PRICE — та же высота 44px, темнее всех */
+/* PRICE — та же высота 40px, темнее всех */
 .c-prices { display:grid; gap:4px; padding:3px; align-items:stretch; }
 .pill-price {
   background: var(--pill-price);
   border-radius: 9px; padding: 0 2px;
   font-size: 11px; font-weight: 800;
-  width: 100%; height: 44px; min-height: 44px;
+  width: 100%; min-height: 40px;
   display: flex; align-items: center; justify-content: center;
   box-sizing: border-box;
 }
@@ -1014,9 +990,9 @@ body .popup-teleport {
   .id-num { font-size: 10px; }
   .id-sym { font-size: 12px; }
 
-  /* name pill — ближе к номеру (padding слева 1px) */
+  /* name pill — ближе к номеру (меньше padding слева) */
   .c-name { padding: 2px 2px 2px 1px; }
-  .pill-name { padding: 5px 8px 5px 5px; border-radius: 8px; min-height: 0; height: auto; }
+  .pill-name { padding: 5px 8px 5px 6px; border-radius: 8px; min-height: 0; }
   .scent-title { font-size: 12px; }
   .brand-code { font-size: 8px; }
   .mob-meta { margin-top: 3px; gap: 3px; }
@@ -1024,7 +1000,7 @@ body .popup-teleport {
 
   /* prices */
   .c-prices { padding: 2px; gap: 2px; }
-  .pill-price { font-size: 10px; height: auto; min-height: 0; border-radius: 7px; padding: 4px 1px; }
+  .pill-price { font-size: 10px; min-height: 0; border-radius: 7px; padding: 0 1px; }
 
   /* head */
   .h-name { padding: 2px; }
@@ -1033,18 +1009,9 @@ body .popup-teleport {
   .s-inp { padding: 0 22px 0 24px; font-size: 9px; }
   .s-clr { right: 6px; }
   .h-prices { padding: 2px; gap: 2px; }
-  .hp { height: 34px; }
 
   .aura-txt { font-size: 9px; letter-spacing: 2px; }
 
   .container { padding-right: 15px; }
-
-  /* Mobile popup bottom sheet */
-  .popup-teleport {
-    min-width: 0 !important;
-    max-width: none !important;
-    border-radius: 20px 20px 16px 16px !important;
-    max-height: 70vh !important;
-  }
 }
 </style>
