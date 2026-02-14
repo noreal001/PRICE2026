@@ -297,25 +297,24 @@
                 <div class="cell id-zone-square center">
                   <div class="id-sq-top mono">{{ p.id }}</div>
                   <div v-if="p.isNew" class="badge-new-box desk-only-new">NEW</div>
-                  <div :class="['lamp-sq', p.isOut ? 'red' : (p.isNew ? 'green' : 'standard')]"></div>
+                  <div :class="['lamp-sq', p.isOut ? 'watermelon' : (p.hasPlus ? 'jade' : (p.hasStar ? 'purple' : 'standard'))]"></div>
                 </div>
                 <div class="cell name border-right-mobile">
                   <div class="scent-info">
                     <span class="brand-code eng-font">{{ p.brand }}</span>
-                    <span class="scent-title kollektif-font">{{ p.name }}</span>
+                    <span class="scent-title">{{ p.name }}</span>
                     <div class="mobile-only-meta">
                       <span class="m-square-matte">{{ getSex(p.gender) }}</span> 
                       <span class="m-square-matte">{{ p.factory }}</span> 
                       <span class="m-square-matte">{{ p.quality }}</span>
-                      <span v-if="p.isNew" class="m-square-matte new-mobile">NEW</span>
-                    </div>
+                      </div>
                   </div>
                 </div>
                 <div class="cell desk-only center"><div class="badge-square-matte">{{ getSex(p.gender) }}</div></div>
                 <div class="cell desk-only center"><div class="badge-square-matte">{{ p.factory }}</div></div>
                 <div class="cell desk-only center"><div class="badge-square-matte">{{ p.quality }}</div></div>
                 <div class="price-container">
-                  <div class="price-section mono center" :style="priceSubGridStyle">
+                  <div class="price-section center" :style="priceSubGridStyle">
                     <div v-if="showPrices.p50" class="p-col line">{{ p.p50 }}₽</div>
                     <div v-if="showPrices.p500" class="p-col line">{{ p.p500 }}₽</div>
                     <div v-if="showPrices.p1000" class="p-col bold last">{{ p.p1000 }}₽</div>
@@ -631,7 +630,9 @@ onUnmounted(() => {
 /* GLOBALS & THEME */
 .bahur-terminal {
   --bg: #000; --text: #fff; --border: rgba(255,255,255,0.08); --dim: #888; 
-  --panel-bg: rgba(0,0,0,0.95); --aura-bg: rgba(0,0,0,0.4); --aura-text: #fff;
+  --panel-bg: rgba(35, 35, 38, 0.98); /* Сделали менюшки светлее */
+  --card-bg: #0c0c0e; /* Карточки чуть светлее фона */
+  --aura-bg: rgba(0,0,0,0.4); --aura-text: #fff;
   --sticky-bg: rgba(0,0,0,0.9); 
   --seg-bg: #1c1c1e; --seg-active: #ffffff; --seg-txt: #8e8e93; --seg-txt-active: #000000;
   --btn-ctrl-bg: rgba(255,255,255,0.05);
@@ -640,13 +641,13 @@ onUnmounted(() => {
 }
 .noir { 
   --bg: #000; --text: #fff; --aura-bg: rgba(0,0,0,0.4); --border: rgba(255,255,255,0.08);
-  --sticky-bg: rgba(0,0,0,0.9); --panel-bg: rgba(0,0,0,0.95);
+  --sticky-bg: rgba(0,0,0,0.9); --panel-bg: rgba(35, 35, 38, 0.98); --card-bg: #0c0c0e;
   --seg-bg: #1c1c1e; --seg-active: #fff; --seg-txt: #8e8e93; --seg-txt-active: #000;
   --btn-ctrl-bg: rgba(255,255,255,0.08);
 }
 .bahur-terminal:not(.noir) { 
   --bg: #ffffff; --text: #000; --border: rgba(0,0,0,0.1); --dim: #666; 
-  --panel-bg: rgba(255,255,255,0.98); --aura-bg: rgba(255,255,255,0.5); --aura-text: #000;
+  --panel-bg: rgba(240, 240, 245, 0.98); --aura-bg: rgba(255,255,255,0.5); --aura-text: #000; --card-bg: #fafafa;
   --sticky-bg: rgba(255,255,255,0.95); --seg-bg: #e5e5ea; --seg-active: #000000; --seg-txt: #8e8e93; --seg-txt-active: #ffffff;
   --btn-ctrl-bg: #f2f2f7; 
 }
@@ -729,12 +730,13 @@ onUnmounted(() => {
 .bahur-popup-menu { position: absolute; top: calc(100% + 8px); background: var(--panel-bg); border: 1px solid var(--border); border-radius: 16px; padding: 15px; box-shadow: 0 20px 40px rgba(0,0,0,0.8); display: flex; flex-direction: column; gap: 10px; z-index: 999; }
 .bahur-popup-menu.list-mode { left: 0; width: 240px; }
 .bahur-popup-menu.filter-mode { right: 0; width: 220px; }
-.bahur-popup-menu.center-mode { left: 50%; transform: translateX(-50%); width: 200px; }
+/* Уменьшенное всплывающее меню "Статус" */
+.bahur-popup-menu.center-mode { left: 50%; transform: translateX(-50%); width: 170px; padding: 12px; }
 
 /* ТУМБЛЕРЫ БЕЗ ИЗМЕНЕНИЯ ЦВЕТА ФОНА */
-.toggle-row { display: flex; justify-content: space-between; align-items: center; width: 100%; cursor: pointer; padding: 8px 0; border-bottom: 1px solid var(--border); }
+.toggle-row { display: flex; justify-content: space-between; align-items: center; width: 100%; cursor: pointer; padding: 6px 0; border-bottom: 1px solid var(--border); }
 .toggle-row:last-child { border-bottom: none; }
-.toggle-label { font-size: 11px; color: var(--text); font-weight: 600; }
+.toggle-label { font-size: 10px; color: var(--text); font-weight: 600; }
 .bw-toggle { 
   width: 36px; height: 20px; border: 1px solid var(--border); border-radius: 20px; 
   position: relative; transition: 0.3s; background: transparent; 
@@ -829,7 +831,7 @@ onUnmounted(() => {
   border: none; background: transparent; border-bottom: 1px solid var(--border); 
 }
 
-/* CARDS TABLE (Flex Column) */
+/* CARDS TABLE (Горизонтальные карточки с фоном) */
 .grid-table { 
   display: flex; flex-direction: column; gap: 4px; /* Отступы между карточками */
   width: 100%; min-width: 1000px; border: none; padding-top: 5px;
@@ -838,7 +840,8 @@ onUnmounted(() => {
   display: grid; 
   grid-template-columns: 60px 1fr 80px 120px 120px calc(var(--p-cols) * 80px); 
   align-items: stretch; box-sizing: border-box; width: 100%;
-  background: var(--bg); border: 1px solid var(--border); border-radius: 8px; /* Карточка скруглена */
+  background: var(--card-bg); /* Изолированный фон для карточек */
+  border: 1px solid var(--border); border-radius: 8px; 
   position: relative; overflow: hidden; 
 }
 .cell { 
@@ -851,30 +854,42 @@ onUnmounted(() => {
 .clickable-row { cursor: pointer; transition: 0.3s; }
 .out { opacity: 0.4; } 
 
-/* СТАРЫЙ ДИЗАЙН NEW И ЛАМПОЧЕК */
+/* СИСТЕМА ЛАМПОЧЕК (СТАТУСЫ) */
 .badge-new-box { background: var(--text); color: var(--bg); font-size: 8px; font-weight: 800; padding: 1px 3px; border-radius: 2px; margin: 2px auto 0; display: inline-block; }
 .desk-only-new { display: inline-block; }
 .lamp-sq { width: 14px; height: 3px; margin: 0 auto; border-radius: 1px; transition: 0.3s; }
-.lamp-sq.green { background: #00ff41; box-shadow: 0 0 8px #00ff41, 0 0 4px #00ff41; opacity: 1; }
-.lamp-sq.red { background: #ff2a2a; box-shadow: 0 0 8px #ff2a2a, 0 0 4px #ff2a2a; opacity: 1; }
+.lamp-sq.jade { background: #00a86b; box-shadow: 0 0 8px #00a86b, 0 0 4px #00a86b; opacity: 1; } /* Нефритовый для плюса */
+.lamp-sq.watermelon { background: #fd4659; box-shadow: 0 0 8px #fd4659, 0 0 4px #fd4659; opacity: 1; } /* Арбузный для минуса */
+.lamp-sq.purple { background: #a020f0; box-shadow: 0 0 8px #a020f0, 0 0 4px #a020f0; opacity: 1; } /* Пурпурный для версии */
 .lamp-sq.standard { background: var(--text); box-shadow: 0 0 8px var(--text), 0 0 3px var(--text); opacity: 1; }
 
 .badge-square-matte { font-size: 9px; font-weight: 700; border: 1px solid var(--border); padding: 5px 12px; letter-spacing: 1px; text-transform: uppercase; margin: 0 auto; color: var(--text); opacity: 0.8; font-family: 'Kollektif', sans-serif;}
 .m-square-matte { font-size: 8px; font-weight: 700; border: 1px solid var(--border); padding: 2px 6px; opacity: 0.7; text-transform: uppercase; }
-.new-mobile { display: block; background: var(--text); color: var(--bg); border: none; font-weight: 900; }
 
 .id-zone-square { flex-direction: column; gap: 5px; justify-content: center; padding: 8px 0; }
 .id-sq-top { font-size: 14px; font-weight: 900; color: var(--dim); }
 .scent-info { width: 100%; padding-left: 10px; }
 .brand-code { font-size: 10px; font-weight: 700; opacity: 0.5; display: block; text-transform: uppercase; letter-spacing: 1px; }
-.scent-title { font-size: 17px; font-weight: 500; line-height: 1.2; letter-spacing: 0.5px; }
+
+/* CENTURY GOTHIC ДЛЯ АРОМАТОВ И ЦЕН */
+.scent-title { 
+  font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif;
+  font-weight: bold !important;
+  font-size: 17px; 
+  line-height: 1.2; 
+  letter-spacing: 0.5px; 
+}
 .mobile-only-meta { display: none; margin-top: 8px; gap: 5px; align-items: center; }
 
 .price-container { width: calc(var(--p-cols) * 80px); }
 .price-section { display: grid; height: 100%; width: 100%; align-items: stretch; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
-.p-col { text-align: center; font-size: 15px; display: flex; align-items: center; justify-content: center; box-sizing: border-box; }
+.p-col { 
+  font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif;
+  font-weight: bold !important;
+  text-align: center; font-size: 15px; display: flex; align-items: center; justify-content: center; box-sizing: border-box; 
+}
 .p-col.line { border-right: 1px solid var(--border); } 
-.head-p .p-col { font-size: 8px; font-weight: 700; color: var(--dim); letter-spacing: 1.5px; text-transform: uppercase; }
+.head-p .p-col { font-family: 'Helvetica Neue', sans-serif; font-size: 8px; font-weight: 700 !important; color: var(--dim); letter-spacing: 1.5px; text-transform: uppercase; }
 
 .row-aura-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; opacity: 0; background: transparent; transition: all 0.4s; z-index: 10; pointer-events: none; }
 .clickable-row:hover .row-aura-overlay, .clickable-row.simulated-hover .row-aura-overlay { opacity: 1; backdrop-filter: blur(8px); background: var(--aura-bg); }
@@ -916,6 +931,7 @@ onUnmounted(() => {
   .btn-txt-fixed { max-width: 65px; }
   .desk-only-new { display: none; }
   
+  /* Адаптив меню под мобилку */
   .bahur-popup-menu { width: calc(100vw - 30px) !important; max-width: 300px; left: 50% !important; right: auto !important; transform: translateX(-50%) !important; }
   .custom-scroll-minimal::-webkit-scrollbar { width: 1px !important; }
   .container { padding-right: 35px; }
