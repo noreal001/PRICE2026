@@ -4,12 +4,11 @@
       
       <header class="header-manifest">
         <div class="header-inner">
-           <!-- "Статистика" строчными, без иконки -->
            <button @click="showDash = !showDash" class="header-pill-btn">
              <span class="main-font" style="letter-spacing: 0.5px;">Статистика</span>
            </button>
            <button @click="isDark = !isDark" class="header-pill-btn">
-             <span class="main-font" style="letter-spacing: 0.5px;">{{ isDark ? 'СВЕТ' : 'ТЬМА' }}</span>
+             <span class="main-font" style="letter-spacing: 0.5px;">{{ isDark ? 'Свет' : 'Тьма' }}</span>
            </button>
         </div>
       </header>
@@ -27,9 +26,7 @@
           <h3 class="err-title mono">ОШИБКА ПОДКЛЮЧЕНИЯ</h3>
           <p class="err-desc">{{ errorMsg }}</p>
           <div class="err-action">
-             <button @click="loadData" class="retry-btn-noir">
-               <span class="btn-text">ПОВТОРИТЬ</span>
-             </button>
+             <button @click="loadData" class="retry-btn-noir"><span class="btn-text">ПОВТОРИТЬ</span></button>
           </div>
         </div>
       </div>
@@ -82,7 +79,10 @@
                   <label class="d-label">ФАБРИКИ</label>
                   <div class="q-list">
                     <div v-for="f in ['Luzi', 'Eps', 'Seluz']" :key="f" class="q-row-stacked">
-                      <div class="q-meta"><span class="mono">{{ f }}</span><span class="mono op-5">{{ stats.factoryPerc[f.toUpperCase()] }}%</span></div>
+                      <div class="q-meta">
+                        <span class="mono">{{ f }}</span>
+                        <span class="mono op-5">{{ stats.factoryPerc[f.toUpperCase()] }}%</span>
+                      </div>
                       <div class="q-track-neon"><div class="q-fill-neon" :style="{ width: stats.factoryPerc[f.toUpperCase()] + '%' }"></div></div>
                     </div>
                   </div>
@@ -92,24 +92,28 @@
                   <label class="d-label">КАЧЕСТВО</label>
                   <div class="q-list">
                     <div v-for="q in ['Top', 'Q1', 'Q2']" :key="q" class="q-row-stacked">
-                      <div class="q-meta"><span class="mono">{{ q }}</span><span class="mono op-5">{{ stats.qualityPerc[q.toUpperCase()] }}%</span></div>
+                      <div class="q-meta">
+                        <span class="mono">{{ q }}</span>
+                        <span class="mono op-5">{{ stats.qualityPerc[q.toUpperCase()] }}%</span>
+                      </div>
                       <div class="q-track-neon"><div class="q-fill-neon" :style="{ width: stats.qualityPerc[q.toUpperCase()] + '%' }"></div></div>
                     </div>
                   </div>
                 </div>
 
-                <div class="stat-card relative-zone span-full">
+                <!-- РЕЙТИНГ — фикс скрола и наложения полос -->
+                <div class="stat-card span-full">
                   <div class="top-header-center">
                     <button @click="toggleStatsMode" class="top-switch-btn-subtle main-font">
                        <span class="btn-subtle-label">РЕЙТИНГ:</span> {{ statsMode === '6m' ? '6 МЕС' : 'ВСЕ ВРЕМЯ' }} 
                        <span class="arrow-indicator">⇄</span>
                     </button>
                   </div>
-                  <div class="top-list-scroll-container custom-scroll-minimal">
+                  <div class="top-list-scroll-container">
                      <div v-for="(item, idx) in stats.topListFull" :key="idx" class="top-row-compact">
                         <div class="tr-left-main">
                            <span class="top-num mono">{{ idx + 1 }}.</span>
-                           <span class="top-name main-font" :title="item.name">{{ item.name }}</span>
+                           <span class="top-name kollektif" :title="item.name">{{ item.name }}</span>
                         </div>
                         <div class="tr-mid-graph">
                            <div class="mini-bar-track">
@@ -132,14 +136,15 @@
         </div>
 
         <div class="table-frame">
+          <!-- click-overlay ВЫНЕСЕН за sticky, чтобы не перекрывать кнопки -->
+          <div v-if="showFilters || showBrandMenu || showNewMenu" class="click-overlay" @click="closeAllMenus"></div>
+
           <div class="sticky-nav-group">
-            
-            <section class="controls-luxury relative-zone">
-              <!-- горизонтально-прокручиваемая панель всех кнопок -->
+            <section class="controls-luxury">
               <div class="ctrl-scroll-row">
                 <div class="ctrl-inner-flex">
 
-                  <div class="control-item relative-zone">
+                  <div class="control-item">
                      <button @click="toggleBrandMenu" :class="['main-ctrl-btn', { 'active-mode': showBrandMenu || selectedBrands.length > 0 }]">
                         <span class="btn-txt-fixed main-font ctrl-text-bold">{{ brandLabel }}</span>
                         <svg class="pill-arrow" viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 8.59L12 13.17L16.59 8.59L18 10L12 16L6 10L7.41 8.59Z"/></svg>
@@ -168,8 +173,7 @@
                      </transition>
                   </div>
 
-                  <!-- Статус с иконками-кнопками -->
-                  <div class="control-item relative-zone">
+                  <div class="control-item">
                     <button @click="toggleNewMenu" :class="['main-ctrl-btn', { 'active-mode': showNewMenu || filterPlus || filterStar || showOut }]">
                        <span class="main-font ctrl-text-bold">Статус</span>
                        <svg class="pill-arrow" viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 8.59L12 13.17L16.59 8.59L18 10L12 16L6 10L7.41 8.59Z"/></svg>
@@ -192,8 +196,7 @@
                     </transition>
                   </div>
 
-                  <!-- Фильтр — рядом со статусом -->
-                  <div class="control-item relative-zone">
+                  <div class="control-item">
                     <button @click="toggleFilterMenu" :class="['main-ctrl-btn', { 'active-mode': showFilters }]">
                       <span class="main-font ctrl-text-bold">{{ showFilters ? 'Закрыть' : 'Фильтр' }}</span>
                       <svg class="pill-arrow" viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 8.59L12 13.17L16.59 8.59L18 10L12 16L6 10L7.41 8.59Z"/></svg>
@@ -239,25 +242,26 @@
 
                 </div>
               </div>
-              <div v-if="showFilters || showBrandMenu || showNewMenu" class="click-overlay" @click="closeAllMenus"></div>
             </section>
 
+            <!-- Шапка таблицы — столбцы Пол/Фабрика/Качество с плашками, 50г/500г/1кг тоже -->
             <div class="grid-layout-def head no-click">
               <div class="cell id head-txt center">№</div>
-              <div class="cell name name-header search-cell-dark">
+              <div class="cell name search-cell-dark">
                  <div class="header-search-container">
                     <svg class="search-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z" /></svg>
                     <input v-model="searchQuery" type="text" placeholder="АРОМАТЫ / ПОИСК..." class="header-search-input main-font" />
                     <button v-if="searchQuery" @click="searchQuery = ''" class="clear-search">✕</button>
                  </div>
               </div>
-              <div class="cell desk-only head-txt center">Пол</div>
-              <div class="cell desk-only head-txt center">Фабрика</div>
-              <div class="cell desk-only head-txt center">Качество</div>
+              <!-- Заголовки с плашкой -->
+              <div class="cell desk-only center head-meta-cell"><span class="head-meta-pill">Пол</span></div>
+              <div class="cell desk-only center head-meta-cell"><span class="head-meta-pill">Фабрика</span></div>
+              <div class="cell desk-only center head-meta-cell"><span class="head-meta-pill">Качество</span></div>
               <div class="price-section head-p" :style="priceSubGridStyle">
-                <div v-if="showPrices.p50" class="p-col line center">50г</div>
-                <div v-if="showPrices.p500" class="p-col line center">500г</div>
-                <div v-if="showPrices.p1000" class="p-col last center">1кг</div>
+                <div v-if="showPrices.p50" class="p-col center"><span class="head-price-pill">50г</span></div>
+                <div v-if="showPrices.p500" class="p-col center"><span class="head-price-pill">500г</span></div>
+                <div v-if="showPrices.p1000" class="p-col center"><span class="head-price-pill">1кг</span></div>
               </div>
             </div>
           </div>
@@ -279,36 +283,50 @@
 
                 <div class="cell name">
                   <div class="inner-pill-main">
-                    <span class="brand-code main-font">{{ p.brand }}</span>
-                    <span class="scent-title main-font">{{ p.name }}</span>
+                    <span class="brand-code kollektif">{{ p.brand }}</span>
+                    <span class="scent-title kollektif">{{ p.name }}</span>
                     <div class="mobile-only-meta">
-                      <span class="inner-pill-badge-mobile">{{ getSex(p.gender) }}</span> 
-                      <span class="inner-pill-badge-mobile">{{ p.factory }}</span> 
-                      <span class="inner-pill-badge-mobile">{{ p.quality }}</span>
+                      <span class="inner-pill-badge-mobile kollektif">{{ getSex(p.gender) }}</span> 
+                      <span class="inner-pill-badge-mobile kollektif">{{ p.factory }}</span> 
+                      <span class="inner-pill-badge-mobile kollektif">{{ p.quality }}</span>
                     </div>
                   </div>
                 </div>
 
-                <div class="cell desk-only center"><div class="inner-pill-badge meta-badge">{{ getSex(p.gender) }}</div></div>
-                <div class="cell desk-only center"><div class="inner-pill-badge meta-badge">{{ p.factory }}</div></div>
-                <div class="cell desk-only center"><div class="inner-pill-badge meta-badge">{{ p.quality }}</div></div>
+                <div class="cell desk-only center"><div class="inner-pill-badge meta-badge kollektif">{{ getSex(p.gender) }}</div></div>
+                <div class="cell desk-only center"><div class="inner-pill-badge meta-badge kollektif">{{ p.factory }}</div></div>
+                <div class="cell desk-only center"><div class="inner-pill-badge meta-badge kollektif">{{ p.quality }}</div></div>
                 
                 <div class="price-container">
                   <div class="price-section" :style="priceSubGridStyle">
-                    <div v-if="showPrices.p50" class="inner-pill-price">{{ p.p50 }}₽</div>
-                    <div v-if="showPrices.p500" class="inner-pill-price">{{ p.p500 }}₽</div>
-                    <div v-if="showPrices.p1000" class="inner-pill-price bold">{{ p.p1000 }}₽</div>
+                    <div v-if="showPrices.p50" class="inner-pill-price mono">{{ p.p50 }}₽</div>
+                    <div v-if="showPrices.p500" class="inner-pill-price mono">{{ p.p500 }}₽</div>
+                    <div v-if="showPrices.p1000" class="inner-pill-price mono bold">{{ p.p1000 }}₽</div>
                   </div>
                 </div>
 
               </div>
-              <div class="row-aura-overlay"><span class="aura-text main-font">ПЕРЕЙТИ К АРОМАТУ</span></div>
+              <!-- LIQUID EYE HOVER — SVG-фильтр feGaussianBlur + feTurbulence -->
+              <div class="row-aura-overlay">
+                <svg class="liquid-filter" style="position:absolute;width:0;height:0">
+                  <defs>
+                    <filter id="liquid-eye" x="-20%" y="-20%" width="140%" height="140%">
+                      <feTurbulence type="fractalNoise" baseFrequency="0.015 0.015" numOctaves="2" seed="2" result="noise">
+                        <animate attributeName="baseFrequency" values="0.015 0.015;0.025 0.02;0.015 0.015" dur="3s" repeatCount="indefinite"/>
+                      </feTurbulence>
+                      <feDisplacementMap in="SourceGraphic" in2="noise" scale="8" xChannelSelector="R" yChannelSelector="G"/>
+                    </filter>
+                  </defs>
+                </svg>
+                <span class="aura-text kollektif">ПЕРЕЙТИ К АРОМАТУ</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
 
+    <!-- Скроллбар убирает системный через overscroll на html -->
     <div v-if="!loading && !errorMsg" class="scroll-widget-track" ref="scrollTrack" 
          @mousedown.prevent="startDrag" @touchstart.prevent="startDrag" @click="trackClick">
        <div class="scroll-widget-thumb" :style="{ top: thumbTop + '%', height: thumbHeight + '%' }"></div>
@@ -390,26 +408,18 @@ const updateThumb = () => {
   thumbHeight.value = Math.max(ratio * 100, 5); 
   const maxScroll = docH - winH;
   if (maxScroll <= 0) { thumbTop.value = 0; return; }
-  const percent = scrollY / maxScroll;
-  const trackAvailable = 100 - thumbHeight.value;
-  thumbTop.value = percent * trackAvailable;
+  thumbTop.value = (scrollY / maxScroll) * (100 - thumbHeight.value);
 }
 const handleDrag = (clientY) => {
-  const track = scrollTrack.value;
-  if (!track) return;
+  const track = scrollTrack.value; if (!track) return;
   const rect = track.getBoundingClientRect();
-  const relY = clientY - rect.top;
-  const trackH = rect.height;
-  const percent = Math.min(Math.max(relY / trackH, 0), 1);
-  const docH = document.documentElement.scrollHeight;
-  const winH = window.innerHeight;
-  window.scrollTo({ top: percent * (docH - winH), behavior: 'auto' });
+  const percent = Math.min(Math.max((clientY - rect.top) / rect.height, 0), 1);
+  window.scrollTo({ top: percent * (document.documentElement.scrollHeight - window.innerHeight), behavior: 'auto' });
 }
 let isDragging = false;
 const startDrag = (e) => {
   isDragging = true;
-  const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-  handleDrag(clientY);
+  handleDrag(e.touches ? e.touches[0].clientY : e.clientY);
   window.addEventListener('mousemove', onMouseMove);
   window.addEventListener('touchmove', onTouchMove, { passive: false });
   window.addEventListener('mouseup', stopDrag);
@@ -435,14 +445,11 @@ const parseCSV = (data) => {
       let g = col[4] ? col[4].toLowerCase().trim() : '';
       let fG = (g === 'm' || g === 'м' || g.includes('муж')) ? 'm' : (g === 'w' || g === 'ж' || g.includes('жен')) ? 'w' : (g === 'y' || g === 'у' || g.includes('уни')) ? 'y' : '';
       const statusCol = col[10] ? col[10].trim() : '';
-      const hasPlus = statusCol.includes('+'); 
-      const hasStar = statusCol.includes('*');
-      const hasMinus = statusCol.includes('-'); 
       return { 
         id: col[0], link: col[1] || '', brand: col[2] || '', name: col[3] || '', gender: fG, 
         factory: col[5] || '', quality: col[6] || '', p50: parseInt(col[7]) || 0, 
         p500: parseInt(col[8]) || 0, p1000: parseInt(col[9]) || 0, 
-        status: statusCol, hasPlus, hasStar, isOut: hasMinus,
+        status: statusCol, hasPlus: statusCol.includes('+'), hasStar: statusCol.includes('*'), isOut: statusCol.includes('-'),
         sales6m: parseFloat(col[11]) || 0, salesAll: parseFloat(col[12]) || 0 
       }
     }).filter(p => p !== null);
@@ -459,7 +466,7 @@ const loadData = async () => {
     if (products.value.length === 0) throw new Error('Данные пусты или ошибка формата');
     startAutoHighlight();
     setTimeout(() => loading.value = false, 1500);
-  } catch (e) { console.error(e); errorMsg.value = "Не удалось подключиться к базе данных. Проверьте соединение."; loading.value = false; }
+  } catch (e) { errorMsg.value = "Не удалось подключиться к базе данных."; loading.value = false; }
 }
 
 const startAutoHighlight = () => {
@@ -513,9 +520,8 @@ const stats = computed(() => {
     const vB = statsMode.value === '6m' ? b.sales6m : b.salesAll; 
     return vB - vA; 
   }).slice(0, 50);
-  const availPerc = Math.round((avail / count) * 100);
   return { 
-    total: p.length, countAvail: avail, countOut: out, availability: availPerc, 
+    total: p.length, countAvail: avail, countOut: out, availability: Math.round((avail/count)*100),
     avg50: Math.round(s50/count), avg500: Math.round(s500/count), avg1000: Math.round(s1000/count), 
     qualityPerc: { 'TOP': Math.round((qual['TOP']/count)*100), 'Q1': Math.round((qual['Q1']/count)*100), 'Q2': Math.round((qual['Q2']/count)*100) },
     factoryPerc: { 'LUZI': Math.round((factories['LUZI']/count)*100), 'EPS': Math.round((factories['EPS']/count)*100), 'SELUZ': Math.round((factories['SELUZ']/count)*100) },
@@ -527,6 +533,15 @@ const getSex = (g) => ({ m: 'МУЖ', w: 'ЖЕН', y: 'УНИ' }[g] || '—');
 const open = (u) => window.open(u.startsWith('http') ? u : `https://${u}`, '_blank');
 
 onMounted(() => {
+  // Скрыть системный скроллбар через стиль на html
+  document.documentElement.style.scrollbarWidth = 'none';
+  document.documentElement.style.overflow = 'hidden';
+  document.documentElement.style.overflow = 'auto';
+  // Webkit
+  const styleEl = document.createElement('style');
+  styleEl.textContent = 'html::-webkit-scrollbar { display: none !important; } html { scrollbar-width: none !important; -ms-overflow-style: none !important; }';
+  document.head.appendChild(styleEl);
+
   let meta = document.querySelector('meta[name=viewport]');
   if (!meta) { meta = document.createElement('meta'); meta.name = 'viewport'; document.head.appendChild(meta); }
   meta.content = "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no";
@@ -547,64 +562,73 @@ onUnmounted(() => {
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100;300;400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Kollektif&display=swap');
 
-.main-font, .scent-title, .brand-code { font-family: 'Nunito', sans-serif; }
-.rus-font, .eng-font, .kollektif-font { font-family: 'Nunito', sans-serif; }
+.main-font { font-family: 'Nunito', sans-serif; }
+/* Kollektif для всего в таблице кроме цен */
+.kollektif { font-family: 'Kollektif', 'Nunito', sans-serif; }
 .mono { font-family: 'JetBrains Mono', monospace; }
 
 /* ─── ТЕМЫ ─────────────────────────────────────────── */
 .bahur-terminal {
   --bg: #19191b; 
-  --text: #fff; --border: rgba(255,255,255,0.06); --dim: #666;
+  --text: #fff; --border: rgba(255,255,255,0.06); --dim: #555;
   --panel-bg: #111113; 
   --card-bg: #111113;
   --card-border: rgba(255,255,255,0.04);
-  --inner-pill-dark: #0b0b0d;      /* цены */
-  --inner-pill-name: #161618;      /* наименование */
-  --inner-pill-meta: #1f1f23;      /* пол / фабрика / качество */
-  --search-pill-bg: #0d0d0f;       /* поиск */
-  --aura-bg: rgba(255,255,255,0.05);
+  --inner-pill-dark: #0b0b0d;
+  --inner-pill-name: #161618;
+  --inner-pill-meta: #1e1e22;
+  --search-pill-bg: #0d0d0f;
+  /* Liquid Eye hover */
+  --liquid-bg: rgba(255,255,255,0.06);
+  --liquid-border: rgba(255,255,255,0.12);
   --aura-text: #fff;
-  --hover-bg: #181820;
-  --sticky-bg: rgba(17,17,19,0.97);
+  --hover-bg: #17171a;
+  --sticky-bg: rgba(15,15,17,0.98);
   --seg-bg: #0a0a0c;
-  --seg-active: #fff; --seg-txt: #555; --seg-txt-active: #000;
+  --seg-active: #fff; --seg-txt: #444; --seg-txt-active: #000;
   --btn-ctrl-bg: #111113;
   --btn-ctrl-border: rgba(255,255,255,0.07);
+  /* мгновенное переключение темы */
+  transition: background 0s, color 0s;
   min-height: 100vh; background: var(--bg); color: var(--text); font-family: 'Nunito', sans-serif;
   touch-action: pan-y;
 }
 .noir { 
-  --bg: #19191b; --text: #fff; --border: rgba(255,255,255,0.06); --dim: #666;
+  --bg: #19191b; --text: #fff; --border: rgba(255,255,255,0.06); --dim: #555;
   --panel-bg: #111113; --card-bg: #111113; --card-border: rgba(255,255,255,0.04);
-  --inner-pill-dark: #0b0b0d; --inner-pill-name: #161618; --inner-pill-meta: #1f1f23;
+  --inner-pill-dark: #0b0b0d; --inner-pill-name: #161618; --inner-pill-meta: #1e1e22;
   --search-pill-bg: #0d0d0f;
-  --aura-bg: rgba(255,255,255,0.05); --aura-text: #fff; --hover-bg: #181820;
-  --sticky-bg: rgba(17,17,19,0.97);
-  --seg-bg: #0a0a0c; --seg-active: #fff; --seg-txt: #555; --seg-txt-active: #000;
+  --liquid-bg: rgba(255,255,255,0.06); --liquid-border: rgba(255,255,255,0.12);
+  --aura-text: #fff; --hover-bg: #17171a;
+  --sticky-bg: rgba(15,15,17,0.98);
+  --seg-bg: #0a0a0c; --seg-active: #fff; --seg-txt: #444; --seg-txt-active: #000;
   --btn-ctrl-bg: #111113; --btn-ctrl-border: rgba(255,255,255,0.07);
 }
-/* Светлая тема — переработанная без "грязного" hover */
 .bahur-terminal:not(.noir) { 
-  --bg: #f0f0f4; --text: #0f0f11; --border: rgba(0,0,0,0.07); --dim: #999;
+  --bg: #f0f0f4; --text: #0f0f11; --border: rgba(0,0,0,0.07); --dim: #aaa;
   --panel-bg: #fafafa; --card-bg: #fafafa; --card-border: rgba(0,0,0,0.05);
-  --inner-pill-dark: #e6e6ed;
-  --inner-pill-name: #ececf2;
-  --inner-pill-meta: #e0e0ea;
-  --search-pill-bg: #e4e4ec;
-  /* hover в светлой теме — только тень и небольшой сдвиг, без тёмного фона */
-  --aura-bg: rgba(0,0,0,0.03); --aura-text: #111;
-  --hover-bg: #f5f5f9;
-  --sticky-bg: rgba(240,240,244,0.97);
-  --seg-bg: #dcdce4; --seg-active: #111; --seg-txt: #999; --seg-txt-active: #fff;
-  --btn-ctrl-bg: #e8e8ef; --btn-ctrl-border: rgba(0,0,0,0.07);
+  --inner-pill-dark: #e3e3eb;
+  --inner-pill-name: #eaeaf0;
+  --inner-pill-meta: #dddde6;
+  --search-pill-bg: #e0e0ea;
+  --liquid-bg: rgba(0,0,0,0.04); --liquid-border: rgba(0,0,0,0.1);
+  --aura-text: #111; --hover-bg: #f4f4f8;
+  --sticky-bg: rgba(240,240,244,0.98);
+  --seg-bg: #d8d8e2; --seg-active: #111; --seg-txt: #aaa; --seg-txt-active: #fff;
+  --btn-ctrl-bg: #e5e5ee; --btn-ctrl-border: rgba(0,0,0,0.07);
 }
 
-/* ─── SCROLLBARS ──────────────────────────────────── */
-::-webkit-scrollbar { width: 5px; }
-::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: rgba(128,128,128,0.4); border-radius: 2px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(128,128,128,0.7); }
+/* ─── СКРЫТЬ СИСТЕМНЫЙ СКРОЛЛБАР ─────────────────── */
+/* (дублируем на случай если JS не отработает) */
+:global(html) { scrollbar-width: none !important; -ms-overflow-style: none !important; }
+:global(html::-webkit-scrollbar) { display: none !important; }
+
+/* Внутренние скроллбары — тонкие 2px */
+::-webkit-scrollbar { width: 2px; height: 2px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(128,128,128,0.3); border-radius: 2px; }
 
 .container { max-width: 1400px; margin: 0 auto; padding: 15px; }
 
@@ -623,12 +647,11 @@ onUnmounted(() => {
 .err-title { font-size: 14px; color: var(--text); margin-bottom: 10px; letter-spacing: 1px; }
 .err-desc { font-size: 12px; color: var(--dim); margin-bottom: 25px; }
 .retry-btn-noir { background: var(--text); border: none; color: var(--bg); padding: 12px 24px; font-family: 'JetBrains Mono',monospace; font-size: 11px; cursor: pointer; transition: 0.3s; text-transform: uppercase; font-weight: 700; }
-.retry-btn-noir:hover { opacity: 0.8; }
 
-/* ─── SCROLL WIDGET ───────────────────────────────── */
-.scroll-widget-track { position: fixed; right: 2px; top: 15px; bottom: 15px; width: 16px; z-index: 1000; display: flex; justify-content: center; touch-action: none; }
-.scroll-widget-thumb { position: absolute; width: 6px; background: var(--text); border-radius: 3px; opacity: 0.35; transition: opacity 0.2s; }
-.scroll-widget-thumb:hover { opacity: 0.7; }
+/* ─── SCROLL WIDGET (кастомный) ───────────────────── */
+.scroll-widget-track { position: fixed; right: 3px; top: 15px; bottom: 15px; width: 14px; z-index: 1000; display: flex; justify-content: center; touch-action: none; }
+.scroll-widget-thumb { position: absolute; width: 5px; background: var(--text); border-radius: 3px; opacity: 0.3; transition: opacity 0.2s; }
+.scroll-widget-thumb:hover, .scroll-widget-track:hover .scroll-widget-thumb { opacity: 0.6; }
 .scroll-widget-track::before { content: ''; position: absolute; top: 0; bottom: 0; width: 1px; background: var(--border); }
 
 /* ─── HEADER ──────────────────────────────────────── */
@@ -637,24 +660,32 @@ onUnmounted(() => {
 .header-pill-btn {
   background: transparent; border: 1px solid var(--border); color: var(--text);
   border-radius: 20px; padding: 6px 14px; font-size: 11px; font-weight: 700; cursor: pointer;
-  display: flex; align-items: center; justify-content: center; gap: 5px; transition: 0.2s;
+  display: flex; align-items: center; justify-content: center; gap: 5px;
+  /* мгновенное переключение темы */
+  transition: background 0s, border-color 0s, color 0s;
 }
 .header-pill-btn:hover { background: var(--btn-ctrl-bg); }
 
-/* ─── STICKY — карточка на всю ширину с закруглением снизу ─── */
+/* ─── STICKY NAV ──────────────────────────────────── */
+/* 
+   ВАЖНО: нет overflow:hidden чтобы popup-меню вылазили за пределы
+   Скругление только снизу. Линия border-bottom не нужна — используем box-shadow
+*/
 .sticky-nav-group {
   position: sticky; top: 0; z-index: 500;
   background: var(--sticky-bg);
   backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border);
-  border-radius: 0 0 20px 20px;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.25);
+  -webkit-backdrop-filter: blur(20px);
+  /* только нижняя тень — без border */
+  box-shadow: 0 6px 30px rgba(0,0,0,0.3), 0 1px 0 var(--border);
+  border-radius: 0 0 22px 22px;
+  /* НЕТ overflow:hidden — иначе popup обрезаются */
 }
 .controls-luxury { padding: 10px 0 0; }
 
 /* ─── Горизонтальный скролл кнопок ─────────────────── */
 .ctrl-scroll-row {
-  overflow-x: auto;
+  overflow-x: auto; overflow-y: visible;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
 }
@@ -674,18 +705,27 @@ onUnmounted(() => {
   padding: 8px 16px; border-radius: 20px;
   font-size: 11px; font-weight: 700; cursor: pointer; 
   display: flex; align-items: center; justify-content: center; gap: 6px;
-  transition: all 0.2s; white-space: nowrap;
+  transition: filter 0.15s; white-space: nowrap;
+  position: relative; z-index: 10;
 }
-.main-ctrl-btn:hover { filter: brightness(1.2); }
+.main-ctrl-btn:hover { filter: brightness(1.25); }
 .main-ctrl-btn.active-mode { background: var(--text); color: var(--bg); border-color: transparent; }
 .ctrl-text-bold { font-weight: 700; }
 .btn-txt-fixed { max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .pill-arrow { width: 10px; height: 10px; opacity: 0.5; flex-shrink: 0; }
 
-.click-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 800; background: transparent; }
+/* click-overlay вынесен ЗА sticky чтобы не блокировать кнопки */
+.click-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 499; background: transparent; }
 
 /* ─── POPUP MENUS ─────────────────────────────────── */
-.bahur-popup-menu { position: absolute; top: calc(100% + 8px); background: var(--panel-bg); border: 1px solid var(--border); border-radius: 16px; padding: 15px; box-shadow: 0 20px 40px rgba(0,0,0,0.7); display: flex; flex-direction: column; gap: 10px; z-index: 999; }
+.bahur-popup-menu {
+  position: absolute; top: calc(100% + 8px);
+  background: var(--panel-bg); border: 1px solid var(--border);
+  border-radius: 16px; padding: 15px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+  display: flex; flex-direction: column; gap: 10px;
+  z-index: 1000; /* выше sticky */
+}
 .bahur-popup-menu.list-mode { left: 0; width: 240px; }
 .bahur-popup-menu.filter-mode { left: 0; width: 220px; }
 .bahur-popup-menu.center-mode { left: 0; width: 195px; padding: 12px; }
@@ -698,7 +738,6 @@ onUnmounted(() => {
 .bw-thumb { width: 14px; height: 14px; background: var(--text); border-radius: 50%; position: absolute; left: 2px; top: 2px; transition: 0.3s; }
 .bw-toggle.on .bw-thumb { transform: translateX(16px); }
 
-/* Чипы статусов + * - */
 .status-chip {
   display: inline-flex; align-items: center; justify-content: center;
   width: 18px; height: 18px; border-radius: 5px;
@@ -708,7 +747,7 @@ onUnmounted(() => {
 .chip-star { background: rgba(160,32,240,0.15); color: #a020f0; border: 1px solid rgba(160,32,240,0.3); }
 .chip-minus { background: rgba(253,70,89,0.15); color: #fd4659; border: 1px solid rgba(253,70,89,0.3); }
 
-/* ─── INPUT & BRANDS LIST ─────────────────────────── */
+/* ─── INPUT & BRANDS ──────────────────────────────── */
 .popup-input { width: 100%; background: var(--seg-bg); border: 1px solid var(--border); padding: 10px; border-radius: 8px; color: var(--text); font-size: 12px; outline: none; margin-bottom: 5px; box-sizing: border-box; font-weight: 600; }
 .popup-input::placeholder { opacity: 0.5; }
 .search-input-box { width: 100%; }
@@ -716,8 +755,8 @@ onUnmounted(() => {
 .custom-scroll-minimal::-webkit-scrollbar { width: 2px; }
 .custom-scroll-minimal::-webkit-scrollbar-thumb { background: var(--dim); }
 .brands-list-vertical { display: flex; flex-direction: column; gap: 4px; }
-.brand-row-btn { display: flex; justify-content: space-between; align-items: center; background: transparent; color: var(--text); border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-size: 12px; text-transform: capitalize; text-align: left; transition: 0.2s; opacity: 0.8; font-weight: 600; }
-.all-brand-btn { opacity: 1; font-weight: 800; margin-bottom: 5px; border-bottom: 1px solid var(--border); padding-bottom: 10px; border-radius: 0; text-transform: none; }
+.brand-row-btn { display: flex; justify-content: space-between; align-items: center; background: transparent; color: var(--text); border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-size: 12px; text-align: left; transition: 0.15s; opacity: 0.8; font-weight: 600; }
+.all-brand-btn { opacity: 1; font-weight: 800; margin-bottom: 5px; border-bottom: 1px solid var(--border); padding-bottom: 10px; border-radius: 0; }
 .brand-row-btn:hover { background: var(--seg-bg); opacity: 1; }
 .brand-font-fix { font-weight: 700; font-size: 12px; opacity: 0.9; }
 .brand-left-group { display: flex; align-items: center; gap: 8px; overflow: hidden; }
@@ -725,19 +764,19 @@ onUnmounted(() => {
 .circle-check-icon.left { margin-right: 5px; width: 16px; height: 16px; }
 .check-status.right { width: 14px; height: 14px; }
 
-/* ─── СЕГМЕНТЫ — тёмные кнопки ────────────────────── */
+/* ─── СЕГМЕНТЫ ────────────────────────────────────── */
 .popup-section { margin-bottom: 5px; }
 .popup-label { display: block; font-size: 9px; font-weight: 800; color: var(--dim); margin-bottom: 6px; letter-spacing: 1px; text-transform: uppercase; }
 .segmented-control { display: flex; background: #070709; padding: 3px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.04); }
-.bahur-terminal:not(.noir) .segmented-control { background: #d0d0da; border-color: rgba(0,0,0,0.06); }
-.segment-btn { flex: 1; background: transparent; border: none; color: #555; padding: 6px 0; font-size: 10px; font-weight: 700; border-radius: 6px; cursor: pointer; transition: 0.15s; }
+.bahur-terminal:not(.noir) .segmented-control { background: #cecede; border-color: rgba(0,0,0,0.06); }
+.segment-btn { flex: 1; background: transparent; border: none; color: #555; padding: 6px 0; font-size: 10px; font-weight: 700; border-radius: 6px; cursor: pointer; transition: 0.12s; }
 .segment-btn.active { background: #fff; color: #000; box-shadow: 0 2px 6px rgba(0,0,0,0.5); font-weight: 800; }
-.bahur-terminal:not(.noir) .segment-btn { color: #999; }
+.bahur-terminal:not(.noir) .segment-btn { color: #aaa; }
 .bahur-terminal:not(.noir) .segment-btn.active { background: #111; color: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.2); }
 .arrows-horn { font-size: 10px; display: inline-flex; gap: 2px; }
 
-.pop-enter-active, .pop-leave-active { transition: all 0.2s cubic-bezier(0.16,1,0.3,1); }
-.pop-enter-from, .pop-leave-to { opacity: 0; transform: translateY(-10px) scale(0.95); }
+.pop-enter-active, .pop-leave-active { transition: all 0.18s cubic-bezier(0.16,1,0.3,1); }
+.pop-enter-from, .pop-leave-to { opacity: 0; transform: translateY(-8px) scale(0.96); }
 
 /* ─── DASHBOARD ───────────────────────────────────── */
 .dash-collapsible-wrapper { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.3s cubic-bezier(0.4,0,0.2,1); }
@@ -751,8 +790,8 @@ onUnmounted(() => {
 .q-meta { display: flex; justify-content: space-between; font-size: 10px; font-weight: 700; margin-bottom: 5px; }
 .op-5 { opacity: 0.5; }
 .q-track-neon { height: 2px; background: var(--border); width: 100%; overflow: hidden; border-radius: 1px; }
-.q-fill-neon { height: 100%; background: var(--text); box-shadow: 0 0 5px var(--text); }
-.white-part { background: #fff; box-shadow: 0 0 5px #fff; }
+.q-fill-neon { height: 100%; background: var(--text); }
+.white-part { background: #fff; }
 .split-top-row { display: flex; justify-content: space-between; gap: 20px; }
 .st-item, .st-price-box { flex: 1; }
 .st-sep { width: 1px; background: var(--border); margin: 0 10px; opacity: 0.5; }
@@ -767,70 +806,124 @@ onUnmounted(() => {
 .stock-big-num { font-size: 32px; font-weight: 800; line-height: 1; }
 .stock-right { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
 .q-track-neon-thick { height: 6px; background: var(--border); width: 100%; border-radius: 3px; overflow: hidden; margin-bottom: 6px; }
-.q-fill-neon-thick { height: 100%; background: #fff; box-shadow: 0 0 8px #fff; }
+.q-fill-neon-thick { height: 100%; background: #fff; }
 .stock-missing-text { font-size: 10px; color: var(--dim); text-align: right; font-weight: 600; }
-.top-header-center { display: flex; justify-content: center; margin-bottom: 12px; }
-.top-switch-btn-subtle { background: transparent; border: 1px solid var(--border); color: var(--text); padding: 6px 12px; border-radius: 20px; font-size: 10px; font-weight: 700; cursor: pointer; }
-.btn-subtle-label { color: var(--dim); }
-.top-list-scroll-container { max-height: 60px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; padding-right: 2px; }
-.top-row-compact { display: flex; justify-content: space-between; align-items: center; font-size: 11px; padding: 2px 0; border-bottom: 1px solid var(--border); }
-.tr-left-main { display: flex; align-items: center; width: 40%; overflow: hidden; }
-.top-num { color: var(--dim); margin-right: 5px; font-weight: 700; }
-.top-name { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-weight: 700; }
-.tr-mid-graph { flex-grow: 1; margin: 0 8px; display: flex; align-items: center; }
-.mini-bar-track { width: 100%; height: 2px; background: var(--border); border-radius: 1px; }
-.mini-bar-fill { height: 100%; background: var(--text); }
-.tr-right-meta { display: flex; align-items: center; gap: 4px; }
-.badge-mini { border: 1px solid var(--border); padding: 1px 4px; font-size: 9px; color: var(--text); border-radius: 4px; font-weight: 700; }
-.top-val { font-weight: 800; margin-left: 4px; min-width: 25px; text-align: right; }
 
-/* ─── ШАПКА ТАБЛИЦЫ ────────────────────────────────── */
+.top-header-center { display: flex; justify-content: center; margin-bottom: 10px; }
+.top-switch-btn-subtle { background: transparent; border: 1px solid var(--border); color: var(--text); padding: 5px 12px; border-radius: 20px; font-size: 10px; font-weight: 700; cursor: pointer; }
+.btn-subtle-label { color: var(--dim); }
+
+/* РЕЙТИНГ — фикс: overflow:hidden, убираем встроенный скроллбар снизу */
+.top-list-scroll-container {
+  max-height: 120px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex; flex-direction: column; gap: 3px;
+  padding-right: 4px;
+  /* тонкий скролл */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(128,128,128,0.3) transparent;
+}
+.top-list-scroll-container::-webkit-scrollbar { width: 2px; }
+.top-list-scroll-container::-webkit-scrollbar-track { background: transparent; }
+.top-list-scroll-container::-webkit-scrollbar-thumb { background: rgba(128,128,128,0.3); border-radius: 2px; }
+
+.top-row-compact {
+  display: grid;
+  /* Имя | бар | бейджи+% — фиксированные колонки, не overflow */
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  padding: 3px 0;
+  border-bottom: 1px solid var(--border);
+  min-width: 0;
+}
+.top-row-compact:last-child { border-bottom: none; }
+
+.tr-left-main { display: flex; align-items: center; min-width: 0; overflow: hidden; }
+.top-num { color: var(--dim); margin-right: 4px; font-weight: 700; flex-shrink: 0; font-size: 10px; }
+.top-name { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-weight: 700; min-width: 0; }
+
+.tr-mid-graph { display: flex; align-items: center; min-width: 0; }
+.mini-bar-track { width: 100%; height: 2px; background: var(--border); border-radius: 1px; overflow: hidden; }
+.mini-bar-fill { height: 100%; background: var(--text); }
+
+.tr-right-meta { display: flex; align-items: center; gap: 3px; flex-shrink: 0; }
+.badge-mini { border: 1px solid var(--border); padding: 1px 4px; font-size: 8px; color: var(--text); border-radius: 4px; font-weight: 700; white-space: nowrap; }
+.top-val { font-weight: 800; min-width: 28px; text-align: right; font-size: 10px; }
+
+/* ─── ШАПКА ТАБЛИЦЫ ──────────────────────────────── */
+/* Веб: сужаем Пол/Фабрика/Качество, даём больше имени */
 .grid-layout-def.head { 
   display: grid; 
-  grid-template-columns: 60px 1fr 80px 120px 120px calc(var(--p-cols) * 80px); 
+  grid-template-columns: 60px 1fr 70px 100px 90px calc(var(--p-cols) * 75px);
   align-items: stretch; box-sizing: border-box; width: 100%;
-  border: none; background: transparent; border-bottom: 1px solid var(--border); 
+  border: none; background: transparent;
+  padding: 4px 6px;
 }
 
-/* Строка поиска — тёмная таблетка */
-.search-cell-dark { padding: 6px !important; }
+.search-cell-dark { padding: 4px !important; }
 .header-search-container {
   display: flex; align-items: center; width: 100%; height: 100%;
   background: var(--search-pill-bg);
-  border-radius: 12px;
-  position: relative; overflow: hidden;
+  border-radius: 12px; position: relative; overflow: hidden;
+  min-height: 42px;
 }
 .header-search-container .search-icon { position: absolute; left: 12px; width: 13px; height: 13px; color: var(--dim); pointer-events: none; }
 .header-search-input {
   width: 100%; height: 100%; background: transparent; border: none;
   padding: 10px 30px 10px 32px; outline: none; color: var(--text);
   font-size: 10px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase;
+  font-family: 'Kollektif', 'Nunito', sans-serif;
 }
 .header-search-input::placeholder { color: var(--dim); font-weight: 800; }
-.header-search-container .clear-search { position: absolute; right: 10px; background: transparent; border: none; color: var(--dim); cursor: pointer; font-size: 11px; font-weight: bold; transition: 0.2s; }
-.header-search-container .clear-search:hover { color: var(--text); }
+.header-search-container .clear-search { position: absolute; right: 10px; background: transparent; border: none; color: var(--dim); cursor: pointer; font-size: 11px; font-weight: bold; }
+
+/* Заголовки столбцов с плашкой */
+.head-meta-cell { padding: 4px !important; }
+.head-meta-pill {
+  display: inline-block;
+  background: var(--inner-pill-meta);
+  border-radius: 10px;
+  padding: 6px 10px;
+  font-size: 9px; font-weight: 800;
+  color: var(--dim);
+  letter-spacing: 1px; text-transform: uppercase;
+  white-space: nowrap;
+  font-family: 'Kollektif', 'Nunito', sans-serif;
+}
+.head-price-pill {
+  display: inline-block;
+  background: var(--inner-pill-dark);
+  border-radius: 10px;
+  padding: 6px 10px;
+  font-size: 9px; font-weight: 800;
+  color: var(--dim);
+  letter-spacing: 1px; text-transform: uppercase;
+  white-space: nowrap;
+  font-family: 'JetBrains Mono', monospace;
+}
 
 /* ─── ТАБЛИЦА ────────────────────────────────────────── */
-.grid-table { display: flex; flex-direction: column; gap: 8px; width: 100%; min-width: 1000px; border: none; padding-top: 8px; }
+.grid-table { display: flex; flex-direction: column; gap: 8px; width: 100%; min-width: 800px; border: none; padding-top: 8px; }
 
 .grid-layout-def:not(.head) { 
   display: grid; 
-  grid-template-columns: 60px 1fr 80px 120px 120px calc(var(--p-cols) * 80px); 
+  grid-template-columns: 60px 1fr 70px 100px 90px calc(var(--p-cols) * 75px);
   align-items: stretch; box-sizing: border-box; width: 100%;
   background: var(--card-bg); 
   border: 1px solid var(--card-border); border-radius: 20px; 
   position: relative; overflow: hidden; 
   box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-  transition: all 0.2s cubic-bezier(0.25,0.8,0.25,1);
-  padding: 6px; 
+  transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+  padding: 6px;
 }
 
-/* Hover — аккуратный в обеих темах */
 .grid-layout-def.clickable-row:hover,
 .grid-layout-def.clickable-row.simulated-hover {
-  border-color: var(--border);
-  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
   transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
   background: var(--hover-bg);
 }
 
@@ -842,94 +935,117 @@ onUnmounted(() => {
 .out { opacity: 0.4; filter: grayscale(50%); }
 
 /* ─── ПЛАШКИ ─────────────────────────────────────────── */
-/* Наименование */
 .inner-pill-main {
   background: var(--inner-pill-name);
-  border-radius: 16px;
-  padding: 10px 16px;
+  border-radius: 16px; padding: 10px 16px;
   width: 100%; display: flex; flex-direction: column; justify-content: center;
+  height: 100%; box-sizing: border-box;
 }
 
-/* Пол / Фабрика / Качество — светлее */
+/* Пол/Фабрика/Качество — одна высота с именем */
 .inner-pill-badge {
   background: var(--inner-pill-meta);
-  border-radius: 14px;
-  padding: 8px 12px;
+  border-radius: 14px; padding: 0 12px;
   font-weight: 800; font-size: 11px;
   color: var(--text);
   width: 100%; text-align: center;
+  height: 100%; display: flex; align-items: center; justify-content: center;
+  box-sizing: border-box;
 }
 .inner-pill-badge.meta-badge { background: var(--inner-pill-meta); }
 
 .inner-pill-badge-mobile {
   background: var(--inner-pill-meta);
-  border-radius: 8px;
-  padding: 4px 6px;
+  border-radius: 8px; padding: 4px 6px;
   font-weight: 800; font-size: 9px;
   color: var(--text); border: none;
   display: flex; align-items: center; justify-content: center;
 }
 
-/* Цены */
+/* Цены — одна высота */
 .inner-pill-price {
   background: var(--inner-pill-dark);
-  border-radius: 14px;
-  padding: 12px 6px;
-  font-weight: 800; font-size: 14px;
+  border-radius: 14px; padding: 0 6px;
+  font-weight: 800; font-size: 13px;
   display: flex; align-items: center; justify-content: center;
-  width: 100%; box-sizing: border-box; height: 100%;
+  width: 100%; box-sizing: border-box;
+  height: 100%; min-height: 44px;
 }
 
 /* ─── СТАТУСЫ ─────────────────────────────────────────── */
 .status-symbol { font-size: 18px; font-weight: 900; margin-top: 2px; line-height: 1; }
 .sym-plus, .sym-star, .sym-minus { display: inline-block; }
-.jade-txt { color: #00a86b; text-shadow: 0 0 8px rgba(0,168,107,0.5); }
-.purple-txt { color: #a020f0; text-shadow: 0 0 8px rgba(160,32,240,0.5); }
-.watermelon-txt { color: #fd4659; text-shadow: 0 0 8px rgba(253,70,89,0.5); }
+.jade-txt { color: #00a86b; }
+.purple-txt { color: #a020f0; }
+.watermelon-txt { color: #fd4659; }
 
 .id-zone-square { flex-direction: column; gap: 2px; justify-content: center; }
 .id-sq-top { font-size: 15px; font-weight: 900; color: var(--dim); }
-.brand-code { font-size: 10px; font-weight: 800; opacity: 0.5; display: block; text-transform: uppercase; letter-spacing: 1px; }
-.scent-title { font-weight: 800; font-size: 17px; line-height: 1.2; letter-spacing: 0.5px; }
+.brand-code { font-size: 10px; font-weight: 400; opacity: 0.45; display: block; text-transform: uppercase; letter-spacing: 1px; }
+.scent-title { font-weight: 700; font-size: 17px; line-height: 1.2; letter-spacing: 0.3px; }
 .mobile-only-meta { display: none; margin-top: 7px; gap: 4px; align-items: center; }
 
-.price-container { width: calc(var(--p-cols) * 80px); display: flex; align-items: center; }
-.price-section { display: grid; gap: 6px; width: 100%; padding: 0 6px; }
-.head-p .p-col { font-size: 9px; font-weight: 800; color: var(--dim); letter-spacing: 1.5px; text-transform: uppercase; padding: 12px; }
+.price-container { width: calc(var(--p-cols) * 75px); display: flex; align-items: stretch; }
+.price-section { display: grid; gap: 6px; width: 100%; padding: 0 4px; }
+.head-p { padding: 4px; }
+.head-p .p-col { display: flex; align-items: center; justify-content: center; }
 
-/* ─── АУРА HOVER ─────────────────────────────────────── */
+/* ─── LIQUID EYE HOVER ───────────────────────────────── */
+/* SVG-дисторсия на blur+turbulence — живой "глаз" */
+.liquid-filter { display: none; }
 .row-aura-overlay {
-  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-  opacity: 0; background: transparent; transition: all 0.35s;
-  z-index: 10; pointer-events: none; border-radius: 20px;
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0;
+  transition: opacity 0.4s cubic-bezier(0.25,0.8,0.25,1);
+  z-index: 10; pointer-events: none;
+  /* Жидкое стекло — размытие с дисторсией, НЕ обрезается border-radius карточки */
+  backdrop-filter: blur(8px) saturate(1.3);
+  -webkit-backdrop-filter: blur(8px) saturate(1.3);
+  background: var(--liquid-bg);
+  border-radius: inherit;
+  border: 1px solid transparent;
 }
 .clickable-row:hover .row-aura-overlay,
 .clickable-row.simulated-hover .row-aura-overlay {
-  opacity: 1; backdrop-filter: blur(5px); background: var(--aura-bg);
+  opacity: 1;
+  border-color: var(--liquid-border);
+  /* Пульсирующее «дыхание» */
+  animation: liquid-pulse 2.5s ease-in-out infinite;
 }
-/* В светлой теме текст ауры тёмный и хорошо виден */
-.aura-text { font-size: 12px; font-weight: 900; letter-spacing: 5px; color: var(--aura-text); transform: translateY(15px); opacity: 0; transition: 0.4s; text-transform: uppercase; }
+@keyframes liquid-pulse {
+  0%, 100% { backdrop-filter: blur(8px) saturate(1.3); background: var(--liquid-bg); }
+  50% { backdrop-filter: blur(12px) saturate(1.6); background: var(--liquid-bg); filter: brightness(1.05); }
+}
+.aura-text {
+  font-size: 11px; font-weight: 700; letter-spacing: 4px;
+  color: var(--aura-text);
+  transform: translateY(12px) scale(0.97);
+  opacity: 0; transition: 0.45s cubic-bezier(0.25,0.8,0.25,1);
+  text-transform: uppercase;
+  /* Лёгкое свечение текста */
+  text-shadow: 0 0 20px currentColor;
+}
 .clickable-row:hover .aura-text,
-.clickable-row.simulated-hover .aura-text { opacity: 1; transform: translateY(0); }
+.clickable-row.simulated-hover .aura-text {
+  opacity: 1; transform: translateY(0) scale(1);
+}
 
 /* ─── МОБИЛЬ ─────────────────────────────────────────── */
 @media (max-width: 900px) {
   .dash-grid { grid-template-columns: 1fr 1fr; }
   .span-full { grid-column: span 2; }
-  .grid-table { min-width: 100%; border: none; }
+  .grid-table { min-width: 100%; }
   .cell { border-right: none; }
   .desk-only { display: none; }
   .mobile-only-meta { display: flex; }
 
-  /* Sticky — закруглённые углы снизу */
   .sticky-nav-group { border-radius: 0 0 18px 18px; }
-
-  /* Кнопки */
   .main-ctrl-btn { padding: 9px 14px; font-size: 11px; }
   .ctrl-inner-flex { padding-bottom: 10px; }
 
-  /* Таблица — меньше высота строк, ближе к номеру */
-  .grid-layout-def.head { grid-template-columns: 34px 1fr calc(var(--p-cols) * 40px); }
+  /* Мобильная сетка */
+  .grid-layout-def.head { grid-template-columns: 34px 1fr calc(var(--p-cols) * 40px); padding: 2px 4px; }
   .grid-layout-def:not(.head) {
     grid-template-columns: 34px 1fr calc(var(--p-cols) * 40px);
     padding: 3px; border-radius: 12px;
@@ -939,30 +1055,27 @@ onUnmounted(() => {
   .id-sq-top { font-size: 11px; margin-bottom: 1px; }
   .status-symbol { font-size: 12px; margin-top: 0; }
 
-  /* Наименование ближе к ID и к ценам */
-  .inner-pill-main { padding: 5px 3px 5px 7px; border-radius: 9px; }
+  .inner-pill-main { padding: 5px 3px 5px 7px; border-radius: 9px; min-height: 0; }
   .scent-title { font-size: 12px; line-height: 1.15; }
   .brand-code { font-size: 8px; }
   .mobile-only-meta { margin-top: 4px; gap: 3px; }
   .inner-pill-badge-mobile { padding: 3px 5px; font-size: 8px; border-radius: 5px; }
 
-  /* Цены */
+  /* Цены на мобиле — такая же высота, что у плашки имени */
   .price-container { width: calc(var(--p-cols) * 40px); display: flex; align-items: stretch; }
-  .price-section { gap: 2px; padding: 0; }
-  .inner-pill-price { padding: 5px 2px; font-size: 11px; border-radius: 8px; height: auto; }
+  .price-section { gap: 2px; padding: 0; align-items: stretch; }
+  .inner-pill-price { padding: 0 2px; font-size: 11px; border-radius: 8px; min-height: 0; height: auto; flex: 1; }
 
-  /* Шапка */
-  .head-p .p-col { padding: 6px 2px; font-size: 8px; }
   .search-cell-dark { padding: 3px !important; }
-  .header-search-container { border-radius: 8px; }
+  .header-search-container { border-radius: 8px; min-height: 36px; }
   .header-search-container .search-icon { left: 8px; width: 11px; height: 11px; }
   .header-search-input { padding: 7px 20px 7px 24px; font-size: 9px; }
   .header-search-container .clear-search { right: 6px; }
+  .head-p { padding: 2px; }
 
-  .aura-text { font-size: 10px; letter-spacing: 2px; }
-  .container { padding-right: 28px; }
+  .aura-text { font-size: 9px; letter-spacing: 2px; }
+  .container { padding-right: 26px; }
 
   .bahur-popup-menu { width: calc(100vw - 30px) !important; max-width: 300px; left: 50% !important; right: auto !important; transform: translateX(-50%) !important; }
-  .custom-scroll-minimal::-webkit-scrollbar { width: 1px !important; }
 }
 </style>
