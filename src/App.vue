@@ -4,13 +4,14 @@
       
       <header class="header-manifest">
         <div class="header-inner">
-           <button @click="showDash = !showDash" class="text-header-btn">Статистика</button>
-           
-           <div class="logo-box">
-             <h1 class="logo-text kollektif-font">BAHUR</h1>
-           </div>
+           <button @click="showDash = !showDash" class="header-pill-btn">
+             <span class="rus-font" style="letter-spacing: 0.5px;">СТАТИСТИКА</span>
+             <svg :class="['h-icon', { 'closed-arrow': !showDash }]" viewBox="0 0 24 24"><path fill="currentColor" d="M13,9H18.5L13,3.5V9M6,2H14L20,8V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V4C4,2.89 4.89,2 6,2M7,20H9V14H7V20M11,20H13V12H11V20M15,20H17V16H15V20Z" /></svg>
+           </button>
 
-           <button @click="isDark = !isDark" class="text-header-btn">Свет и Тьма</button>
+           <button @click="isDark = !isDark" class="header-pill-btn">
+             <span class="rus-font" style="letter-spacing: 0.5px;">{{ isDark ? 'СВЕТ' : 'ТЬМА' }}</span>
+           </button>
         </div>
       </header>
 
@@ -207,22 +208,17 @@
                     </button>
                     <transition name="pop">
                       <div v-if="showNewMenu" class="bahur-popup-menu center-mode">
-                         <div class="status-btn-group">
-                           <button @click="filterPlus = !filterPlus" :class="['status-btn', { active: filterPlus }]">
-                             <span class="s-icon mono">+</span>
-                             <span class="s-text rus-font">Новинки</span>
-                           </button>
-                           <button @click="filterStar = !filterStar" :class="['status-btn', { active: filterStar }]">
-                             <span class="s-icon mono">*</span>
-                             <span class="s-text rus-font">Новые версии</span>
-                           </button>
+                         <div class="toggle-row" @click="filterPlus = !filterPlus">
+                           <span class="toggle-label rus-font">Новинки (+)</span>
+                           <div :class="['bw-toggle', { 'on': filterPlus }]"><div class="bw-thumb"></div></div>
                          </div>
-                         <div class="menu-divider"></div>
+                         <div class="toggle-row" @click="filterStar = !filterStar">
+                           <span class="toggle-label rus-font">Новые версии (*)</span>
+                           <div :class="['bw-toggle', { 'on': filterStar }]"><div class="bw-thumb"></div></div>
+                         </div>
                          <div class="toggle-row" @click="showOut = !showOut">
                            <span class="toggle-label rus-font">Наличие в таблице</span>
-                           <div :class="['bw-toggle', { 'on': showOut }]">
-                             <div class="bw-thumb"></div>
-                           </div>
+                           <div :class="['bw-toggle', { 'on': showOut }]"><div class="bw-thumb"></div></div>
                          </div>
                       </div>
                     </transition>
@@ -300,11 +296,8 @@
               <div class="row-visual-layer">
                 <div class="cell id-zone-square center">
                   <div class="id-sq-top mono">{{ p.id }}</div>
-                  <div class="lamp-container">
-                     <span v-if="p.hasPlus" class="mini-icon green">+</span>
-                     <span v-if="p.hasStar" class="mini-icon blue">*</span>
-                     <span v-if="p.isOut" class="mini-icon red">-</span>
-                  </div>
+                  <div v-if="p.isNew" class="badge-new-box desk-only-new">NEW</div>
+                  <div :class="['lamp-sq', p.isOut ? 'red' : (p.isNew ? 'green' : 'standard')]"></div>
                 </div>
                 <div class="cell name border-right-mobile">
                   <div class="scent-info">
@@ -314,6 +307,7 @@
                       <span class="m-square-matte">{{ getSex(p.gender) }}</span> 
                       <span class="m-square-matte">{{ p.factory }}</span> 
                       <span class="m-square-matte">{{ p.quality }}</span>
+                      <span v-if="p.isNew" class="m-square-matte new-mobile">NEW</span>
                     </div>
                   </div>
                 </div>
@@ -350,7 +344,7 @@ const isDark = ref(true);
 const loading = ref(true); 
 const errorMsg = ref(null);
 const products = ref([]); 
-const showDash = ref(false); // Скрыто по умолчанию
+const showDash = ref(false);
 
 const statsMode = ref('6m'); 
 const toggleStatsMode = () => statsMode.value = statsMode.value === '6m' ? 'all' : '6m';
@@ -365,11 +359,10 @@ const showAromaMenu = ref(false);
 
 const showFilters = ref(false);
 
-// Новые стейты для меню "Статус/Новинки"
 const showNewMenu = ref(false);
 const filterPlus = ref(false);
 const filterStar = ref(false);
-const showOut = ref(true); // Показывать нет в наличии (по умолчанию true)
+const showOut = ref(true); 
 
 const activeGender = ref('ВСЕ'); 
 const activeQuality = ref('ВСЕ'); 
@@ -436,7 +429,6 @@ const aromaLabel = computed(() => {
 
 const priceSubGridStyle = computed(() => ({ gridTemplateColumns: `repeat(${activePriceCount.value}, 1fr)` }));
 
-// SCROLL WIDGET LOGIC
 const scrollTrack = ref(null);
 const thumbTop = ref(0);
 const thumbHeight = ref(10); 
@@ -460,13 +452,10 @@ const handleDrag = (clientY) => {
   const rect = track.getBoundingClientRect();
   const relY = clientY - rect.top;
   const trackH = rect.height;
-  
   const percent = Math.min(Math.max(relY / trackH, 0), 1);
-  
   const docH = document.documentElement.scrollHeight;
   const winH = window.innerHeight;
   const targetScroll = percent * (docH - winH);
-  
   window.scrollTo({ top: targetScroll, behavior: 'auto' });
 }
 
@@ -501,12 +490,14 @@ const parseCSV = (data) => {
       let fG = (g === 'm' || g === 'м' || g.includes('муж')) ? 'm' : (g === 'w' || g === 'ж' || g.includes('жен')) ? 'w' : (g === 'y' || g === 'у' || g.includes('уни')) ? 'y' : '';
       
       const statusCol = col[10] ? col[10].trim() : '';
+      const rawNote = (col[11] || '').toUpperCase();
       const brand = col[2] || '';
       const name = col[3] || '';
       
       const hasPlus = statusCol.includes('+'); 
       const hasStar = statusCol.includes('*');
       const hasMinus = statusCol.includes('-'); 
+      const isNew = hasPlus || statusCol.toUpperCase().includes('NEW') || rawNote.includes('NEW') || brand.toUpperCase().includes('NEW') || name.toUpperCase().includes('NEW');
 
       const sales6m = parseFloat(col[11]) || 0;
       const salesAll = parseFloat(col[12]) || 0;
@@ -515,7 +506,7 @@ const parseCSV = (data) => {
         id: col[0], link: col[1] || '', brand: brand, name: name, gender: fG, 
         factory: col[5] || '', quality: col[6] || '', p50: parseInt(col[7]) || 0, 
         p500: parseInt(col[8]) || 0, p1000: parseInt(col[9]) || 0, 
-        status: statusCol, hasPlus, hasStar, isOut: hasMinus, sales6m, salesAll 
+        status: statusCol, isNew, hasPlus, hasStar, isOut: hasMinus, sales6m, salesAll 
       }
     }).filter(p => p !== null);
   } catch(err) { console.error("CSV Parse Error", err); return []; }
@@ -558,7 +549,6 @@ const filteredProducts = computed(() => {
     const matchesQuality = activeQuality.value === 'ВСЕ' || p.quality === activeQuality.value;
     const matchesFactory = activeFactory.value === 'ВСЕ' || p.factory.toUpperCase().includes(activeFactory.value);
     
-    // Новая логика фильтрации статусов
     if (filterPlus.value && !p.hasPlus) return false;
     if (filterStar.value && !p.hasStar) return false;
     if (!showOut.value && p.isOut) return false;
@@ -640,7 +630,7 @@ onUnmounted(() => {
 
 /* GLOBALS & THEME */
 .bahur-terminal {
-  --bg: #000; --text: #fff; --border: rgba(255,255,255,0.12); --dim: #888; 
+  --bg: #000; --text: #fff; --border: rgba(255,255,255,0.08); --dim: #888; 
   --panel-bg: rgba(0,0,0,0.95); --aura-bg: rgba(0,0,0,0.4); --aura-text: #fff;
   --sticky-bg: rgba(0,0,0,0.9); 
   --seg-bg: #1c1c1e; --seg-active: #ffffff; --seg-txt: #8e8e93; --seg-txt-active: #000000;
@@ -649,13 +639,13 @@ onUnmounted(() => {
   touch-action: pan-y;
 }
 .noir { 
-  --bg: #000; --text: #fff; --aura-bg: rgba(0,0,0,0.4); 
+  --bg: #000; --text: #fff; --aura-bg: rgba(0,0,0,0.4); --border: rgba(255,255,255,0.08);
   --sticky-bg: rgba(0,0,0,0.9); --panel-bg: rgba(0,0,0,0.95);
   --seg-bg: #1c1c1e; --seg-active: #fff; --seg-txt: #8e8e93; --seg-txt-active: #000;
   --btn-ctrl-bg: rgba(255,255,255,0.08);
 }
 .bahur-terminal:not(.noir) { 
-  --bg: #ffffff; --text: #000; --border: rgba(0,0,0,0.15); --dim: #666; 
+  --bg: #ffffff; --text: #000; --border: rgba(0,0,0,0.1); --dim: #666; 
   --panel-bg: rgba(255,255,255,0.98); --aura-bg: rgba(255,255,255,0.5); --aura-text: #000;
   --sticky-bg: rgba(255,255,255,0.95); --seg-bg: #e5e5ea; --seg-active: #000000; --seg-txt: #8e8e93; --seg-txt-active: #ffffff;
   --btn-ctrl-bg: #f2f2f7; 
@@ -699,17 +689,17 @@ onUnmounted(() => {
 .scroll-widget-thumb { position: absolute; width: 6px; background: var(--text); border-radius: 3px; box-shadow: 0 0 5px rgba(255,255,255,0.2); transition: opacity 0.2s; }
 .scroll-widget-track::before { content: ''; position: absolute; top: 0; bottom: 0; width: 1px; background: var(--border); }
 
-/* HEADER REDESIGN */
+/* HEADER REDESIGN (ТАБЛЕТОЧКИ) */
 .header-manifest { margin-bottom: 25px; }
 .header-inner { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
-.logo-box { text-align: center; flex-grow: 1; }
-.logo-text { font-size: 28px; font-weight: 700; margin: 0; letter-spacing: 0.15em; line-height: 1; }
-.text-header-btn {
-  background: transparent; border: none; color: var(--dim);
-  font-size: 11px; font-weight: 600; cursor: pointer; transition: 0.2s;
-  text-transform: uppercase; letter-spacing: 1px; font-family: 'Helvetica Neue', sans-serif;
+.header-pill-btn {
+  background: transparent; border: 1px solid var(--border); color: var(--text);
+  border-radius: 20px; padding: 6px 12px; font-size: 10px; font-weight: 600; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 5px; transition: 0.2s;
 }
-.text-header-btn:hover { color: var(--text); }
+.header-pill-btn:hover { background: rgba(255,255,255,0.05); }
+.h-icon { width: 16px; height: 16px; }
+.closed-arrow { transform: rotate(180deg); transition: 0.3s; }
 
 /* STICKY NAV */
 .sticky-nav-group { position: sticky; top: 0; z-index: 500; background: var(--sticky-bg); backdrop-filter: blur(15px); border-bottom: 1px solid var(--border); margin-bottom: 0; }
@@ -739,34 +729,21 @@ onUnmounted(() => {
 .bahur-popup-menu { position: absolute; top: calc(100% + 8px); background: var(--panel-bg); border: 1px solid var(--border); border-radius: 16px; padding: 15px; box-shadow: 0 20px 40px rgba(0,0,0,0.8); display: flex; flex-direction: column; gap: 10px; z-index: 999; }
 .bahur-popup-menu.list-mode { left: 0; width: 240px; }
 .bahur-popup-menu.filter-mode { right: 0; width: 220px; }
-.bahur-popup-menu.center-mode { left: 50%; transform: translateX(-50%); width: 220px; align-items: center; }
+.bahur-popup-menu.center-mode { left: 50%; transform: translateX(-50%); width: 200px; }
 
-/* СТАТУСЫ (НОВИНКИ) МЕНЮ */
-.status-btn-group { display: flex; flex-direction: column; gap: 8px; width: 100%; }
-.status-btn { 
-  background: transparent; border: 1px solid var(--border); color: var(--text);
-  padding: 10px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 10px;
-  transition: 0.2s; justify-content: center;
-}
-.status-btn:hover { background: rgba(255,255,255,0.05); }
-.status-btn.active { background: var(--text); color: var(--bg); font-weight: 700; }
-.s-icon { font-size: 14px; font-weight: bold; width: 15px; text-align: center; }
-.s-text { font-size: 11px; }
-
-.menu-divider { width: 100%; height: 1px; background: var(--border); margin: 5px 0; }
-
-.toggle-row { display: flex; justify-content: space-between; align-items: center; width: 100%; cursor: pointer; padding: 5px 0; }
-.toggle-label { font-size: 10px; color: var(--text); font-weight: 600; }
+/* ТУМБЛЕРЫ БЕЗ ИЗМЕНЕНИЯ ЦВЕТА ФОНА */
+.toggle-row { display: flex; justify-content: space-between; align-items: center; width: 100%; cursor: pointer; padding: 8px 0; border-bottom: 1px solid var(--border); }
+.toggle-row:last-child { border-bottom: none; }
+.toggle-label { font-size: 11px; color: var(--text); font-weight: 600; }
 .bw-toggle { 
-  width: 36px; height: 20px; border: 1px solid var(--text); border-radius: 20px; 
+  width: 36px; height: 20px; border: 1px solid var(--border); border-radius: 20px; 
   position: relative; transition: 0.3s; background: transparent; 
 }
-.bw-toggle.on { background: var(--text); }
 .bw-thumb {
   width: 14px; height: 14px; background: var(--text); border-radius: 50%;
   position: absolute; left: 2px; top: 2px; transition: 0.3s;
 }
-.bw-toggle.on .bw-thumb { background: var(--bg); transform: translateX(16px); }
+.bw-toggle.on .bw-thumb { transform: translateX(16px); }
 
 /* INPUT & LISTS IN POPUPS */
 .popup-input { width: 100%; background: var(--seg-bg); border: 1px solid var(--border); padding: 10px; border-radius: 8px; color: var(--text); font-size: 12px; outline: none; margin-bottom: 5px; box-sizing: border-box; }
@@ -798,7 +775,7 @@ onUnmounted(() => {
 .pop-enter-active, .pop-leave-active { transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
 .pop-enter-from, .pop-leave-to { opacity: 0; transform: translateY(-10px) scale(0.95); }
 
-/* DASHBOARD (STATISTICS) */
+/* DASHBOARD */
 .dash-collapsible-wrapper { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
 .dash-collapsible-wrapper.open { grid-template-rows: 1fr; margin-bottom: 20px; }
 .dash-inner-content { overflow: hidden; }
@@ -844,40 +821,55 @@ onUnmounted(() => {
 .badge-mini { border: 1px solid var(--border); padding: 1px 3px; font-size: 8px; color: var(--text); border-radius: 2px; }
 .top-val { font-weight: 700; margin-left: 4px; min-width: 25px; text-align: right; }
 
-/* TABLE GRID */
-.grid-table { display: flex; flex-direction: column; width: 100%; min-width: 1000px; border: 1px solid var(--border); border-top: none; }
-.grid-layout-def { 
+/* TABLE HEADER */
+.grid-layout-def.head { 
   display: grid; 
   grid-template-columns: 60px 1fr 80px 120px 120px calc(var(--p-cols) * 80px); 
-  align-items: stretch; box-sizing: border-box; width: 100%; 
+  align-items: stretch; box-sizing: border-box; width: 100%;
+  border: none; background: transparent; border-bottom: 1px solid var(--border); 
 }
-.grid-layout-def.head { border-bottom: none; background: transparent; border-top: 1px solid var(--border); border-left: 1px solid var(--border); border-right: 1px solid var(--border);}
-.grid-layout-def:not(.head) { background: var(--bg); border-bottom: 1px solid var(--border); position: relative; overflow: hidden; }
+
+/* CARDS TABLE (Flex Column) */
+.grid-table { 
+  display: flex; flex-direction: column; gap: 4px; /* Отступы между карточками */
+  width: 100%; min-width: 1000px; border: none; padding-top: 5px;
+}
+.grid-layout-def:not(.head) { 
+  display: grid; 
+  grid-template-columns: 60px 1fr 80px 120px 120px calc(var(--p-cols) * 80px); 
+  align-items: stretch; box-sizing: border-box; width: 100%;
+  background: var(--bg); border: 1px solid var(--border); border-radius: 8px; /* Карточка скруглена */
+  position: relative; overflow: hidden; 
+}
 .cell { 
-  height: auto; display: flex; align-items: center; padding: 15px; 
+  height: auto; display: flex; align-items: center; padding: 12px; 
   border-right: 1px solid var(--border); box-sizing: border-box; overflow: hidden; 
 }
 .head-txt { font-size: 8px; font-weight: 700; color: var(--dim); text-transform: uppercase; letter-spacing: 1.5px; }
 .center { justify-content: center; text-align: center; }
 .row-visual-layer { display: contents; }
 .clickable-row { cursor: pointer; transition: 0.3s; }
-.out { opacity: 0.4; } /* Затемнение для отсутствующих */
+.out { opacity: 0.4; } 
 
-/* ИКОНКИ СТАТУСОВ (+ * -) */
-.lamp-container { display: flex; gap: 3px; margin-top: 5px; justify-content: center; }
-.mini-icon { font-size: 14px; font-weight: bold; line-height: 1; }
-.mini-icon.green { color: #00ff41; text-shadow: 0 0 5px #00ff41; }
-.mini-icon.blue { color: #00aaff; text-shadow: 0 0 5px #00aaff; }
-.mini-icon.red { color: #ff2a2a; text-shadow: 0 0 5px #ff2a2a; }
+/* СТАРЫЙ ДИЗАЙН NEW И ЛАМПОЧЕК */
+.badge-new-box { background: var(--text); color: var(--bg); font-size: 8px; font-weight: 800; padding: 1px 3px; border-radius: 2px; margin: 2px auto 0; display: inline-block; }
+.desk-only-new { display: inline-block; }
+.lamp-sq { width: 14px; height: 3px; margin: 0 auto; border-radius: 1px; transition: 0.3s; }
+.lamp-sq.green { background: #00ff41; box-shadow: 0 0 8px #00ff41, 0 0 4px #00ff41; opacity: 1; }
+.lamp-sq.red { background: #ff2a2a; box-shadow: 0 0 8px #ff2a2a, 0 0 4px #ff2a2a; opacity: 1; }
+.lamp-sq.standard { background: var(--text); box-shadow: 0 0 8px var(--text), 0 0 3px var(--text); opacity: 1; }
 
 .badge-square-matte { font-size: 9px; font-weight: 700; border: 1px solid var(--border); padding: 5px 12px; letter-spacing: 1px; text-transform: uppercase; margin: 0 auto; color: var(--text); opacity: 0.8; font-family: 'Kollektif', sans-serif;}
 .m-square-matte { font-size: 8px; font-weight: 700; border: 1px solid var(--border); padding: 2px 6px; opacity: 0.7; text-transform: uppercase; }
-.id-zone-square { flex-direction: column; gap: 0px; justify-content: center; padding: 8px 0; }
+.new-mobile { display: block; background: var(--text); color: var(--bg); border: none; font-weight: 900; }
+
+.id-zone-square { flex-direction: column; gap: 5px; justify-content: center; padding: 8px 0; }
 .id-sq-top { font-size: 14px; font-weight: 900; color: var(--dim); }
 .scent-info { width: 100%; padding-left: 10px; }
 .brand-code { font-size: 10px; font-weight: 700; opacity: 0.5; display: block; text-transform: uppercase; letter-spacing: 1px; }
 .scent-title { font-size: 17px; font-weight: 500; line-height: 1.2; letter-spacing: 0.5px; }
 .mobile-only-meta { display: none; margin-top: 8px; gap: 5px; align-items: center; }
+
 .price-container { width: calc(var(--p-cols) * 80px); }
 .price-section { display: grid; height: 100%; width: 100%; align-items: stretch; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
 .p-col { text-align: center; font-size: 15px; display: flex; align-items: center; justify-content: center; box-sizing: border-box; }
@@ -896,13 +888,16 @@ onUnmounted(() => {
   .cell { border-right: none; }
   .desk-only { display: none; }
   .mobile-only-meta { display: flex; }
-  .grid-layout-def { grid-template-columns: 40px 1fr calc(var(--p-cols) * 55px); border-bottom: 1px solid var(--border); }
-  .grid-layout-def.head { border-top: none; border-left: none; border-right: none;}
+  
+  .grid-layout-def.head { grid-template-columns: 40px 1fr calc(var(--p-cols) * 55px); }
+  .grid-layout-def:not(.head) { grid-template-columns: 40px 1fr calc(var(--p-cols) * 55px); }
+  
   .id-zone-square { padding: 2px 0 !important; align-items: center; justify-content: flex-start; padding-top: 15px !important; }
   .id-sq-top { font-size: 11px; margin-bottom: 2px; }
   .border-right-mobile { border-right: 1px solid var(--border) !important; padding-right: 5px; }
   .scent-info { padding-left: 2px; }
   .scent-title { font-size: 14px; }
+  .lamp-sq { width: 6px; height: 6px; border-radius: 50%; }
   
   .price-container { width: calc(var(--p-cols) * 55px); display: flex; flex-direction: column; }
   .price-section { border-right: none; height: 100%; }
@@ -912,16 +907,15 @@ onUnmounted(() => {
   
   .aura-text { font-size: 9px; letter-spacing: 2px; }
   
-  /* MOBILE CONTROL LAYOUT - 4 Кнопки в ряд */
   .ctrl-wrapper-desktop { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
   .left-group { display: contents; }
   .right-group { display: contents; }
-  .control-item { min-width: 0; width: 100%; position: static; /* Для центрирования попапов на мобилке */ }
+  .control-item { min-width: 0; width: 100%; position: static; }
   
   .main-ctrl-btn { font-size: 11px; padding: 15px 0; font-weight: 800; border-radius: 12px; }
   .btn-txt-fixed { max-width: 65px; }
+  .desk-only-new { display: none; }
   
-  /* Фикс попапов на мобилке, чтобы не вылезали за экран */
   .bahur-popup-menu { width: calc(100vw - 30px) !important; max-width: 300px; left: 50% !important; right: auto !important; transform: translateX(-50%) !important; }
   .custom-scroll-minimal::-webkit-scrollbar { width: 1px !important; }
   .container { padding-right: 35px; }
