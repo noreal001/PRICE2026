@@ -667,16 +667,11 @@ onUnmounted(() => {
 .header-pill-btn:hover { background: var(--btn-ctrl-bg); }
 
 /* ─── STICKY NAV ──────────────────────────────────── */
-/* 
-   ВАЖНО: нет overflow:hidden чтобы popup-меню вылазили за пределы
-   Скругление только снизу. Линия border-bottom не нужна — используем box-shadow
-*/
 .sticky-nav-group {
   position: sticky; top: 0; z-index: 500;
   background: var(--sticky-bg);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  /* только нижняя тень — без border */
   box-shadow: 0 6px 30px rgba(0,0,0,0.3), 0 1px 0 var(--border);
   border-radius: 0 0 22px 22px;
   /* НЕТ overflow:hidden — иначе popup обрезаются */
@@ -697,7 +692,8 @@ onUnmounted(() => {
 }
 
 /* ─── КНОПКИ ────────────────────────────────────────── */
-.control-item { position: relative; flex-shrink: 0; }
+/* isolation: isolate создаёт stacking context — popup вылазят поверх overlay */
+.control-item { position: relative; flex-shrink: 0; isolation: isolate; }
 .main-ctrl-btn { 
   background: var(--btn-ctrl-bg); 
   border: 1px solid var(--btn-ctrl-border);
@@ -706,7 +702,7 @@ onUnmounted(() => {
   font-size: 11px; font-weight: 700; cursor: pointer; 
   display: flex; align-items: center; justify-content: center; gap: 6px;
   transition: filter 0.15s; white-space: nowrap;
-  position: relative; z-index: 10;
+  position: relative; z-index: 510;
 }
 .main-ctrl-btn:hover { filter: brightness(1.25); }
 .main-ctrl-btn.active-mode { background: var(--text); color: var(--bg); border-color: transparent; }
@@ -714,8 +710,8 @@ onUnmounted(() => {
 .btn-txt-fixed { max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .pill-arrow { width: 10px; height: 10px; opacity: 0.5; flex-shrink: 0; }
 
-/* click-overlay вынесен ЗА sticky чтобы не блокировать кнопки */
-.click-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 499; background: transparent; }
+/* click-overlay — НИЖЕ кнопок sticky (499 → 490) */
+.click-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 490; background: transparent; }
 
 /* ─── POPUP MENUS ─────────────────────────────────── */
 .bahur-popup-menu {
@@ -724,7 +720,7 @@ onUnmounted(() => {
   border-radius: 16px; padding: 15px;
   box-shadow: 0 20px 60px rgba(0,0,0,0.7);
   display: flex; flex-direction: column; gap: 10px;
-  z-index: 1000; /* выше sticky */
+  z-index: 600; /* выше sticky (500) и overlay (490) */
 }
 .bahur-popup-menu.list-mode { left: 0; width: 240px; }
 .bahur-popup-menu.filter-mode { left: 0; width: 220px; }
@@ -854,10 +850,10 @@ onUnmounted(() => {
 .top-val { font-weight: 800; min-width: 28px; text-align: right; font-size: 10px; }
 
 /* ─── ШАПКА ТАБЛИЦЫ ──────────────────────────────── */
-/* Веб: сужаем Пол/Фабрика/Качество, даём больше имени */
+/* Веб: Пол/Фабрика/Качество = 72px каждый (как самый широкий МУЖ/ЖЕН/УНИ), цены = 72px */
 .grid-layout-def.head { 
   display: grid; 
-  grid-template-columns: 60px 1fr 70px 100px 90px calc(var(--p-cols) * 75px);
+  grid-template-columns: 52px 1fr 72px 72px 72px calc(var(--p-cols) * 72px);
   align-items: stretch; box-sizing: border-box; width: 100%;
   border: none; background: transparent;
   padding: 4px 6px;
@@ -868,41 +864,47 @@ onUnmounted(() => {
   display: flex; align-items: center; width: 100%; height: 100%;
   background: var(--search-pill-bg);
   border-radius: 12px; position: relative; overflow: hidden;
-  min-height: 42px;
+  min-height: 56px;
 }
-.header-search-container .search-icon { position: absolute; left: 12px; width: 13px; height: 13px; color: var(--dim); pointer-events: none; }
+.header-search-container .search-icon { position: absolute; left: 12px; width: 14px; height: 14px; color: var(--dim); pointer-events: none; }
 .header-search-input {
   width: 100%; height: 100%; background: transparent; border: none;
-  padding: 10px 30px 10px 32px; outline: none; color: var(--text);
-  font-size: 10px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase;
+  padding: 10px 30px 10px 34px; outline: none; color: var(--text);
+  font-size: 11px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase;
   font-family: 'Kollektif', 'Nunito', sans-serif;
 }
 .header-search-input::placeholder { color: var(--dim); font-weight: 800; }
 .header-search-container .clear-search { position: absolute; right: 10px; background: transparent; border: none; color: var(--dim); cursor: pointer; font-size: 11px; font-weight: bold; }
 
 /* Заголовки столбцов с плашкой */
-.head-meta-cell { padding: 4px !important; }
+.head-meta-cell { padding: 4px !important; display: flex !important; align-items: stretch !important; }
 .head-meta-pill {
-  display: inline-block;
+  display: flex; align-items: center; justify-content: center;
+  width: 100%; flex: 1;
+  height: 48px;
   background: var(--inner-pill-meta);
   border-radius: 10px;
-  padding: 6px 10px;
+  padding: 0 8px;
   font-size: 9px; font-weight: 800;
   color: var(--dim);
   letter-spacing: 1px; text-transform: uppercase;
   white-space: nowrap;
   font-family: 'Kollektif', 'Nunito', sans-serif;
+  box-sizing: border-box;
 }
 .head-price-pill {
-  display: inline-block;
+  display: flex; align-items: center; justify-content: center;
+  width: 100%; flex: 1;
+  height: 64px;
   background: var(--inner-pill-dark);
   border-radius: 10px;
-  padding: 6px 10px;
+  padding: 0 4px;
   font-size: 9px; font-weight: 800;
   color: var(--dim);
   letter-spacing: 1px; text-transform: uppercase;
   white-space: nowrap;
   font-family: 'JetBrains Mono', monospace;
+  box-sizing: border-box;
 }
 
 /* ─── ТАБЛИЦА ────────────────────────────────────────── */
@@ -910,7 +912,7 @@ onUnmounted(() => {
 
 .grid-layout-def:not(.head) { 
   display: grid; 
-  grid-template-columns: 60px 1fr 70px 100px 90px calc(var(--p-cols) * 75px);
+  grid-template-columns: 52px 1fr 72px 72px 72px calc(var(--p-cols) * 72px);
   align-items: stretch; box-sizing: border-box; width: 100%;
   background: var(--card-bg); 
   border: 1px solid var(--card-border); border-radius: 20px; 
@@ -939,17 +941,18 @@ onUnmounted(() => {
   background: var(--inner-pill-name);
   border-radius: 16px; padding: 10px 16px;
   width: 100%; display: flex; flex-direction: column; justify-content: center;
-  height: 100%; box-sizing: border-box;
+  min-height: 64px; box-sizing: border-box;
 }
 
-/* Пол/Фабрика/Качество — одна высота с именем */
+/* Пол/Фабрика/Качество — фиксированная высота 48px */
 .inner-pill-badge {
   background: var(--inner-pill-meta);
-  border-radius: 14px; padding: 0 12px;
-  font-weight: 800; font-size: 11px;
+  border-radius: 14px; padding: 0 8px;
+  font-weight: 800; font-size: 10px;
   color: var(--text);
   width: 100%; text-align: center;
-  height: 100%; display: flex; align-items: center; justify-content: center;
+  height: 48px; min-height: 48px;
+  display: flex; align-items: center; justify-content: center;
   box-sizing: border-box;
 }
 .inner-pill-badge.meta-badge { background: var(--inner-pill-meta); }
@@ -962,14 +965,14 @@ onUnmounted(() => {
   display: flex; align-items: center; justify-content: center;
 }
 
-/* Цены — одна высота */
+/* Цены — выше чем мета (64px) */
 .inner-pill-price {
   background: var(--inner-pill-dark);
-  border-radius: 14px; padding: 0 6px;
+  border-radius: 14px; padding: 0 4px;
   font-weight: 800; font-size: 13px;
   display: flex; align-items: center; justify-content: center;
   width: 100%; box-sizing: border-box;
-  height: 100%; min-height: 44px;
+  height: 64px; min-height: 64px;
 }
 
 /* ─── СТАТУСЫ ─────────────────────────────────────────── */
@@ -985,10 +988,10 @@ onUnmounted(() => {
 .scent-title { font-weight: 700; font-size: 17px; line-height: 1.2; letter-spacing: 0.3px; }
 .mobile-only-meta { display: none; margin-top: 7px; gap: 4px; align-items: center; }
 
-.price-container { width: calc(var(--p-cols) * 75px); display: flex; align-items: stretch; }
+.price-container { width: calc(var(--p-cols) * 72px); display: flex; align-items: stretch; }
 .price-section { display: grid; gap: 6px; width: 100%; padding: 0 4px; }
-.head-p { padding: 4px; }
-.head-p .p-col { display: flex; align-items: center; justify-content: center; }
+.head-p { padding: 4px; display: grid; align-items: stretch; }
+.head-p .p-col { display: flex; align-items: stretch; justify-content: center; }
 
 /* ─── LIQUID EYE HOVER ───────────────────────────────── */
 /* SVG-дисторсия на blur+turbulence — живой "глаз" */
@@ -1040,14 +1043,41 @@ onUnmounted(() => {
   .desk-only { display: none; }
   .mobile-only-meta { display: flex; }
 
-  .sticky-nav-group { border-radius: 0 0 18px 18px; }
-  .main-ctrl-btn { padding: 9px 14px; font-size: 11px; }
-  .ctrl-inner-flex { padding-bottom: 10px; }
+  /* Скрыть кастомный скролл-ползунок на мобиле */
+  .scroll-widget-track { display: none !important; }
 
-  /* Мобильная сетка */
-  .grid-layout-def.head { grid-template-columns: 34px 1fr calc(var(--p-cols) * 40px); padding: 2px 4px; }
+  /* Sticky — на всю ширину экрана, без отступов container */
+  .sticky-nav-group {
+    border-radius: 0 0 18px 18px;
+    margin-left: -15px;
+    margin-right: -15px;
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+
+  /* Кнопки меню — равная ширина и высота, заполняют строку */
+  .ctrl-scroll-row { overflow-x: visible; }
+  .ctrl-inner-flex {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    padding: 0 0 10px;
+    min-width: 0;
+    width: 100%;
+  }
+  .control-item { flex-shrink: unset; width: 100%; }
+  .main-ctrl-btn {
+    width: 100%;
+    padding: 10px 8px;
+    font-size: 11px;
+    justify-content: center;
+  }
+  .pill-arrow { display: none; }
+
+  /* Мобильная сетка таблицы */
+  .grid-layout-def.head { grid-template-columns: 34px 1fr calc(var(--p-cols) * 38px); padding: 2px 4px; }
   .grid-layout-def:not(.head) {
-    grid-template-columns: 34px 1fr calc(var(--p-cols) * 40px);
+    grid-template-columns: 34px 1fr calc(var(--p-cols) * 38px);
     padding: 3px; border-radius: 12px;
   }
 
@@ -1061,11 +1091,12 @@ onUnmounted(() => {
   .mobile-only-meta { margin-top: 4px; gap: 3px; }
   .inner-pill-badge-mobile { padding: 3px 5px; font-size: 8px; border-radius: 5px; }
 
-  /* Цены на мобиле — такая же высота, что у плашки имени */
-  .price-container { width: calc(var(--p-cols) * 40px); display: flex; align-items: stretch; }
+  /* Цены на мобиле */
+  .price-container { width: calc(var(--p-cols) * 38px); display: flex; align-items: stretch; }
   .price-section { gap: 2px; padding: 0; align-items: stretch; }
-  .inner-pill-price { padding: 0 2px; font-size: 11px; border-radius: 8px; min-height: 0; height: auto; flex: 1; }
+  .inner-pill-price { padding: 0 2px; font-size: 11px; border-radius: 8px; height: auto; min-height: 0; flex: 1; }
 
+  /* Поиск на мобиле */
   .search-cell-dark { padding: 3px !important; }
   .header-search-container { border-radius: 8px; min-height: 36px; }
   .header-search-container .search-icon { left: 8px; width: 11px; height: 11px; }
@@ -1074,8 +1105,18 @@ onUnmounted(() => {
   .head-p { padding: 2px; }
 
   .aura-text { font-size: 9px; letter-spacing: 2px; }
-  .container { padding-right: 26px; }
 
-  .bahur-popup-menu { width: calc(100vw - 30px) !important; max-width: 300px; left: 50% !important; right: auto !important; transform: translateX(-50%) !important; }
+  /* Popup меню на мобиле — по центру */
+  .bahur-popup-menu {
+    position: fixed !important;
+    top: auto !important;
+    bottom: 20px !important;
+    left: 15px !important;
+    right: 15px !important;
+    width: auto !important;
+    max-width: none !important;
+    transform: none !important;
+    z-index: 2000 !important;
+  }
 }
 </style>
