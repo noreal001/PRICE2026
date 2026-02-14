@@ -5,12 +5,12 @@
       <header class="header-manifest">
         <div class="header-inner">
            <button @click="showDash = !showDash" class="header-pill-btn">
-             <span class="rus-font" style="letter-spacing: 0.5px;">СТАТИСТИКА</span>
+             <span class="main-font" style="letter-spacing: 0.5px;">СТАТИСТИКА</span>
              <svg :class="['h-icon', { 'closed-arrow': !showDash }]" viewBox="0 0 24 24"><path fill="currentColor" d="M13,9H18.5L13,3.5V9M6,2H14L20,8V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V4C4,2.89 4.89,2 6,2M7,20H9V14H7V20M11,20H13V12H11V20M15,20H17V16H15V20Z" /></svg>
            </button>
 
            <button @click="isDark = !isDark" class="header-pill-btn">
-             <span class="rus-font" style="letter-spacing: 0.5px;">{{ isDark ? 'СВЕТ' : 'ТЬМА' }}</span>
+             <span class="main-font" style="letter-spacing: 0.5px;">{{ isDark ? 'СВЕТ' : 'ТЬМА' }}</span>
            </button>
         </div>
       </header>
@@ -18,7 +18,7 @@
       <div v-if="loading" class="loading-overlay">
          <div class="diagonal-bg"></div>
          <div class="intro-content">
-            <span class="intro-text kollektif-font">BAHUR</span>
+            <span class="intro-text main-font">BAHUR</span>
          </div>
       </div>
 
@@ -101,7 +101,7 @@
 
                 <div class="stat-card relative-zone span-full">
                   <div class="top-header-center">
-                    <button @click="toggleStatsMode" class="top-switch-btn-subtle rus-font">
+                    <button @click="toggleStatsMode" class="top-switch-btn-subtle main-font">
                        <span class="btn-subtle-label">РЕЙТИНГ:</span> {{ statsMode === '6m' ? '6 МЕС' : 'ВСЕ ВРЕМЯ' }} 
                        <span class="arrow-indicator">⇄</span>
                     </button>
@@ -111,7 +111,7 @@
                      <div v-for="(item, idx) in stats.topListFull" :key="idx" class="top-row-compact">
                         <div class="tr-left-main">
                            <span class="top-num mono">{{ idx + 1 }}.</span>
-                           <span class="top-name kollektif-font" :title="item.name">{{ item.name }}</span>
+                           <span class="top-name main-font" :title="item.name">{{ item.name }}</span>
                         </div>
                         <div class="tr-mid-graph">
                            <div class="mini-bar-track">
@@ -142,27 +142,27 @@
                 <div class="left-group">
                   <div class="control-item relative-zone">
                      <button @click="toggleBrandMenu" :class="['main-ctrl-btn', { 'active-mode': showBrandMenu || selectedBrands.length > 0 }]">
-                        <span class="btn-txt-fixed rus-font ctrl-text-bold">{{ brandLabel }}</span>
+                        <span class="btn-txt-fixed main-font ctrl-text-bold">{{ brandLabel }}</span>
                         <svg class="pill-arrow" viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 8.59L12 13.17L16.59 8.59L18 10L12 16L6 10L7.41 8.59Z"/></svg>
                      </button>
                      <transition name="pop">
                         <div v-if="showBrandMenu" class="bahur-popup-menu list-mode">
                            <div class="search-input-box">
-                              <input v-model="tempBrandInput" type="text" inputmode="search" placeholder="Поиск бренда..." class="popup-input rus-font" />
+                              <input v-model="tempBrandInput" type="text" inputmode="search" placeholder="Поиск бренда..." class="popup-input main-font" />
                            </div>
                            <div class="brands-scroll-area custom-scroll-minimal">
                               <div class="brands-list-vertical">
-                                <button @click="clearBrands" class="brand-row-btn rus-font all-brand-btn">
+                                <button @click="clearBrands" class="brand-row-btn main-font all-brand-btn">
                                   <div class="brand-left-group">
                                      <svg class="circle-check-icon left" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.5 2 2 6.5 2 12S6.5 22 12 22 22 17.5 22 12 17.5 2 12 2M10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" /></svg>
                                      <span>Все</span>
                                   </div>
                                 </button>
-                                <button v-for="b in filteredBrandsDropdown" :key="b" @click="toggleBrandSelection(b)" class="brand-row-btn eng-font brand-font-fix">
+                                <button v-for="b in filteredBrandsDropdown" :key="b" @click="toggleBrandSelection(b)" class="brand-row-btn main-font brand-font-fix">
                                   <div class="brand-left-group"><span class="brand-txt-truncate">{{ b }}</span></div>
                                   <svg v-if="selectedBrands.includes(b)" class="check-status right" viewBox="0 0 24 24"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z" /></svg>
                                 </button>
-                                <div v-if="filteredBrandsDropdown.length === 0" class="no-results rus-font">Нет совпадений</div>
+                                <div v-if="filteredBrandsDropdown.length === 0" class="no-results main-font">Нет совпадений</div>
                               </div>
                            </div>
                         </div>
@@ -171,21 +171,21 @@
                   
                   <div class="control-item relative-zone pos-center-mobile">
                     <button @click="toggleNewMenu" :class="['main-ctrl-btn', { 'active-mode': showNewMenu || filterPlus || filterStar || showOut }]">
-                       <span class="rus-font ctrl-text-bold">Статус</span>
+                       <span class="main-font ctrl-text-bold">Статус</span>
                        <svg class="pill-arrow" viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 8.59L12 13.17L16.59 8.59L18 10L12 16L6 10L7.41 8.59Z"/></svg>
                     </button>
                     <transition name="pop">
                       <div v-if="showNewMenu" class="bahur-popup-menu center-mode">
                          <div class="toggle-row" @click="filterPlus = !filterPlus">
-                           <span class="toggle-label rus-font">Новинки (+)</span>
+                           <span class="toggle-label main-font">Новинки (+)</span>
                            <div :class="['bw-toggle', { 'on': filterPlus }]"><div class="bw-thumb"></div></div>
                          </div>
                          <div class="toggle-row" @click="filterStar = !filterStar">
-                           <span class="toggle-label rus-font">Новые версии (*)</span>
+                           <span class="toggle-label main-font">Новые версии (*)</span>
                            <div :class="['bw-toggle', { 'on': filterStar }]"><div class="bw-thumb"></div></div>
                          </div>
                          <div class="toggle-row" @click="showOut = !showOut">
-                           <span class="toggle-label rus-font">Нет в наличии (-)</span>
+                           <span class="toggle-label main-font">Нет в наличии (-)</span>
                            <div :class="['bw-toggle', { 'on': showOut }]"><div class="bw-thumb"></div></div>
                          </div>
                       </div>
@@ -196,42 +196,42 @@
                 <div class="right-group">
                   <div class="control-item relative-zone">
                     <button @click="toggleFilterMenu" :class="['main-ctrl-btn', { 'active-mode': showFilters }]">
-                      <span class="rus-font ctrl-text-bold">{{ showFilters ? 'Закрыть' : 'Фильтр' }}</span>
+                      <span class="main-font ctrl-text-bold">{{ showFilters ? 'Закрыть' : 'Фильтр' }}</span>
                       <svg class="pill-arrow" viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 8.59L12 13.17L16.59 8.59L18 10L12 16L6 10L7.41 8.59Z"/></svg>
                     </button>
                      <transition name="pop">
                       <div v-if="showFilters" class="bahur-popup-menu filter-mode">
                         <div class="popup-section">
-                          <span class="popup-label rus-font">Пол</span>
+                          <span class="popup-label main-font">Пол</span>
                           <div class="segmented-control">
-                            <button v-for="g in genderOptions" :key="g.val" @click="activeGender = g.val" :class="['segment-btn', { active: activeGender === g.val }]"><span class="rus-font">{{ g.label }}</span></button>
+                            <button v-for="g in genderOptions" :key="g.val" @click="activeGender = g.val" :class="['segment-btn', { active: activeGender === g.val }]"><span class="main-font">{{ g.label }}</span></button>
                           </div>
                         </div>
                         <div class="popup-section">
-                          <span class="popup-label rus-font">Фабрика</span>
+                          <span class="popup-label main-font">Фабрика</span>
                           <div class="segmented-control">
-                            <button v-for="f in factoryOptions" :key="f.val" @click="activeFactory = f.val" :class="['segment-btn', { active: activeFactory === f.val }]"><span class="eng-font">{{ f.label }}</span></button>
+                            <button v-for="f in factoryOptions" :key="f.val" @click="activeFactory = f.val" :class="['segment-btn', { active: activeFactory === f.val }]"><span class="main-font">{{ f.label }}</span></button>
                           </div>
                         </div>
                         <div class="popup-section">
-                          <span class="popup-label rus-font">Качество</span>
+                          <span class="popup-label main-font">Качество</span>
                           <div class="segmented-control">
-                            <button v-for="q in qualityOptions" :key="q.val" @click="activeQuality = q.val" :class="['segment-btn', { active: activeQuality === q.val }]"><span class="eng-font">{{ q.label }}</span></button>
+                            <button v-for="q in qualityOptions" :key="q.val" @click="activeQuality = q.val" :class="['segment-btn', { active: activeQuality === q.val }]"><span class="main-font">{{ q.label }}</span></button>
                           </div>
                         </div>
                         <div class="popup-section">
-                          <span class="popup-label rus-font">Цена</span>
+                          <span class="popup-label main-font">Цена</span>
                           <div class="segmented-control">
                             <button v-for="s in sortOptions" :key="s.val" @click="sortBy = s.val" :class="['segment-btn', { active: sortBy === s.val }]">
-                               <span v-if="s.val === 'id'" class="rus-font">ID</span>
+                               <span v-if="s.val === 'id'" class="main-font">ID</span>
                                <span v-else class="arrows-horn"><b>{{ s.label }}</b>{{ s.val === 'asc' ? '▲' : '▼' }}</span>
                             </button>
                           </div>
                         </div>
                         <div class="popup-section">
-                          <span class="popup-label rus-font">Столбцы</span>
+                          <span class="popup-label main-font">Столбцы</span>
                           <div class="segmented-control">
-                            <button v-for="(val, key) in priceLabels" :key="key" @click="togglePrice(key)" :class="['segment-btn', { active: showPrices[key] }]"><span class="rus-font">{{ val }}</span></button>
+                            <button v-for="(val, key) in priceLabels" :key="key" @click="togglePrice(key)" :class="['segment-btn', { active: showPrices[key] }]"><span class="main-font">{{ val }}</span></button>
                           </div>
                         </div>
                       </div>
@@ -243,17 +243,15 @@
               <div v-if="showFilters || showBrandMenu || showNewMenu" class="click-overlay" @click="closeAllMenus"></div>
             </section>
 
-            <div class="grid-layout-def head">
+            <div class="grid-layout-def head no-click">
               <div class="cell id head-txt center">№</div>
-              
               <div class="cell name name-header" style="padding: 0;">
                  <div class="header-search-container">
                     <svg class="search-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z" /></svg>
-                    <input v-model="searchQuery" type="text" placeholder="АРОМАТЫ / ПОИСК..." class="header-search-input rus-font" />
+                    <input v-model="searchQuery" type="text" placeholder="АРОМАТЫ / ПОИСК..." class="header-search-input main-font" />
                     <button v-if="searchQuery" @click="searchQuery = ''" class="clear-search">✕</button>
                  </div>
               </div>
-
               <div class="cell desk-only head-txt center">Пол</div>
               <div class="cell desk-only head-txt center">Фабрика</div>
               <div class="cell desk-only head-txt center">Качество</div>
@@ -270,6 +268,7 @@
                  :class="['grid-layout-def', 'clickable-row', { 'out': p.isOut, 'simulated-hover': autoHighlightId === p.id }]"
                  @click="p.link && p.link.length > 5 ? open(p.link) : null">
               <div class="row-visual-layer">
+                
                 <div class="cell id-zone-square center">
                   <div class="id-sq-top mono">{{ p.id }}</div>
                   <div class="status-symbol mono">
@@ -278,29 +277,33 @@
                     <span v-else-if="p.hasStar" class="sym-star purple-txt">*</span>
                   </div>
                 </div>
-                <div class="cell name border-right-mobile">
-                  <div class="scent-info">
-                    <span class="brand-code eng-font">{{ p.brand }}</span>
-                    <span class="scent-title">{{ p.name }}</span>
+
+                <div class="cell name">
+                  <div class="inner-pill-main">
+                    <span class="brand-code main-font">{{ p.brand }}</span>
+                    <span class="scent-title main-font">{{ p.name }}</span>
                     <div class="mobile-only-meta">
-                      <span class="m-square-matte">{{ getSex(p.gender) }}</span> 
-                      <span class="m-square-matte">{{ p.factory }}</span> 
-                      <span class="m-square-matte">{{ p.quality }}</span>
+                      <span class="inner-pill-badge-mobile">{{ getSex(p.gender) }}</span> 
+                      <span class="inner-pill-badge-mobile">{{ p.factory }}</span> 
+                      <span class="inner-pill-badge-mobile">{{ p.quality }}</span>
                     </div>
                   </div>
                 </div>
-                <div class="cell desk-only center"><div class="badge-square-matte">{{ getSex(p.gender) }}</div></div>
-                <div class="cell desk-only center"><div class="badge-square-matte">{{ p.factory }}</div></div>
-                <div class="cell desk-only center"><div class="badge-square-matte">{{ p.quality }}</div></div>
+
+                <div class="cell desk-only center"><div class="inner-pill-badge">{{ getSex(p.gender) }}</div></div>
+                <div class="cell desk-only center"><div class="inner-pill-badge">{{ p.factory }}</div></div>
+                <div class="cell desk-only center"><div class="inner-pill-badge">{{ p.quality }}</div></div>
+                
                 <div class="price-container">
-                  <div class="price-section center" :style="priceSubGridStyle">
-                    <div v-if="showPrices.p50" class="p-col line">{{ p.p50 }}₽</div>
-                    <div v-if="showPrices.p500" class="p-col line">{{ p.p500 }}₽</div>
-                    <div v-if="showPrices.p1000" class="p-col bold last">{{ p.p1000 }}₽</div>
+                  <div class="price-section" :style="priceSubGridStyle">
+                    <div v-if="showPrices.p50" class="inner-pill-price">{{ p.p50 }}₽</div>
+                    <div v-if="showPrices.p500" class="inner-pill-price">{{ p.p500 }}₽</div>
+                    <div v-if="showPrices.p1000" class="inner-pill-price bold">{{ p.p1000 }}₽</div>
                   </div>
                 </div>
+
               </div>
-              <div class="row-aura-overlay"><span class="aura-text">ПЕРЕЙТИ К АРОМАТУ</span></div>
+              <div class="row-aura-overlay"><span class="aura-text main-font">ПЕРЕЙТИ К АРОМАТУ</span></div>
             </div>
           </div>
         </div>
@@ -579,27 +582,29 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-/* FONTS */
-@font-face { font-family: 'Kollektif'; src: local('Kollektif'), url('https://fonts.cdnfonts.com/s/16912/Kollektif.woff') format('woff'); font-weight: normal; font-style: normal; }
+/* ИМПОРТ ШРИФТОВ */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100;300;400;700&display=swap');
 
-.eng-font { font-family: 'Kollektif', 'Segoe UI', sans-serif; }
-.kollektif-font { font-family: 'Kollektif', sans-serif; } 
-.rus-font { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
+/* ЗАМЕНА ВСЕХ СТАРЫХ ШРИФТОВ НА NUNITO ДЛЯ ЕДИНОГО UI/UX */
+.main-font, .scent-title, .brand-code { font-family: 'Nunito', sans-serif; }
+.rus-font, .eng-font, .kollektif-font { font-family: 'Nunito', sans-serif; }
 .mono { font-family: 'JetBrains Mono', monospace; }
 
 /* GLOBALS & THEME */
 .bahur-terminal {
   --bg: #19191b; 
   --text: #fff; --border: rgba(255,255,255,0.06); --dim: #888; 
-  --panel-bg: #121214; /* Всплывающие меню теперь темные как карточки */
+  --panel-bg: #121214; 
   --card-bg: #121214; 
   --card-border: rgba(255, 255, 255, 0.03); 
+  --inner-pill-bg: #1f1f22; /* Цвет плашек внутри карточки */
+  --inner-pill-dark: #0a0a0b; /* Еще более темный цвет для цен */
   --aura-bg: rgba(0,0,0,0.4); --aura-text: #fff;
   --sticky-bg: rgba(25, 25, 27, 0.95);
   --seg-bg: #1c1c1e; --seg-active: #ffffff; --seg-txt: #8e8e93; --seg-txt-active: #000000;
   --btn-ctrl-bg: rgba(255,255,255,0.05);
-  min-height: 100vh; background: var(--bg); color: var(--text); font-family: 'Helvetica Neue', sans-serif;
+  min-height: 100vh; background: var(--bg); color: var(--text); font-family: 'Nunito', sans-serif;
   touch-action: pan-y;
 }
 .noir { 
@@ -607,6 +612,7 @@ onUnmounted(() => {
   --text: #fff; --aura-bg: rgba(0,0,0,0.4); --border: rgba(255,255,255,0.06);
   --sticky-bg: rgba(25, 25, 27, 0.95); --panel-bg: #121214; 
   --card-bg: #121214; --card-border: rgba(255, 255, 255, 0.03);
+  --inner-pill-bg: #1f1f22; --inner-pill-dark: #0a0a0b;
   --seg-bg: #1c1c1e; --seg-active: #fff; --seg-txt: #8e8e93; --seg-txt-active: #000;
   --btn-ctrl-bg: rgba(255,255,255,0.08);
 }
@@ -614,6 +620,7 @@ onUnmounted(() => {
   --bg: #f4f4f7; --text: #000; --border: rgba(0,0,0,0.1); --dim: #666; 
   --panel-bg: #ffffff; --aura-bg: rgba(255,255,255,0.5); --aura-text: #000; 
   --card-bg: #ffffff; --card-border: rgba(0, 0, 0, 0.05);
+  --inner-pill-bg: #f0f0f5; --inner-pill-dark: #e8e8ed;
   --sticky-bg: rgba(244, 244, 247, 0.95); --seg-bg: #e5e5ea; --seg-active: #000000; --seg-txt: #8e8e93; --seg-txt-active: #ffffff;
   --btn-ctrl-bg: #f2f2f7; 
 }
@@ -639,7 +646,7 @@ onUnmounted(() => {
 }
 @keyframes bg-move { 0% { background-position: 0% 0%; } 100% { background-position: 100% 100%; } }
 .intro-content { position: relative; z-index: 10; text-align: center; }
-.intro-text { font-weight: 700; font-size: 60px; color: var(--text); letter-spacing: 8px; opacity: 0; text-shadow: 0 0 15px rgba(255,255,255,0.6); animation: scale-in 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+.intro-text { font-weight: 800; font-size: 60px; color: var(--text); letter-spacing: 8px; opacity: 0; text-shadow: 0 0 15px rgba(255,255,255,0.6); animation: scale-in 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
 @keyframes scale-in { 0% { transform: scale(0.8); opacity: 0; filter: blur(10px); } 100% { transform: scale(1); opacity: 1; filter: blur(0); } }
 
 /* ERROR ZONE */
@@ -661,7 +668,7 @@ onUnmounted(() => {
 .header-inner { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
 .header-pill-btn {
   background: transparent; border: 1px solid var(--border); color: var(--text);
-  border-radius: 20px; padding: 6px 12px; font-size: 10px; font-weight: 600; cursor: pointer;
+  border-radius: 20px; padding: 6px 12px; font-size: 10px; font-weight: 700; cursor: pointer;
   display: flex; align-items: center; justify-content: center; gap: 5px; transition: 0.2s;
 }
 .header-pill-btn:hover { background: rgba(255,255,255,0.05); }
@@ -680,15 +687,15 @@ onUnmounted(() => {
 
 /* НОВЫЙ ДИЗАЙН КНОПОК УПРАВЛЕНИЯ (Как Статистика) */
 .main-ctrl-btn { 
-  width: 100%; background: var(--card-bg); /* Темный фон как у карточек */
+  width: 100%; background: var(--card-bg); 
   border: 1px solid var(--border); color: var(--text); 
-  padding: 8px 16px; border-radius: 20px; font-size: 10px; font-weight: 600; cursor: pointer; 
+  padding: 8px 16px; border-radius: 20px; font-size: 10px; font-weight: 700; cursor: pointer; 
   display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; 
   text-transform: uppercase; letter-spacing: 0.5px;
 }
 .main-ctrl-btn:hover { background: rgba(255,255,255,0.05); }
 .main-ctrl-btn.active-mode { background: var(--text); color: var(--bg); border-color: var(--text); }
-.ctrl-text-bold { font-weight: 600; }
+.ctrl-text-bold { font-weight: 700; }
 .btn-txt-fixed { max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .pill-arrow { width: 10px; height: 10px; opacity: 0.8; } 
 
@@ -703,23 +710,23 @@ onUnmounted(() => {
 /* ТУМБЛЕРЫ */
 .toggle-row { display: flex; justify-content: space-between; align-items: center; width: 100%; cursor: pointer; padding: 6px 0; border-bottom: 1px solid var(--border); }
 .toggle-row:last-child { border-bottom: none; }
-.toggle-label { font-size: 10px; color: var(--text); font-weight: 600; text-transform: none; letter-spacing: 0;}
+.toggle-label { font-size: 11px; color: var(--text); font-weight: 700; text-transform: none; letter-spacing: 0;}
 .bw-toggle { width: 36px; height: 20px; border: 1px solid var(--border); border-radius: 20px; position: relative; transition: 0.3s; background: transparent; }
 .bw-thumb { width: 14px; height: 14px; background: var(--text); border-radius: 50%; position: absolute; left: 2px; top: 2px; transition: 0.3s; }
 .bw-toggle.on .bw-thumb { transform: translateX(16px); }
 
 /* INPUT & LISTS IN POPUPS */
-.popup-input { width: 100%; background: var(--seg-bg); border: 1px solid var(--border); padding: 10px; border-radius: 8px; color: var(--text); font-size: 12px; outline: none; margin-bottom: 5px; box-sizing: border-box; text-transform: none; }
+.popup-input { width: 100%; background: var(--seg-bg); border: 1px solid var(--border); padding: 10px; border-radius: 8px; color: var(--text); font-size: 12px; outline: none; margin-bottom: 5px; box-sizing: border-box; text-transform: none; font-weight: 600; }
 .popup-input::placeholder { opacity: 0.5; }
 .search-input-box { width: 100%; }
 .brands-scroll-area { max-height: 280px; overflow-y: auto; }
 .custom-scroll-minimal::-webkit-scrollbar { width: 2px; }
 .custom-scroll-minimal::-webkit-scrollbar-thumb { background: var(--dim); }
 .brands-list-vertical { display: flex; flex-direction: column; gap: 4px; }
-.brand-row-btn { display: flex; justify-content: space-between; align-items: center; background: transparent; color: var(--text); border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-size: 11px; text-transform: capitalize; text-align: left; transition: 0.2s; opacity: 0.8; }
-.all-brand-btn { opacity: 1; font-weight: 700; margin-bottom: 5px; border-bottom: 1px solid var(--border); padding-bottom: 10px; border-radius: 0; text-transform: none;}
+.brand-row-btn { display: flex; justify-content: space-between; align-items: center; background: transparent; color: var(--text); border: none; padding: 10px; border-radius: 6px; cursor: pointer; font-size: 12px; text-transform: capitalize; text-align: left; transition: 0.2s; opacity: 0.8; font-weight: 600; }
+.all-brand-btn { opacity: 1; font-weight: 800; margin-bottom: 5px; border-bottom: 1px solid var(--border); padding-bottom: 10px; border-radius: 0; text-transform: none;}
 .brand-row-btn:hover { background: var(--seg-bg); opacity: 1; }
-.brand-font-fix { font-weight: 700; font-size: 11px; opacity: 0.9; }
+.brand-font-fix { font-weight: 700; font-size: 12px; opacity: 0.9; }
 .brand-left-group { display: flex; align-items: center; gap: 8px; overflow: hidden; }
 .brand-txt-truncate { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px; }
 .circle-check-icon.left { margin-right: 5px; width: 16px; height: 16px; }
@@ -727,10 +734,10 @@ onUnmounted(() => {
 
 /* SEGMENTS IN FILTER */
 .popup-section { margin-bottom: 5px; }
-.popup-label { display: block; font-size: 9px; font-weight: 700; color: var(--dim); margin-bottom: 6px; letter-spacing: 1px; text-transform: uppercase; }
+.popup-label { display: block; font-size: 9px; font-weight: 800; color: var(--dim); margin-bottom: 6px; letter-spacing: 1px; text-transform: uppercase; }
 .segmented-control { display: flex; background: var(--seg-bg); padding: 3px; border-radius: 8px; border: 1px solid var(--border); }
-.segment-btn { flex: 1; background: transparent; border: none; color: var(--seg-txt); padding: 6px 0; font-size: 10px; font-weight: 600; border-radius: 6px; cursor: pointer; transition: 0.2s; text-transform: none;}
-.segment-btn.active { background: var(--seg-active); color: var(--seg-txt-active); box-shadow: 0 2px 5px rgba(0,0,0,0.2); font-weight: 700; }
+.segment-btn { flex: 1; background: transparent; border: none; color: var(--seg-txt); padding: 6px 0; font-size: 11px; font-weight: 700; border-radius: 6px; cursor: pointer; transition: 0.2s; text-transform: none;}
+.segment-btn.active { background: var(--seg-active); color: var(--seg-txt-active); box-shadow: 0 2px 5px rgba(0,0,0,0.2); font-weight: 800; }
 .arrows-horn { font-size: 10px; display: inline-flex; gap: 2px; } 
 
 .pop-enter-active, .pop-leave-active { transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
@@ -741,46 +748,46 @@ onUnmounted(() => {
 .dash-collapsible-wrapper.open { grid-template-rows: 1fr; margin-bottom: 20px; }
 .dash-inner-content { overflow: hidden; }
 .dash-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
-.stat-card { border: 1px solid var(--border); padding: 18px; background: var(--card-bg); border-left: 3px solid var(--text); border-radius: 8px; }
-.d-label { display: block; font-size: 8px; font-weight: 700; color: var(--dim); margin-bottom: 12px; letter-spacing: 1.5px; text-transform: uppercase; }
-.stat-card .v { font-size: 24px; font-weight: 700; }
+.stat-card { border: 1px solid var(--border); padding: 18px; background: var(--card-bg); border-left: 3px solid var(--text); border-radius: 12px; }
+.d-label { display: block; font-size: 9px; font-weight: 800; color: var(--dim); margin-bottom: 12px; letter-spacing: 1.5px; text-transform: uppercase; }
+.stat-card .v { font-size: 24px; font-weight: 800; }
 .q-row-stacked { margin-bottom: 10px; }
-.q-meta { display: flex; justify-content: space-between; font-size: 9px; font-weight: 600; margin-bottom: 5px; }
+.q-meta { display: flex; justify-content: space-between; font-size: 10px; font-weight: 700; margin-bottom: 5px; }
 .op-5 { opacity: 0.5; }
-.q-track-neon { height: 2px; background: var(--border); width: 100%; overflow: hidden; }
+.q-track-neon { height: 2px; background: var(--border); width: 100%; overflow: hidden; border-radius: 1px; }
 .q-fill-neon { height: 100%; background: var(--text); box-shadow: 0 0 5px var(--text); }
 .white-part { background: #fff; box-shadow: 0 0 5px #fff; } 
 .split-top-row { display: flex; justify-content: space-between; gap: 20px; }
 .st-item, .st-price-box { flex: 1; }
 .st-sep { width: 1px; background: var(--border); margin: 0 10px; opacity: 0.5; }
 .avg-price-flex { display: flex; flex-direction: column; gap: 4px; }
-.ap-item { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--dim); }
-.ap-item .val { color: var(--text); font-weight: 700; font-size: 12px; margin-left: 5px; }
+.ap-item { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--dim); font-weight: 600;}
+.ap-item .val { color: var(--text); font-weight: 800; font-size: 13px; margin-left: 5px; }
 .stock-stack-info { display: flex; flex-direction: column; margin-top: 10px; gap: 2px; }
-.ss-row { font-size: 10px; color: var(--dim); font-weight: 600; }
+.ss-row { font-size: 11px; color: var(--dim); font-weight: 700; }
 .ss-row span { color: var(--text); margin-left: 4px; }
 .stock-layout { display: flex; justify-content: space-between; align-items: center; }
 .stock-left { flex-shrink: 0; margin-right: 15px; }
-.stock-big-num { font-size: 32px; font-weight: 700; line-height: 1; }
+.stock-big-num { font-size: 32px; font-weight: 800; line-height: 1; }
 .stock-right { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; }
 .q-track-neon-thick { height: 6px; background: var(--border); width: 100%; border-radius: 3px; overflow: hidden; margin-bottom: 6px; }
 .q-fill-neon-thick { height: 100%; background: #fff; box-shadow: 0 0 8px #fff; }
-.stock-missing-text { font-size: 9px; color: var(--dim); text-align: right; }
+.stock-missing-text { font-size: 10px; color: var(--dim); text-align: right; font-weight: 600; }
 
 .top-header-center { display: flex; justify-content: center; margin-bottom: 12px; }
-.top-switch-btn-subtle { background: transparent; border: 1px solid var(--border); color: var(--text); padding: 6px 12px; border-radius: 20px; font-size: 10px; font-weight: 600; cursor: pointer; }
+.top-switch-btn-subtle { background: transparent; border: 1px solid var(--border); color: var(--text); padding: 6px 12px; border-radius: 20px; font-size: 10px; font-weight: 700; cursor: pointer; }
 .btn-subtle-label { color: var(--dim); }
 .top-list-scroll-container { max-height: 60px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; padding-right: 2px; }
-.top-row-compact { display: flex; justify-content: space-between; align-items: center; font-size: 10px; padding: 2px 0; border-bottom: 1px solid var(--border); }
+.top-row-compact { display: flex; justify-content: space-between; align-items: center; font-size: 11px; padding: 2px 0; border-bottom: 1px solid var(--border); }
 .tr-left-main { display: flex; align-items: center; width: 40%; overflow: hidden; }
-.top-num { color: var(--dim); margin-right: 5px; }
-.top-name { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-weight: 500; }
+.top-num { color: var(--dim); margin-right: 5px; font-weight: 700; }
+.top-name { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-weight: 700; }
 .tr-mid-graph { flex-grow: 1; margin: 0 8px; display: flex; align-items: center; }
-.mini-bar-track { width: 100%; height: 2px; background: var(--border); }
+.mini-bar-track { width: 100%; height: 2px; background: var(--border); border-radius: 1px;}
 .mini-bar-fill { height: 100%; background: var(--text); }
 .tr-right-meta { display: flex; align-items: center; gap: 4px; }
-.badge-mini { border: 1px solid var(--border); padding: 1px 3px; font-size: 8px; color: var(--text); border-radius: 2px; }
-.top-val { font-weight: 700; margin-left: 4px; min-width: 25px; text-align: right; }
+.badge-mini { border: 1px solid var(--border); padding: 1px 4px; font-size: 9px; color: var(--text); border-radius: 4px; font-weight: 700; }
+.top-val { font-weight: 800; margin-left: 4px; min-width: 25px; text-align: right; }
 
 /* TABLE HEADER (С ПОИСКОМ ВНУТРИ) */
 .grid-layout-def.head { 
@@ -791,30 +798,25 @@ onUnmounted(() => {
 }
 
 /* СТИЛИ ИНТЕГРИРОВАННОГО ПОИСКА */
-.header-search-container {
-  display: flex; align-items: center; width: 100%; height: 100%; position: relative;
-}
-.header-search-container .search-icon {
-  position: absolute; left: 14px; width: 14px; height: 14px; color: var(--dim); pointer-events: none;
-}
+.header-search-container { display: flex; align-items: center; width: 100%; height: 100%; position: relative; }
+.header-search-container .search-icon { position: absolute; left: 14px; width: 14px; height: 14px; color: var(--dim); pointer-events: none; }
 .header-search-input {
   width: 100%; height: 100%; background: transparent; border: none;
   padding: 0 35px; outline: none; color: var(--text);
-  font-family: 'Helvetica Neue', sans-serif; font-size: 9px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+  font-size: 10px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase;
 }
-.header-search-input::placeholder { color: var(--dim); font-weight: 700; }
+.header-search-input::placeholder { color: var(--dim); font-weight: 800; }
 .header-search-input:focus { background: rgba(255,255,255,0.02); }
 .header-search-container .clear-search {
   position: absolute; right: 14px; background: transparent; border: none; color: var(--dim);
-  cursor: pointer; font-size: 10px; font-weight: bold; transition: 0.2s;
+  cursor: pointer; font-size: 11px; font-weight: bold; transition: 0.2s;
 }
 .header-search-container .clear-search:hover { color: var(--text); }
 
-
-/* CARDS TABLE (Горизонтальные карточки с UI/UX дизайном) */
+/* CARDS TABLE (UI/UX - ВНУТРЕННИЕ ПЛАШКИ) */
 .grid-table { 
-  display: flex; flex-direction: column; gap: 6px; 
-  width: 100%; min-width: 1000px; border: none; padding-top: 5px;
+  display: flex; flex-direction: column; gap: 8px; /* Чуть увеличил зазор между карточками */
+  width: 100%; min-width: 1000px; border: none; padding-top: 8px;
 }
 
 .grid-layout-def:not(.head) { 
@@ -822,10 +824,11 @@ onUnmounted(() => {
   grid-template-columns: 60px 1fr 80px 120px 120px calc(var(--p-cols) * 80px); 
   align-items: stretch; box-sizing: border-box; width: 100%;
   background: var(--card-bg); 
-  border: 1px solid var(--card-border); border-radius: 12px; 
+  border: 1px solid var(--card-border); border-radius: 20px; /* Сильнее скруглили саму карточку */
   position: relative; overflow: hidden; 
   box-shadow: 0 4px 12px rgba(0,0,0,0.3);
   transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+  padding: 6px; /* Внутренний отступ карточки, чтобы плашки "дышали" */
 }
 
 .grid-layout-def.clickable-row:hover, .grid-layout-def.clickable-row.simulated-hover {
@@ -835,15 +838,51 @@ onUnmounted(() => {
   background: #161619; 
 }
 
+/* Убираем все старые бордеры у ячеек */
 .cell { 
-  height: auto; display: flex; align-items: center; padding: 12px; 
-  border-right: 1px solid var(--card-border); box-sizing: border-box; overflow: hidden; 
+  height: auto; display: flex; align-items: center; padding: 4px; 
+  border-right: none !important; box-sizing: border-box; overflow: hidden; 
 }
-.head-txt { font-size: 8px; font-weight: 700; color: var(--dim); text-transform: uppercase; letter-spacing: 1.5px; }
+.head-txt { font-size: 9px; font-weight: 800; color: var(--dim); text-transform: uppercase; letter-spacing: 1.5px; padding: 12px; }
 .center { justify-content: center; text-align: center; }
 .row-visual-layer { display: contents; }
 .clickable-row { cursor: pointer; }
 .out { opacity: 0.4; filter: grayscale(50%); } 
+
+/* СТИЛИ ВНУТРЕННИХ ПЛАШЕК (Bubble UI) */
+.inner-pill-main {
+  background: var(--inner-pill-bg);
+  border-radius: 16px;
+  padding: 10px 16px;
+  width: 100%; display: flex; flex-direction: column; justify-content: center;
+}
+.inner-pill-badge {
+  background: var(--inner-pill-bg);
+  border-radius: 14px;
+  padding: 8px 12px;
+  font-weight: 800;
+  font-size: 11px;
+  color: var(--text);
+  width: 100%; text-align: center;
+}
+.inner-pill-badge-mobile {
+  background: var(--inner-pill-bg);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-weight: 800;
+  font-size: 9px;
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+.inner-pill-price {
+  background: var(--inner-pill-dark); /* Темнее */
+  border-radius: 14px;
+  padding: 12px 6px;
+  font-weight: 800;
+  font-size: 14px;
+  display: flex; align-items: center; justify-content: center;
+  width: 100%; box-sizing: border-box;
+}
 
 /* ЗНАКИ СТАТУСОВ (+ * -) */
 .status-symbol { font-size: 18px; font-weight: 900; margin-top: 2px; line-height: 1; }
@@ -852,38 +891,27 @@ onUnmounted(() => {
 .purple-txt { color: #a020f0; text-shadow: 0 0 8px rgba(160, 32, 240, 0.5); }
 .watermelon-txt { color: #fd4659; text-shadow: 0 0 8px rgba(253, 70, 89, 0.5); }
 
-.badge-square-matte { font-size: 9px; font-weight: 700; border: 1px solid var(--border); padding: 5px 12px; letter-spacing: 1px; text-transform: uppercase; margin: 0 auto; color: var(--text); opacity: 0.8; font-family: 'Kollektif', sans-serif;}
-.m-square-matte { font-size: 8px; font-weight: 700; border: 1px solid var(--border); padding: 2px 6px; opacity: 0.7; text-transform: uppercase; }
+.id-zone-square { flex-direction: column; gap: 2px; justify-content: center; }
+.id-sq-top { font-size: 15px; font-weight: 900; color: var(--dim); }
+.brand-code { font-size: 10px; font-weight: 800; opacity: 0.5; display: block; text-transform: uppercase; letter-spacing: 1px; }
 
-.id-zone-square { flex-direction: column; gap: 2px; justify-content: center; padding: 8px 0; border-right: 1px solid var(--card-border); }
-.id-sq-top { font-size: 14px; font-weight: 900; color: var(--dim); }
-.scent-info { width: 100%; padding-left: 10px; }
-.brand-code { font-size: 10px; font-weight: 700; opacity: 0.5; display: block; text-transform: uppercase; letter-spacing: 1px; }
-
-/* CENTURY GOTHIC ДЛЯ АРОМАТОВ И ЦЕН */
+/* НАЗВАНИЕ И ЦЕНЫ */
 .scent-title { 
-  font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif;
-  font-weight: bold !important;
+  font-weight: 800;
   font-size: 17px; 
   line-height: 1.2; 
   letter-spacing: 0.5px; 
 }
 .mobile-only-meta { display: none; margin-top: 8px; gap: 5px; align-items: center; }
 
-.price-container { width: calc(var(--p-cols) * 80px); }
-.price-section { display: grid; height: 100%; width: 100%; align-items: stretch; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
-.p-col { 
-  font-family: 'Century Gothic', CenturyGothic, AppleGothic, sans-serif;
-  font-weight: bold !important;
-  text-align: center; font-size: 15px; display: flex; align-items: center; justify-content: center; box-sizing: border-box; 
-}
-.p-col.line { border-right: 1px solid var(--card-border); } 
-.head-p .p-col { font-family: 'Helvetica Neue', sans-serif; font-size: 8px; font-weight: 700 !important; color: var(--dim); letter-spacing: 1.5px; text-transform: uppercase; border-right: 1px solid var(--border); }
-.head-p .p-col.last { border-right: none; }
+.price-container { width: calc(var(--p-cols) * 80px); display: flex; align-items: center; }
+.price-section { display: grid; gap: 6px; width: 100%; padding: 0 6px;}
 
-.row-aura-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; opacity: 0; background: transparent; transition: all 0.4s; z-index: 10; pointer-events: none; }
+.head-p .p-col { font-size: 9px; font-weight: 800; color: var(--dim); letter-spacing: 1.5px; text-transform: uppercase; padding: 12px; }
+
+.row-aura-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; opacity: 0; background: transparent; transition: all 0.4s; z-index: 10; pointer-events: none; border-radius: 20px;}
 .clickable-row:hover .row-aura-overlay, .clickable-row.simulated-hover .row-aura-overlay { opacity: 1; backdrop-filter: blur(8px); background: var(--aura-bg); }
-.aura-text { font-size: 11px; font-weight: 900; letter-spacing: 5px; color: var(--aura-text); transform: translateY(15px); opacity: 0; transition: 0.5s; font-family: 'Kollektif', sans-serif; }
+.aura-text { font-size: 12px; font-weight: 900; letter-spacing: 5px; color: var(--aura-text); transform: translateY(15px); opacity: 0; transition: 0.5s; text-transform: uppercase;}
 .clickable-row:hover .aura-text, .clickable-row.simulated-hover .aura-text { opacity: 1; transform: translateY(0); }
 
 @media (max-width: 900px) {
@@ -895,29 +923,26 @@ onUnmounted(() => {
   .mobile-only-meta { display: flex; }
   
   .grid-layout-def.head { grid-template-columns: 40px 1fr calc(var(--p-cols) * 55px); }
-  .grid-layout-def:not(.head) { grid-template-columns: 40px 1fr calc(var(--p-cols) * 55px); }
+  .grid-layout-def:not(.head) { grid-template-columns: 40px 1fr calc(var(--p-cols) * 55px); padding: 4px; border-radius: 16px; }
   
-  .id-zone-square { padding: 2px 0 !important; align-items: center; justify-content: flex-start; padding-top: 15px !important; border-right: 1px solid var(--card-border); }
-  .id-sq-top { font-size: 11px; margin-bottom: 2px; }
+  .id-zone-square { padding: 0 !important; align-items: center; justify-content: center; }
+  .id-sq-top { font-size: 12px; margin-bottom: 2px; }
   .status-symbol { font-size: 14px; margin-top: 0; }
-  .border-right-mobile { border-right: 1px solid var(--card-border) !important; padding-right: 5px; }
-  .scent-info { padding-left: 2px; }
+  
+  .inner-pill-main { padding: 8px 10px; border-radius: 12px;}
   .scent-title { font-size: 14px; }
   
-  .price-container { width: calc(var(--p-cols) * 55px); display: flex; flex-direction: column; }
-  .price-section { border-right: none; height: 100%; }
-  .p-col { padding: 0; font-size: 12px; border-right: 1px solid var(--card-border) !important; }
-  .p-col.line { border-right: 1px solid var(--card-border) !important; }
-  .p-col.last { border-right: none !important; }
+  .price-container { width: calc(var(--p-cols) * 55px); display: flex; flex-direction: column; justify-content: center;}
+  .price-section { display: flex; flex-direction: column; gap: 4px; padding: 0; width: 100%;}
+  .inner-pill-price { padding: 8px 4px; font-size: 12px; border-radius: 10px;}
   
-  .aura-text { font-size: 9px; letter-spacing: 2px; }
+  .aura-text { font-size: 10px; letter-spacing: 2px; }
   
   /* Мобильный поиск в шапке (уменьшенные отступы) */
   .header-search-container .search-icon { left: 8px; width: 12px; height: 12px; }
-  .header-search-input { padding: 0 20px 0 24px; font-size: 8px; }
+  .header-search-input { padding: 0 20px 0 24px; font-size: 9px; }
   .header-search-container .clear-search { right: 5px; }
 
-  /* Кнопки управления для мобилки теперь таблеточками */
   .ctrl-wrapper-desktop { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
   .left-group { display: contents; }
   .right-group { display: contents; }
