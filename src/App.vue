@@ -5,12 +5,11 @@
       <header class="header-manifest">
         <div class="header-inner">
            <button @click="showDash = !showDash" class="header-pill-btn">
-             <span class="main-font" style="letter-spacing: 0.5px;">СТАТИСТИКА</span>
-             <svg :class="['h-icon', { 'closed-arrow': !showDash }]" viewBox="0 0 24 24"><path fill="currentColor" d="M13,9H18.5L13,3.5V9M6,2H14L20,8V20A2,2 0 0,1 18,22H6C4.89,22 4,21.1 4,20V4C4,2.89 4.89,2 6,2M7,20H9V14H7V20M11,20H13V12H11V20M15,20H17V16H15V20Z" /></svg>
+             <span class="main-font" style="letter-spacing: 0.5px;">Статистика</span>
            </button>
 
            <button @click="isDark = !isDark" class="header-pill-btn">
-             <span class="main-font" style="letter-spacing: 0.5px;">{{ isDark ? 'СВЕТ' : 'ТЬМА' }}</span>
+             <span class="main-font" style="letter-spacing: 0.5px;">{{ isDark ? 'Свет' : 'Тьма' }}</span>
            </button>
         </div>
       </header>
@@ -143,7 +142,6 @@
                   <div class="control-item relative-zone">
                      <button @click="toggleBrandMenu" :class="['main-ctrl-btn', { 'active-mode': showBrandMenu || selectedBrands.length > 0 }]">
                         <span class="btn-txt-fixed main-font ctrl-text-bold">{{ brandLabel }}</span>
-                        <svg class="pill-arrow" viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 8.59L12 13.17L16.59 8.59L18 10L12 16L6 10L7.41 8.59Z"/></svg>
                      </button>
                      <transition name="pop">
                         <div v-if="showBrandMenu" class="bahur-popup-menu list-mode">
@@ -172,20 +170,19 @@
                   <div class="control-item relative-zone pos-center-mobile">
                     <button @click="toggleNewMenu" :class="['main-ctrl-btn', { 'active-mode': showNewMenu || filterPlus || filterStar || showOut }]">
                        <span class="main-font ctrl-text-bold">Статус</span>
-                       <svg class="pill-arrow" viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 8.59L12 13.17L16.59 8.59L18 10L12 16L6 10L7.41 8.59Z"/></svg>
                     </button>
                     <transition name="pop">
                       <div v-if="showNewMenu" class="bahur-popup-menu center-mode">
                          <div class="toggle-row" @click="filterPlus = !filterPlus">
-                           <span class="toggle-label main-font">Новинки (+)</span>
+                           <span class="toggle-label main-font">Новинки <span class="status-chip plus">+</span></span>
                            <div :class="['bw-toggle', { 'on': filterPlus }]"><div class="bw-thumb"></div></div>
                          </div>
                          <div class="toggle-row" @click="filterStar = !filterStar">
-                           <span class="toggle-label main-font">Новые версии (*)</span>
+                           <span class="toggle-label main-font">Новые версии <span class="status-chip star">*</span></span>
                            <div :class="['bw-toggle', { 'on': filterStar }]"><div class="bw-thumb"></div></div>
                          </div>
                          <div class="toggle-row" @click="showOut = !showOut">
-                           <span class="toggle-label main-font">Нет в наличии (-)</span>
+                           <span class="toggle-label main-font">Нет в наличии <span class="status-chip minus">-</span></span>
                            <div :class="['bw-toggle', { 'on': showOut }]"><div class="bw-thumb"></div></div>
                          </div>
                       </div>
@@ -197,7 +194,6 @@
                   <div class="control-item relative-zone">
                     <button @click="toggleFilterMenu" :class="['main-ctrl-btn', { 'active-mode': showFilters }]">
                       <span class="main-font ctrl-text-bold">{{ showFilters ? 'Закрыть' : 'Фильтр' }}</span>
-                      <svg class="pill-arrow" viewBox="0 0 24 24"><path fill="currentColor" d="M7.41 8.59L12 13.17L16.59 8.59L18 10L12 16L6 10L7.41 8.59Z"/></svg>
                     </button>
                      <transition name="pop">
                       <div v-if="showFilters" class="bahur-popup-menu filter-mode">
@@ -244,7 +240,7 @@
             </section>
 
             <div class="grid-layout-def head no-click">
-              <div class="cell id head-txt center">№</div>
+              <div class="cell id head-txt center"><span class="head-pill slim">№</span></div>
               <div class="cell name name-header" style="padding: 0;">
                  <div class="header-search-container">
                     <svg class="search-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z" /></svg>
@@ -252,13 +248,13 @@
                     <button v-if="searchQuery" @click="searchQuery = ''" class="clear-search">✕</button>
                  </div>
               </div>
-              <div class="cell desk-only head-txt center">Пол</div>
-              <div class="cell desk-only head-txt center">Фабрика</div>
-              <div class="cell desk-only head-txt center">Качество</div>
+              <div class="cell desk-only head-txt center"><span class="head-pill">Пол</span></div>
+              <div class="cell desk-only head-txt center"><span class="head-pill">Фабрика</span></div>
+              <div class="cell desk-only head-txt center"><span class="head-pill">Качество</span></div>
               <div class="price-section head-p" :style="priceSubGridStyle">
-                <div v-if="showPrices.p50" class="p-col line center">50г</div>
-                <div v-if="showPrices.p500" class="p-col line center">500г</div>
-                <div v-if="showPrices.p1000" class="p-col last center">1кг</div>
+                <div v-if="showPrices.p50" class="p-col line center"><span class="head-pill price-pill">50г</span></div>
+                <div v-if="showPrices.p500" class="p-col line center"><span class="head-pill price-pill">500г</span></div>
+                <div v-if="showPrices.p1000" class="p-col last center"><span class="head-pill price-pill">1кг</span></div>
               </div>
             </div>
           </div>
@@ -555,7 +551,7 @@ const stats = computed(() => {
   }
 })
 
-const getSex = (g) => ({ m: 'Муж', w: 'Жен', y: 'Уни' }[g] || '—');
+const getSex = (g) => ({ m: 'МУЖ', w: 'ЖЕН', y: 'УНИ' }[g] || '—');
 const open = (u) => window.open(u.startsWith('http') ? u : `https://${u}`, '_blank');
 
 onMounted(() => {
@@ -585,6 +581,7 @@ onUnmounted(() => {
 /* ИМПОРТ ШРИФТОВ */
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100;300;400;700&display=swap');
+@import url('https://fonts.cdnfonts.com/css/kollektif');
 
 /* ЗАМЕНА ВСЕХ СТАРЫХ ШРИФТОВ НА NUNITO ДЛЯ ЕДИНОГО UI/UX */
 .main-font, .scent-title, .brand-code { font-family: 'Nunito', sans-serif; }
@@ -600,15 +597,22 @@ onUnmounted(() => {
   --card-border: rgba(255, 255, 255, 0.03); 
   --inner-pill-bg: #1f1f22; 
   --inner-pill-dark: #0a0a0b; 
+  --pill-bg: #232327;
+  --badge-bg: #26262b;
+  --head-pill-bg: rgba(255,255,255,0.08);
+  --row-hover-bg: #18181c;
+  --row-hover-border: rgba(255,255,255,0.12);
+  --ctrl-bg: rgba(0,0,0,0.35);
   --aura-bg: rgba(0,0,0,0.4); --aura-text: #fff;
   --sticky-bg: rgba(25, 25, 27, 0.95);
   --seg-bg: #1c1c1e; --seg-active: #ffffff; --seg-txt: #8e8e93; --seg-txt-active: #000000;
   --btn-ctrl-bg: rgba(255,255,255,0.05);
   --col-id: 52px;
-  --col-meta: 90px;
-  --col-price: 90px;
-  --pill-h: 44px;
+  --col-meta: 74px;
+  --col-price: 74px;
+  --pill-h: 46px;
   min-height: 100vh; background: var(--bg); color: var(--text); font-family: 'Nunito', sans-serif;
+  transition: background-color 0.01ms linear, color 0.01ms linear;
   touch-action: pan-y;
 }
 .noir { 
@@ -617,6 +621,9 @@ onUnmounted(() => {
   --sticky-bg: rgba(25, 25, 27, 0.95); --panel-bg: #121214; 
   --card-bg: #121214; --card-border: rgba(255, 255, 255, 0.03);
   --inner-pill-bg: #1f1f22; --inner-pill-dark: #0a0a0b;
+  --pill-bg: #232327; --badge-bg: #26262b; --head-pill-bg: rgba(255,255,255,0.08);
+  --row-hover-bg: #18181c; --row-hover-border: rgba(255,255,255,0.12);
+  --ctrl-bg: rgba(0,0,0,0.35);
   --seg-bg: #1c1c1e; --seg-active: #fff; --seg-txt: #8e8e93; --seg-txt-active: #000;
   --btn-ctrl-bg: rgba(255,255,255,0.08);
 }
@@ -625,6 +632,9 @@ onUnmounted(() => {
   --panel-bg: #ffffff; --aura-bg: rgba(255,255,255,0.5); --aura-text: #000; 
   --card-bg: #ffffff; --card-border: rgba(0, 0, 0, 0.05);
   --inner-pill-bg: #f0f0f5; --inner-pill-dark: #e8e8ed;
+  --pill-bg: #f4f4f9; --badge-bg: #ececf2; --head-pill-bg: rgba(0,0,0,0.08);
+  --row-hover-bg: #ededf4; --row-hover-border: rgba(0,0,0,0.08);
+  --ctrl-bg: rgba(0,0,0,0.08);
   --sticky-bg: rgba(244, 244, 247, 0.95); --seg-bg: #e5e5ea; --seg-active: #000000; --seg-txt: #8e8e93; --seg-txt-active: #ffffff;
   --btn-ctrl-bg: #f2f2f7; 
 }
@@ -680,24 +690,28 @@ onUnmounted(() => {
 .closed-arrow { transform: rotate(180deg); transition: 0.3s; }
 
 /* STICKY NAV */
-.table-frame { max-width: 1200px; margin: 0 auto; padding: 0 12px; position: relative; }
-.sticky-nav-group { position: sticky; top: 0; z-index: 500; background: var(--sticky-bg); backdrop-filter: blur(15px); border-bottom: 1px solid var(--border); margin-bottom: 0; overflow: visible; }
-.controls-luxury { padding: 12px 0; overflow: visible; }
+.table-frame { max-width: 1200px; margin: 0 auto; padding: 0 12px; position: relative; font-family: 'Kollektif', 'Nunito', sans-serif; }
+.sticky-nav-group { 
+  position: sticky; top: 0; z-index: 700; background: var(--sticky-bg); backdrop-filter: blur(15px); 
+  border: 1px solid var(--border); border-radius: 16px; margin-bottom: 0; overflow: hidden; 
+  box-shadow: 0 10px 24px rgba(0,0,0,0.25);
+}
+.controls-luxury { padding: 12px; overflow: visible; position: relative; z-index: 750; }
 
 /* CONTROLS LAYOUT */
-.ctrl-wrapper-desktop { display: flex; justify-content: space-between; align-items: center; width: 100%; gap: 10px; overflow: visible; }
+.ctrl-wrapper-desktop { display: flex; justify-content: flex-start; align-items: center; width: 100%; gap: 10px; overflow: visible; }
 .left-group, .right-group { display: flex; gap: 10px; overflow: visible; }
 .control-item { min-width: 120px; position: relative; }
 
 /* НОВЫЙ ДИЗАЙН КНОПОК УПРАВЛЕНИЯ */
 .main-ctrl-btn { 
-  width: 100%; background: var(--card-bg); 
+  width: 100%; background: var(--ctrl-bg); 
   border: 1px solid var(--border); color: var(--text); 
   padding: 8px 16px; border-radius: 20px; font-size: 10px; font-weight: 700; cursor: pointer; 
-  display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; 
-  text-transform: uppercase; letter-spacing: 0.5px;
+  display: flex; align-items: center; justify-content: center; transition: all 0.2s; 
+  text-transform: none; letter-spacing: 0.3px; min-height: 32px;
 }
-.main-ctrl-btn:hover { background: rgba(255,255,255,0.05); }
+.main-ctrl-btn:hover { background: rgba(255,255,255,0.07); }
 .main-ctrl-btn.active-mode { background: var(--text); color: var(--bg); border-color: var(--text); }
 .ctrl-text-bold { font-weight: 700; }
 .btn-txt-fixed { max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -715,6 +729,15 @@ onUnmounted(() => {
 .toggle-row { display: flex; justify-content: space-between; align-items: center; width: 100%; cursor: pointer; padding: 6px 0; border-bottom: 1px solid var(--border); }
 .toggle-row:last-child { border-bottom: none; }
 .toggle-label { font-size: 11px; color: var(--text); font-weight: 700; text-transform: none; letter-spacing: 0;}
+.status-chip {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 18px; height: 18px; margin-left: 6px;
+  border-radius: 4px; border: 1px solid var(--border);
+  font-size: 11px; font-weight: 800; background: var(--card-bg);
+}
+.status-chip.plus { color: #00a86b; }
+.status-chip.star { color: #a020f0; }
+.status-chip.minus { color: #fd4659; }
 .bw-toggle { width: 36px; height: 20px; border: 1px solid var(--border); border-radius: 20px; position: relative; transition: 0.3s; background: transparent; }
 .bw-thumb { width: 14px; height: 14px; background: var(--text); border-radius: 50%; position: absolute; left: 2px; top: 2px; transition: 0.3s; }
 .bw-toggle.on .bw-thumb { transform: translateX(16px); }
@@ -739,9 +762,9 @@ onUnmounted(() => {
 /* SEGMENTS IN FILTER */
 .popup-section { margin-bottom: 5px; }
 .popup-label { display: block; font-size: 9px; font-weight: 800; color: var(--dim); margin-bottom: 6px; letter-spacing: 1px; text-transform: uppercase; }
-.segmented-control { display: flex; background: var(--seg-bg); padding: 3px; border-radius: 8px; border: 1px solid var(--border); }
-.segment-btn { flex: 1; background: transparent; border: none; color: var(--seg-txt); padding: 6px 0; font-size: 11px; font-weight: 700; border-radius: 6px; cursor: pointer; transition: 0.2s; text-transform: none;}
-.segment-btn.active { background: var(--seg-active); color: var(--seg-txt-active); box-shadow: 0 2px 5px rgba(0,0,0,0.2); font-weight: 800; }
+.segmented-control { display: flex; background: transparent; padding: 3px; border-radius: 8px; border: 1px solid var(--border); gap: 4px; }
+.segment-btn { flex: 1; background: #000; border: 1px solid #000; color: #fff; padding: 6px 0; font-size: 11px; font-weight: 700; border-radius: 6px; cursor: pointer; transition: 0.2s; text-transform: none;}
+.segment-btn.active { background: #111; color: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.25); font-weight: 800; }
 .arrows-horn { font-size: 10px; display: inline-flex; gap: 2px; } 
 
 .pop-enter-active, .pop-leave-active { transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); }
@@ -781,15 +804,19 @@ onUnmounted(() => {
 .top-header-center { display: flex; justify-content: center; margin-bottom: 8px; }
 .top-switch-btn-subtle { background: transparent; border: 1px solid var(--border); color: var(--text); padding: 4px 10px; border-radius: 20px; font-size: 9px; font-weight: 700; cursor: pointer; }
 .btn-subtle-label { color: var(--dim); }
-.top-list-scroll-container { max-height: 90px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; padding-right: 2px; }
-.top-row-compact { display: flex; justify-content: space-between; align-items: center; font-size: 10px; padding: 2px 0; border-bottom: 1px solid var(--border); }
+.top-list-scroll-container { 
+  max-height: 90px; overflow-y: auto; display: flex; flex-direction: column; gap: 4px; padding-right: 2px;
+  scrollbar-width: none;
+}
+.top-list-scroll-container::-webkit-scrollbar { width: 0; height: 0; }
+.top-row-compact { display: flex; justify-content: space-between; align-items: center; font-size: 10px; padding: 2px 0; border-bottom: 1px solid var(--border); gap: 6px; }
 .tr-left-main { display: flex; align-items: center; width: 40%; overflow: hidden; }
 .top-num { color: var(--dim); margin-right: 5px; font-weight: 700; }
 .top-name { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-weight: 700; }
-.tr-mid-graph { flex-grow: 1; margin: 0 8px; display: flex; align-items: center; }
+.tr-mid-graph { flex: 1 1 120px; margin: 0 6px; display: flex; align-items: center; min-width: 90px; }
 .mini-bar-track { width: 100%; height: 2px; background: var(--border); border-radius: 1px;}
 .mini-bar-fill { height: 100%; background: var(--text); }
-.tr-right-meta { display: flex; align-items: center; gap: 4px; }
+.tr-right-meta { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
 .badge-mini { border: 1px solid var(--border); padding: 2px 6px; font-size: 9px; color: var(--text); border-radius: 6px; font-weight: 700; min-width: 44px; height: 22px; display: inline-flex; align-items: center; justify-content: center; }
 .top-val { font-weight: 800; margin-left: 4px; min-width: 44px; text-align: right; font-size: 9px; }
 
@@ -799,15 +826,19 @@ onUnmounted(() => {
   grid-template-columns: var(--col-id) 1fr var(--col-meta) var(--col-meta) var(--col-meta) calc(var(--p-cols) * var(--col-price)); 
   align-items: stretch; box-sizing: border-box; width: 100%;
   border: none; background: transparent; border-bottom: 1px solid var(--border); 
+  position: relative; z-index: 700;
 }
 
 /* СТИЛИ ИНТЕГРИРОВАННОГО ПОИСКА */
-.header-search-container { display: flex; align-items: center; width: 100%; height: var(--pill-h); position: relative; box-shadow: inset 0 0 0 1px var(--border); border-radius: 12px; }
+.header-search-container { 
+  display: flex; align-items: center; width: 100%; height: var(--pill-h); position: relative; 
+  background: var(--pill-bg); border-radius: 14px; box-shadow: inset 0 0 0 1px var(--border);
+}
 .header-search-container .search-icon { position: absolute; left: 14px; width: 14px; height: 14px; color: var(--dim); pointer-events: none; }
 .header-search-input {
   width: 100%; height: 100%; background: transparent; border: none;
   padding: 0 35px; outline: none; color: var(--text);
-  font-size: 10px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase;
+  font-size: 11px; font-weight: 800; letter-spacing: 0.8px; text-transform: uppercase;
 }
 .header-search-input::placeholder { color: var(--dim); font-weight: 800; }
 .header-search-input:focus { background: rgba(255,255,255,0.02); }
@@ -836,17 +867,25 @@ onUnmounted(() => {
 }
 
 .grid-layout-def.clickable-row:hover, .grid-layout-def.clickable-row.simulated-hover {
-  border-color: rgba(255,255,255,0.1);
+  border-color: var(--row-hover-border);
   box-shadow: 0 8px 24px rgba(0,0,0,0.6);
   transform: translateY(-2px);
-  background: #161619; 
+  background: var(--row-hover-bg); 
 }
 
 .cell { 
   height: auto; display: flex; align-items: center; padding: 4px; 
   border-right: none !important; box-sizing: border-box; overflow: hidden; 
 }
-.head-txt { font-size: 9px; font-weight: 800; color: var(--dim); text-transform: uppercase; letter-spacing: 1.5px; padding: 12px; box-shadow: inset 0 0 0 1px var(--border); border-radius: 10px; }
+.head-txt { font-size: 9px; font-weight: 800; color: var(--dim); text-transform: uppercase; letter-spacing: 1.5px; padding: 6px; }
+.head-pill { 
+  display: inline-flex; align-items: center; justify-content: center; 
+  background: var(--head-pill-bg); border-radius: 10px; padding: 6px 10px;
+  box-shadow: inset 0 0 0 1px var(--border);
+  min-height: 26px;
+}
+.head-pill.price-pill { min-height: 30px; padding: 8px 10px; }
+.head-pill.slim { min-width: 28px; padding: 6px 8px; }
 .center { justify-content: center; text-align: center; }
 .row-visual-layer { display: contents; }
 .clickable-row { cursor: pointer; }
@@ -854,14 +893,14 @@ onUnmounted(() => {
 
 /* ПЛАШКИ */
 .inner-pill-main {
-  background: var(--inner-pill-dark);
+  background: var(--pill-bg);
   border-radius: 16px;
-  padding: 10px 16px;
+  padding: 12px 16px;
   width: 100%; display: flex; flex-direction: column; justify-content: center;
-  min-height: var(--pill-h); box-shadow: inset 0 0 0 1px var(--border);
+  min-height: calc(var(--pill-h) + 6px); box-shadow: inset 0 0 0 1px var(--border);
 }
 .inner-pill-badge {
-  background: var(--inner-pill-dark);
+  background: var(--badge-bg);
   border-radius: 14px;
   padding: 8px 12px;
   font-weight: 800;
@@ -872,7 +911,7 @@ onUnmounted(() => {
   box-shadow: inset 0 0 0 1px var(--border);
 }
 .inner-pill-badge-mobile {
-  background: var(--inner-pill-dark);
+  background: var(--badge-bg);
   border-radius: 8px;
   padding: 6px 8px;
   font-weight: 800;
@@ -893,6 +932,7 @@ onUnmounted(() => {
   display: flex; align-items: center; justify-content: center;
   width: 100%; box-sizing: border-box;
   min-height: var(--pill-h); box-shadow: inset 0 0 0 1px var(--border);
+  font-family: 'JetBrains Mono', monospace;
 }
 
 /* ЗНАКИ СТАТУСОВ (+ * -) */
@@ -915,13 +955,20 @@ onUnmounted(() => {
 }
 .mobile-only-meta { display: none; margin-top: 8px; gap: 5px; align-items: center; }
 
-.price-container { width: calc(var(--p-cols) * var(--col-price)); display: flex; align-items: center; }
-.price-section { display: grid; gap: 6px; width: 100%; padding: 0 6px;}
+.price-container { width: calc(var(--p-cols) * var(--col-price)); display: flex; align-items: stretch; }
+.price-section { display: grid; gap: 6px; width: 100%; padding: 0 6px; align-items: stretch; }
 
-.head-p .p-col { font-size: 9px; font-weight: 800; color: var(--dim); letter-spacing: 1.5px; text-transform: uppercase; padding: 12px; box-shadow: inset 0 0 0 1px var(--border); border-radius: 10px; }
+.head-p .p-col { font-size: 9px; font-weight: 800; color: var(--dim); letter-spacing: 1.5px; text-transform: uppercase; padding: 6px; }
 
-.row-aura-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; opacity: 0; background: transparent; transition: all 0.4s; z-index: 10; pointer-events: none; border-radius: 20px;}
-.clickable-row:hover .row-aura-overlay, .clickable-row.simulated-hover .row-aura-overlay { opacity: 1; backdrop-filter: blur(8px); background: var(--aura-bg); }
+.row-aura-overlay { 
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; opacity: 0; 
+  background: transparent; transition: all 0.4s; z-index: 10; pointer-events: none; 
+  border-radius: inherit;
+}
+.clickable-row:hover .row-aura-overlay, .clickable-row.simulated-hover .row-aura-overlay { 
+  opacity: 1; backdrop-filter: blur(10px) saturate(1.2); 
+  background: radial-gradient(120% 120% at 50% 0%, rgba(255,255,255,0.12), transparent 60%), var(--aura-bg); 
+}
 .aura-text { font-size: 12px; font-weight: 900; letter-spacing: 5px; color: var(--aura-text); transform: translateY(15px); opacity: 0; transition: 0.5s; text-transform: uppercase;}
 .clickable-row:hover .aura-text, .clickable-row.simulated-hover .aura-text { opacity: 1; transform: translateY(0); }
 
