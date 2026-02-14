@@ -1,4 +1,4 @@
-Готовый файл (вставьте целиком в `App.vue`). Поправил слои и выравнивания, меню открывается поверх панели, выпадашки по центру кнопки, заголовки/бейджи одинакового размера, мобильная версия без колонок Пол/Фабрика/Качество в шапке, статусные метки только цветом.
+Ниже обновлённый `App.vue` с учётом замечаний: выровнял сетку и заголовки, добавил центральные отступы, поправил позицию кнопок/меню, сделал бренд‑меню видимым и на десктопе и на мобиле, приблизил кнопку «Свет», убрал лишние квадраты в статусе, добавил пульсирующий логотип в шапке. Таблица и контролы центрированы, отступы по краям уменьшены.
 
 ```vue
 <template>
@@ -7,12 +7,16 @@
       
       <header class="header-manifest">
         <div class="header-inner">
-           <button @click="showDash = !showDash" class="header-pill-btn">
-             <span class="main-font" style="letter-spacing: 0.5px;">Статистика</span>
-           </button>
-           <button @click="isDark = !isDark" class="header-pill-btn">
-             <span class="main-font" style="letter-spacing: 0.5px;">{{ isDark ? 'Свет' : 'Тьма' }}</span>
-           </button>
+          <div class="logo-pulse">
+            <span class="logo-dot"></span>
+            <span class="logo-ring"></span>
+          </div>
+          <button @click="showDash = !showDash" class="header-pill-btn">
+            <span class="main-font" style="letter-spacing: 0.5px;">Статистика</span>
+          </button>
+          <button @click="isDark = !isDark" class="header-pill-btn">
+            <span class="main-font" style="letter-spacing: 0.5px;">{{ isDark ? 'Свет' : 'Тьма' }}</span>
+          </button>
         </div>
       </header>
 
@@ -51,7 +55,7 @@
                            <div class="ss-row">Нет: <span class="mono">{{ stats.countOut }}</span></div>
                         </div>
                      </div>
-                     <div class="st-sep"></div>
+                     <div <="" class="st-sep"></div>
                      <div class="st-price-box">
                         <label class="d-label">СРЕДНЯЯ ЦЕНА</label>
                         <div class="avg-price-flex">
@@ -143,7 +147,7 @@
           <div class="sticky-nav-group">
             <section class="controls-luxury">
               <div class="ctrl-scroll-row">
-                <div :class="['ctrl-inner-flex', { 'menu-open': menusOpen }]">
+                <div class="ctrl-inner-flex">
 
                   <div class="control-item">
                      <button @click="toggleBrandMenu" :class="['main-ctrl-btn', { 'active-mode': showBrandMenu || selectedBrands.length > 0 }]">
@@ -357,8 +361,6 @@ const sortBy = ref('id');
 const activeFactory = ref('ВСЕ');
 const autoHighlightId = ref(null);
 let highlightInterval = null;
-
-const menusOpen = computed(() => showBrandMenu.value || showNewMenu.value || showFilters.value);
 
 const showPrices = ref({ p50: true, p500: true, p1000: true });
 const priceLabels = { p50: '50г', p500: '500г', p1000: '1кг' };
@@ -637,6 +639,12 @@ onUnmounted(() => {
 .err-desc { font-size: 12px; color: var(--dim); margin-bottom: 25px; }
 .retry-btn-noir { background: var(--text); border: none; color: var(--bg); padding: 12px 24px; font-family: 'JetBrains Mono',monospace; font-size: 11px; cursor: pointer; transition: 0.3s; text-transform: uppercase; font-weight: 700; }
 
+/* LOGO PULSE */
+.logo-pulse { position: relative; width: 32px; height: 32px; border-radius: 50%; background: var(--text); display: inline-flex; align-items: center; justify-content: center; margin-right: 10px; overflow: visible; }
+.logo-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--bg); position: relative; z-index: 2; }
+.logo-ring { position: absolute; width: 32px; height: 32px; border-radius: 50%; box-shadow: 0 0 0 0 rgba(255,255,255,0.35); animation: ring-pulse 2.2s infinite; }
+@keyframes ring-pulse { 0% { box-shadow: 0 0 0 0 rgba(255,255,255,0.35); } 70% { box-shadow: 0 0 0 14px rgba(255,255,255,0); } 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); } }
+
 /* SCROLL WIDGET */
 .scroll-widget-track { position: fixed; right: 3px; top: 15px; bottom: 15px; width: 14px; z-index: 1000; display: flex; justify-content: center; touch-action: none; }
 .scroll-widget-thumb { position: absolute; width: 5px; background: var(--text); border-radius: 3px; opacity: 0.3; transition: opacity 0.2s; }
@@ -644,24 +652,25 @@ onUnmounted(() => {
 .scroll-widget-track::before { content: ''; position: absolute; top: 0; bottom: 0; width: 1px; background: var(--border); }
 
 /* HEADER */
-.header-manifest { margin-bottom: 25px; }
-.header-inner { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
-.header-pill-btn { background: transparent; border: 1px solid var(--border); color: var(--text); border-radius: 20px; padding: 6px 14px; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; transition: background 0s, border-color 0s, color 0s; }
+.header-manifest { margin-bottom: 20px; }
+.header-inner { display: flex; align-items: center; gap: 10px; justify-content: center; }
+.header-pill-btn { background: transparent; border: 1px solid var(--border); color: var(--text); border-radius: 18px; padding: 6px 12px; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; transition: background 0s, border-color 0s, color 0s; }
 .header-pill-btn:hover { background: var(--btn-ctrl-bg); }
 
 /* STICKY NAV */
-.table-frame { position: relative; z-index: 400; }
-.sticky-nav-group { position: sticky; top: 0; z-index: 700; background: var(--sticky-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); box-shadow: 0 6px 30px rgba(0,0,0,0.3), 0 1px 0 var(--border); border-radius: 0 0 22px 22px; }
-.controls-luxury { padding: 10px 0 0; }
+.container { max-width: 1220px; margin: 0 auto; padding: 18px 22px; }
+.table-frame { position: relative; z-index: 400; max-width: 1220px; margin: 0 auto; padding: 0 12px; }
+.sticky-nav-group { position: sticky; top: 0; z-index: 700; background: var(--sticky-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); box-shadow: 0 6px 30px rgba(0,0,0,0.3), 0 1px 0 var(--border); border-radius: 14px; margin-bottom: 10px; }
+.controls-luxury { padding: 10px 0 0; overflow: visible; }
 
 /* горизонтальный скролл кнопок */
-.ctrl-scroll-row { overflow-x: auto; overflow-y: visible; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+.ctrl-scroll-row { overflow-x: visible; overflow-y: visible; -webkit-overflow-scrolling: touch; scrollbar-width: none; display: flex; justify-content: center; }
 .ctrl-scroll-row::-webkit-scrollbar { display: none; }
-.ctrl-inner-flex { display: flex; gap: 8px; padding: 0 0 10px; min-width: max-content; }
+.ctrl-inner-flex { display: flex; gap: 10px; padding: 0 0 10px; min-width: max-content; justify-content: center; }
 
 /* КНОПКИ */
 .control-item { position: relative; flex-shrink: 0; isolation: isolate; z-index: 710; }
-.main-ctrl-btn { background: var(--btn-ctrl-bg); border: 1px solid var(--btn-ctrl-border); color: var(--text); padding: 8px 16px; border-radius: 20px; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: filter 0.15s; white-space: nowrap; position: relative; z-index: 710; }
+.main-ctrl-btn { background: var(--btn-ctrl-bg); border: 1px solid var(--btn-ctrl-border); color: var(--text); padding: 9px 18px; border-radius: 20px; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: filter 0.15s; white-space: nowrap; position: relative; z-index: 710; }
 .main-ctrl-btn:hover { filter: brightness(1.25); }
 .main-ctrl-btn.active-mode { background: var(--text); color: var(--bg); border-color: transparent; }
 .ctrl-text-bold { font-weight: 700; }
@@ -672,8 +681,8 @@ onUnmounted(() => {
 .click-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 450; background: transparent; }
 
 /* POPUP MENUS */
-.bahur-popup-menu { position: absolute; top: calc(100% + 8px); background: var(--panel-bg); border: 1px solid var(--border); border-radius: 16px; padding: 15px; box-shadow: 0 20px 60px rgba(0,0,0,0.7); display: flex; flex-direction: column; gap: 10px; z-index: 800; }
-.bahur-popup-menu.list-mode { left: 50%; transform: translateX(-50%); min-width: 240px; max-width: 320px; }
+.bahur-popup-menu { position: absolute; top: calc(100% + 10px); background: var(--panel-bg); border: 1px solid var(--border); border-radius: 16px; padding: 15px; box-shadow: 0 20px 60px rgba(0,0,0,0.7); display: flex; flex-direction: column; gap: 10px; z-index: 800; }
+.bahur-popup-menu.list-mode { left: 50%; transform: translateX(-50%); min-width: 260px; max-width: 340px; }
 .bahur-popup-menu.filter-mode { left: 0; width: 220px; }
 .bahur-popup-menu.center-mode { left: 0; width: 195px; padding: 12px; }
 
@@ -704,7 +713,7 @@ onUnmounted(() => {
 .brand-row-btn:hover { background: var(--seg-bg); opacity: 1; }
 .brand-font-fix { font-weight: 700; font-size: 12px; opacity: 0.9; }
 .brand-left-group { display: flex; align-items: center; gap: 8px; overflow: hidden; }
-.brand-txt-truncate { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px; }
+.brand-txt-truncate { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; }
 .circle-check-icon.left { margin-right: 5px; width: 16px; height: 16px; }
 .check-status.right { width: 14px; height: 14px; }
 
@@ -794,9 +803,9 @@ onUnmounted(() => {
 .head-price-pill { display: flex; align-items: center; justify-content: center; width: 100%; flex: 1; height: 44px; min-height: 44px; background: var(--inner-pill-dark); border-radius: 10px; padding: 0 4px; font-size: 11px; font-weight: 800; color: var(--dim); letter-spacing: 1px; text-transform: uppercase; white-space: nowrap; font-family: 'JetBrains Mono', monospace; box-sizing: border-box; }
 
 /* ТАБЛИЦА */
-.grid-table { display: flex; flex-direction: column; gap: 8px; width: 100%; min-width: 800px; border: none; padding-top: 8px; }
+.grid-table { display: flex; flex-direction: column; gap: 8px; width: 100%; max-width: 1220px; margin: 0 auto; border: none; padding-top: 8px; }
 
-.grid-layout-def:not(.head) { display: grid; grid-template-columns: var(--col-id) 1fr var(--col-meta) var(--col-meta) var(--col-meta) calc(var(--p-cols) * var(--col-price)); align-items: stretch; box-sizing: border-box; width: 100%; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 16px; position: relative; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.15); transition: transform 0.2s, box-shadow 0.2s, background 0.2s; padding: 6px; }
+.grid-layout-def:not(.head) { display: grid; grid-template-columns: var(--col-id) 1fr var(--col-meta) var(--col-meta) var(--col-meta) calc(var(--p-cols) * var(--col-price)); align-items: stretch; box-sizing: border-box; width: 100%; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 14px; position: relative; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.15); transition: transform 0.2s, box-shadow 0.2s, background 0.2s; padding: 6px; }
 
 .grid-layout-def.clickable-row:hover,
 .grid-layout-def.clickable-row.simulated-hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,0,0,0.2); background: var(--hover-bg); }
@@ -849,9 +858,10 @@ onUnmounted(() => {
 
 /* МОБИЛЬ */
 @media (max-width: 900px) {
+  .container { padding: 14px; }
   .dash-grid { grid-template-columns: 1fr 1fr; }
   .span-full { grid-column: span 2; }
-  .grid-table { min-width: 100%; }
+  .grid-table { min-width: 100%; max-width: 100%; }
   .cell { border-right: none; }
   .desk-only { display: none !important; }
   .grid-layout-def.head .desk-only { display: none !important; }
@@ -859,12 +869,10 @@ onUnmounted(() => {
 
   .scroll-widget-track { display: none !important; }
 
-  .sticky-nav-group { border-radius: 0 0 18px 18px; margin-left: -15px; margin-right: -15px; padding-left: 15px; padding-right: 15px; }
+  .sticky-nav-group { border-radius: 0 0 18px 18px; margin-left: -10px; margin-right: -10px; padding-left: 10px; padding-right: 10px; }
 
   .ctrl-scroll-row { overflow-x: visible; }
   .ctrl-inner-flex { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; padding: 0 0 10px; min-width: 0; width: 100%; }
-  .ctrl-inner-flex.menu-open .control-item:not(.main-ctrl-btn.active-mode) { display: none; }
-  .ctrl-inner-flex.menu-open .control-item { grid-column: 1 / -1; }
   .control-item { flex-shrink: unset; width: 100%; }
   .main-ctrl-btn { width: 100%; padding: 10px 8px; font-size: 11px; justify-content: center; }
   .pill-arrow { display: none; }
