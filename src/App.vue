@@ -41,7 +41,6 @@
           <div class="dash-inner-content">
             <section class="dashboard">
               <div class="dash-grid">
-                
                 <div class="stat-card span-full">
                   <div class="split-top-row">
                      <div class="st-item">
@@ -244,9 +243,11 @@
             </section>
 
             <div class="grid-layout-def head no-click">
-              <div class="cell id head-txt center">№</div>
+              <div class="cell id-zone-column center">
+                <span class="head-txt" style="margin-bottom: 4px;">№</span>
+              </div>
               
-              <div class="cell name name-header" style="padding: 0;">
+              <div class="cell name name-header" style="padding: 0 10px;">
                  <div class="header-search-container">
                     <svg class="search-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z" /></svg>
                     <input v-model="searchQuery" type="text" placeholder="АРОМАТЫ / ПОИСК..." class="header-search-input" />
@@ -254,13 +255,13 @@
                  </div>
               </div>
 
-              <div class="cell desk-only head-txt center">Пол</div>
-              <div class="cell desk-only head-txt center">Фабрика</div>
-              <div class="cell desk-only head-txt center">Качество</div>
+              <div class="cell desk-only center"><span class="head-txt">Пол</span></div>
+              <div class="cell desk-only center"><span class="head-txt">Фабрика</span></div>
+              <div class="cell desk-only center"><span class="head-txt">Качество</span></div>
               <div class="price-section head-p" :style="priceSubGridStyle">
-                <div v-if="showPrices.p50" class="p-col center">50г</div>
-                <div v-if="showPrices.p500" class="p-col center">500г</div>
-                <div v-if="showPrices.p1000" class="p-col center">1кг</div>
+                <div v-if="showPrices.p50" class="p-col center"><span class="head-txt">50г</span></div>
+                <div v-if="showPrices.p500" class="p-col center"><span class="head-txt">500г</span></div>
+                <div v-if="showPrices.p1000" class="p-col center"><span class="head-txt">1кг</span></div>
               </div>
             </div>
           </div>
@@ -269,54 +270,53 @@
             <div v-for="(p, index) in sortedProducts" :key="p.id + '-' + index" 
                  :class="['grid-layout-def', 'clickable-row', { 'out': p.isOut, 'simulated-hover': autoHighlightId === p.id }]"
                  @click="p.link && p.link.length > 5 ? open(p.link) : null">
+              
               <div class="row-visual-layer">
                 
-                <div class="cell id-zone-square center">
-                  <div class="id-sq-top mono">{{ p.id }}</div>
-                  <div v-if="p.isOut" class="status-btn-pill out-pill">-</div>
-                  <div v-else-if="p.hasPlus" class="status-btn-pill plus-pill">+</div>
-                  <div v-else-if="p.hasStar" class="status-btn-pill star-pill">*</div>
+                <div class="cell id-zone-column center">
+                  <div class="id-text mono">{{ p.id }}</div>
+                  <div v-if="p.isOut" class="status-sym-pill out-pill">-</div>
+                  <div v-else-if="p.hasPlus" class="status-sym-pill plus-pill">+</div>
+                  <div v-else-if="p.hasStar" class="status-sym-pill star-pill">*</div>
                 </div>
 
                 <div class="cell name">
-                  <div class="inner-pill scent-info-pill">
+                  <div class="inner-pill scent-card">
                     <span class="brand-code">{{ p.brand }}</span>
                     <span class="scent-title">{{ p.name }}</span>
                     
                     <div class="mobile-only-meta">
-                      <div class="mini-pill-mobile">{{ getSex(p.gender) }}</div>
-                      <div class="mini-pill-mobile">{{ p.factory }}</div>
-                      <div class="mini-pill-mobile">{{ p.quality }}</div>
+                      <div class="mini-pill">{{ getSex(p.gender) }}</div>
+                      <div class="mini-pill">{{ p.factory }}</div>
+                      <div class="mini-pill">{{ p.quality }}</div>
                     </div>
                   </div>
                 </div>
 
                 <div class="cell desk-only center">
-                  <div class="inner-pill mini-pill">{{ getSex(p.gender) }}</div>
+                  <div class="inner-pill tag-pill">{{ getSex(p.gender) }}</div>
                 </div>
                 <div class="cell desk-only center">
-                  <div class="inner-pill mini-pill">{{ p.factory }}</div>
+                  <div class="inner-pill tag-pill">{{ p.factory }}</div>
                 </div>
                 <div class="cell desk-only center">
-                  <div class="inner-pill mini-pill">{{ p.quality }}</div>
+                  <div class="inner-pill tag-pill">{{ p.quality }}</div>
                 </div>
 
-                <div class="price-container">
-                  <div class="price-section center" :style="priceSubGridStyle">
-                    <div v-if="showPrices.p50" class="p-col">
-                      <div class="inner-pill price-pill">{{ p.p50 }}₽</div>
-                    </div>
-                    <div v-if="showPrices.p500" class="p-col">
-                      <div class="inner-pill price-pill">{{ p.p500 }}₽</div>
-                    </div>
-                    <div v-if="showPrices.p1000" class="p-col">
-                      <div class="inner-pill price-pill highlight-price">{{ p.p1000 }}₽</div>
-                    </div>
+                <div class="price-section" :style="priceSubGridStyle">
+                  <div v-if="showPrices.p50" class="p-col center">
+                    <div class="inner-pill price-pill">{{ p.p50 }}₽</div>
+                  </div>
+                  <div v-if="showPrices.p500" class="p-col center">
+                    <div class="inner-pill price-pill">{{ p.p500 }}₽</div>
+                  </div>
+                  <div v-if="showPrices.p1000" class="p-col center">
+                    <div class="inner-pill price-pill highlight-price">{{ p.p1000 }}₽</div>
                   </div>
                 </div>
 
               </div>
-              <div class="row-aura-overlay"><span class="aura-text">ПЕРЕЙТИ К АРОМАТУ</span></div>
+              <div class="row-aura-overlay"><span class="aura-text">ПЕРЕЙТИ</span></div>
             </div>
           </div>
 
@@ -354,7 +354,7 @@ const showFilters = ref(false);
 const showNewMenu = ref(false);
 const filterPlus = ref(false);
 const filterStar = ref(false);
-const showOut = ref(false); // Изначально скрыты минусы
+const showOut = ref(false); 
 
 const activeGender = ref('ВСЕ'); 
 const activeQuality = ref('ВСЕ'); 
@@ -569,7 +569,7 @@ const stats = computed(() => {
   }
 })
 
-const getSex = (g) => ({ m: 'МУЖ', w: 'ЖЕН', y: 'УНИ' }[g] || '—'); // УНИ заглавными
+const getSex = (g) => ({ m: 'МУЖ', w: 'ЖЕН', y: 'УНИ' }[g] || '—'); 
 const open = (u) => window.open(u.startsWith('http') ? u : `https://${u}`, '_blank');
 
 onMounted(() => {
@@ -596,43 +596,45 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-/* ПОДКЛЮЧЕНИЕ ШРИФТА NUNITO */
+/* ШРИФТЫ: Везде Nunito, моноширинный для цифр */
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;900&display=swap');
 
 .mono { font-family: 'JetBrains Mono', monospace; }
 
-/* GLOBALS & THEME */
+/* ЦВЕТОВАЯ ПАЛИТРА И ТЕМА */
 .bahur-terminal {
-  --bg: #19191b; 
-  --text: #fff; --border: rgba(255,255,255,0.06); --dim: #888; 
-  --panel-bg: #121214; /* Всплывающие меню темные */
-  --card-bg: #222225; /* Карточки */
-  --pill-bg: #121214; /* Внутренние "кнопочки" темнее карточки (утоплены) */
-  --card-border: rgba(255, 255, 255, 0.03); 
-  --aura-bg: rgba(0,0,0,0.4); --aura-text: #fff;
-  --sticky-bg: rgba(25, 25, 27, 0.95);
-  --seg-bg: #1c1c1e; --seg-active: #ffffff; --seg-txt: #8e8e93; --seg-txt-active: #000000;
+  --bg: #0a0a0c; /* Самый темный фон (как в iOS) */
+  --text: #fff; 
+  --border: rgba(255,255,255,0.05); 
+  --dim: #888; 
+  
+  --panel-bg: #1c1c1e; /* Меню и попапы */
+  --card-bg: transparent; /* Строка теперь прозрачная */
+  --pill-bg: #1c1c1e; /* Кнопочки светлее фона (UI-схема со скрина) */
+  
+  --sticky-bg: rgba(10, 10, 12, 0.95);
+  --seg-bg: #2c2c2e; --seg-active: #ffffff; --seg-txt: #8e8e93; --seg-txt-active: #000000;
   
   min-height: 100vh; background: var(--bg); color: var(--text); 
-  font-family: 'Nunito', sans-serif; /* ВСЁ NUNITO */
+  font-family: 'Nunito', sans-serif; 
   touch-action: pan-y;
 }
 .noir { 
-  --bg: #19191b;
-  --text: #fff; --aura-bg: rgba(0,0,0,0.4); --border: rgba(255,255,255,0.06);
-  --sticky-bg: rgba(25, 25, 27, 0.95); --panel-bg: #121214; 
-  --card-bg: #222225; --pill-bg: #121214; --card-border: rgba(255, 255, 255, 0.03);
-  --seg-bg: #1c1c1e; --seg-active: #fff; --seg-txt: #8e8e93; --seg-txt-active: #000;
+  --bg: #0a0a0c;
+  --text: #fff; --border: rgba(255,255,255,0.05);
+  --sticky-bg: rgba(10, 10, 12, 0.95); --panel-bg: #1c1c1e; 
+  --card-bg: transparent; --pill-bg: #1c1c1e; 
+  --seg-bg: #2c2c2e; --seg-active: #fff; --seg-txt: #8e8e93; --seg-txt-active: #000;
 }
 .bahur-terminal:not(.noir) { 
-  --bg: #f4f4f7; --text: #000; --border: rgba(0,0,0,0.1); --dim: #666; 
-  --panel-bg: #ffffff; --aura-bg: rgba(255,255,255,0.5); --aura-text: #000; 
-  --card-bg: #ffffff; --pill-bg: #f4f4f7; --card-border: rgba(0, 0, 0, 0.05);
-  --sticky-bg: rgba(244, 244, 247, 0.95); --seg-bg: #e5e5ea; --seg-active: #000000; --seg-txt: #8e8e93; --seg-txt-active: #ffffff;
+  --bg: #f2f2f7; --text: #000; --border: rgba(0,0,0,0.08); --dim: #666; 
+  --panel-bg: #ffffff; 
+  --card-bg: transparent; --pill-bg: #ffffff; 
+  --sticky-bg: rgba(242, 242, 247, 0.95); --seg-bg: #e5e5ea; --seg-active: #000000; --seg-txt: #8e8e93; --seg-txt-active: #ffffff;
 }
 
-/* CUSTOM SCROLLBARS */
+/* СКРОЛЛБАРЫ */
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: var(--text); border-radius: 2px; border: 1px solid var(--bg); }
@@ -640,7 +642,7 @@ onUnmounted(() => {
 
 .container { max-width: 1400px; margin: 0 auto; padding: 15px; }
 
-/* LOADING SCREEN (ЧИСТО ЧЕРНЫЙ ФОН) */
+/* LOADING SCREEN (ЧИСТО ЧЕРНЫЙ) */
 .loading-overlay { position: fixed; inset: 0; background: #000; z-index: 2000; display: flex; justify-content: center; align-items: center; overflow: hidden; }
 .diagonal-bg { position: absolute; inset: 0; background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255, 255, 255, 0.3) 10px, rgba(255, 255, 255, 0.3) 13px); background-size: 200% 200%; animation: bg-move 4s linear infinite; }
 @keyframes bg-move { 0% { background-position: 0% 0%; } 100% { background-position: 100% 100%; } }
@@ -650,11 +652,11 @@ onUnmounted(() => {
 
 /* ERROR ZONE */
 .error-zone { display: flex; justify-content: center; align-items: center; height: 50vh; }
-.error-box-noir { text-align: center; border: 1px solid var(--border); padding: 40px 60px; border-radius: 12px; background: var(--card-bg); }
+.error-box-noir { text-align: center; border: 1px solid var(--border); padding: 40px 60px; border-radius: 16px; background: var(--pill-bg); }
 .err-icon { font-size: 30px; margin-bottom: 15px; color: var(--text); opacity: 0.8; }
 .err-title { font-size: 14px; color: var(--text); margin-bottom: 10px; letter-spacing: 1px; }
 .err-desc { font-size: 12px; color: var(--dim); margin-bottom: 25px; }
-.retry-btn-noir { background: var(--text); border: none; color: var(--bg); padding: 12px 24px; font-weight: 800; font-size: 11px; cursor: pointer; transition: 0.3s; text-transform: uppercase; border-radius: 8px;}
+.retry-btn-noir { background: var(--text); border: none; color: var(--bg); padding: 12px 24px; font-weight: 800; font-size: 11px; cursor: pointer; transition: 0.3s; text-transform: uppercase; border-radius: 20px;}
 .retry-btn-noir:hover { opacity: 0.8; }
 
 /* SCROLL WIDGET */
@@ -675,7 +677,7 @@ onUnmounted(() => {
 .closed-arrow { transform: rotate(180deg); transition: 0.3s; }
 
 /* STICKY NAV */
-.sticky-nav-group { position: sticky; top: 0; z-index: 500; background: var(--sticky-bg); backdrop-filter: blur(15px); border-bottom: 1px solid var(--border); margin-bottom: 0; }
+.sticky-nav-group { position: sticky; top: 0; z-index: 500; background: var(--sticky-bg); backdrop-filter: blur(15px); margin-bottom: 0; border-bottom: 1px solid var(--border); }
 .controls-luxury { padding: 12px 0; }
 
 /* CONTROLS LAYOUT */
@@ -684,9 +686,9 @@ onUnmounted(() => {
 .right-group { flex-shrink: 0; }
 .control-item { min-width: 120px; position: relative; }
 
-/* КНОПКИ УПРАВЛЕНИЯ (Темный фон, форма таблетки) */
+/* КНОПКИ УПРАВЛЕНИЯ (Как Статистика) */
 .main-ctrl-btn { 
-  width: 100%; background: var(--panel-bg); /* Темные как меню/pills */
+  width: 100%; background: var(--pill-bg);
   border: 1px solid var(--border); color: var(--text); 
   padding: 8px 16px; border-radius: 20px; font-size: 10px; font-weight: 800; cursor: pointer; 
   display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; 
@@ -747,7 +749,7 @@ onUnmounted(() => {
 .dash-collapsible-wrapper.open { grid-template-rows: 1fr; margin-bottom: 20px; }
 .dash-inner-content { overflow: hidden; }
 .dash-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
-.stat-card { border: 1px solid var(--border); padding: 18px; background: var(--card-bg); border-radius: 12px; }
+.stat-card { border: 1px solid var(--border); padding: 18px; background: var(--pill-bg); border-radius: 16px; }
 .d-label { display: block; font-size: 8px; font-weight: 800; color: var(--dim); margin-bottom: 12px; letter-spacing: 1.5px; text-transform: uppercase; }
 .stat-card .v { font-size: 24px; font-weight: 800; }
 .q-row-stacked { margin-bottom: 10px; }
@@ -788,10 +790,10 @@ onUnmounted(() => {
 .badge-mini { border: 1px solid var(--border); padding: 1px 3px; font-size: 8px; font-weight: 800; color: var(--text); border-radius: 4px; }
 .top-val { font-weight: 800; margin-left: 4px; min-width: 25px; text-align: right; }
 
-/* TABLE HEADER */
+/* GRID LAYOUT SETUP */
 .grid-layout-def.head { 
   display: grid; 
-  grid-template-columns: 60px 1fr 80px 120px 120px calc(var(--p-cols) * 80px); 
+  grid-template-columns: 50px 1fr 80px 120px 120px calc(var(--p-cols) * 80px); 
   align-items: stretch; box-sizing: border-box; width: 100%;
   border: none; background: transparent; border-bottom: 1px solid var(--border); 
 }
@@ -813,74 +815,81 @@ onUnmounted(() => {
 .header-search-container .clear-search:hover { color: var(--text); }
 
 
-/* CARDS TABLE (Горизонтальные карточки с UI/UX дизайном) */
+/* CARDS TABLE (ОТДЕЛЬНЫЕ СТРОКИ) */
 .grid-table { 
-  display: flex; flex-direction: column; gap: 8px; 
-  width: 100%; min-width: 1000px; border: none; padding-top: 8px;
+  display: flex; flex-direction: column; gap: 12px; /* Расстояние между рядами */
+  width: 100%; min-width: 1000px; border: none; padding-top: 10px;
 }
 
 .grid-layout-def:not(.head) { 
   display: grid; 
-  grid-template-columns: 60px 1fr 80px 120px 120px calc(var(--p-cols) * 80px); 
+  grid-template-columns: 50px 1fr 80px 120px 120px calc(var(--p-cols) * 80px); 
   align-items: stretch; box-sizing: border-box; width: 100%;
-  background: var(--card-bg); 
-  border: 1px solid var(--card-border); border-radius: 16px; 
-  position: relative; overflow: hidden; 
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-  transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+  background: var(--card-bg); /* Прозрачный или нулевой фон самой строки */
+  border: none;
+  position: relative; 
+  border-bottom: 1px solid rgba(255,255,255,0.03); /* Мягкий разделитель снизу */
+  padding-bottom: 6px;
+  transition: all 0.2s;
 }
 
-.grid-layout-def.clickable-row:hover, .grid-layout-def.clickable-row.simulated-hover {
-  border-color: rgba(255,255,255,0.1);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.6);
-  transform: translateY(-2px);
-  background: #2a2a2e; /* Легкое высветление при наведении */
+/* ЭФФЕКТ ПРИ НАВЕДЕНИИ НА РЯД */
+.grid-layout-def.clickable-row:hover .inner-pill, 
+.grid-layout-def.clickable-row.simulated-hover .inner-pill {
+  background: #232326; /* Чуть светлеют кнопки внутри ряда */
 }
 
-/* ВНУТРЕННИЕ ЭЛЕМЕНТЫ (КНОПОЧКИ / PILLS) */
-.cell { padding: 8px 6px; border: none; display: flex; align-items: center; box-sizing: border-box; }
+/* ЯЧЕЙКИ БЕЗ ГРАНИЦ */
+.cell { 
+  padding: 6px 4px; border: none; 
+  display: flex; align-items: center; box-sizing: border-box; 
+}
 .head-txt { font-size: 8px; font-weight: 800; color: var(--dim); text-transform: uppercase; letter-spacing: 1.5px; }
 .center { justify-content: center; text-align: center; }
 .row-visual-layer { display: contents; }
 .clickable-row { cursor: pointer; }
 .out { opacity: 0.4; filter: grayscale(50%); } 
 
-/* Универсальный класс для вложенных кнопок */
+/* ВНУТРЕННИЕ ЭЛЕМЕНТЫ (PILLS / КНОПОЧКИ) */
 .inner-pill {
-  background: var(--pill-bg);
-  border-radius: 12px; border: 1px solid rgba(255,255,255,0.02);
+  background: var(--pill-bg); /* Основной цвет кнопочек */
+  border-radius: 16px; 
+  border: 1px solid rgba(255,255,255,0.03);
   width: 100%; height: 100%;
   display: flex; flex-direction: column; justify-content: center;
   box-sizing: border-box;
+  transition: background 0.2s ease;
 }
 
-/* БЛОК НАЗВАНИЯ И БРЕНДА */
-.scent-info-pill { padding: 8px 12px; align-items: flex-start; }
-.brand-code { font-size: 10px; font-weight: 800; opacity: 0.5; display: block; text-transform: uppercase; letter-spacing: 1px; }
-.scent-title { font-size: 16px; font-weight: 800; line-height: 1.2; letter-spacing: 0.5px; margin-top: 2px;}
+/* ID ЗОНА (СВОБОДНАЯ) */
+.id-zone-column { flex-direction: column; justify-content: center; gap: 4px; }
+.id-text { font-size: 16px; font-weight: 900; color: var(--dim); line-height: 1;}
 
-/* ЗНАКИ СТАТУСОВ (КНОПКИ + * -) */
-.status-btn-pill { 
+/* ЗНАКИ СТАТУСОВ (КНОПОЧКИ + * -) */
+.status-sym-pill { 
   width: 24px; height: 24px; border-radius: 8px; 
   display: flex; align-items: center; justify-content: center; 
-  font-weight: 900; font-size: 14px; margin-top: 4px;
+  font-weight: 900; font-size: 14px; 
 }
 .plus-pill { background: rgba(0, 168, 107, 0.15); color: #00a86b; border: 1px solid rgba(0, 168, 107, 0.3); }
 .star-pill { background: rgba(160, 32, 240, 0.15); color: #a020f0; border: 1px solid rgba(160, 32, 240, 0.3); }
 .out-pill { background: rgba(253, 70, 89, 0.15); color: #fd4659; border: 1px solid rgba(253, 70, 89, 0.3); }
 
+/* БЛОК НАЗВАНИЯ И БРЕНДА */
+.scent-card { padding: 10px 16px; align-items: flex-start; justify-content: center;}
+.brand-code { font-size: 10px; font-weight: 800; opacity: 0.5; display: block; text-transform: uppercase; letter-spacing: 1px; }
+.scent-title { font-size: 16px; font-weight: 800; line-height: 1.2; letter-spacing: 0.5px; margin-top: 2px;}
+
 /* ПОЛ, ФАБРИКА, КАЧЕСТВО (Мелкие кнопочки) */
-.mini-pill { align-items: center; font-size: 9px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: var(--text); padding: 8px; }
+.tag-pill { align-items: center; font-size: 9px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: var(--text); padding: 8px; border-radius: 20px;}
 
 /* ЦЕНЫ (Кнопочки) */
 .price-container { width: calc(var(--p-cols) * 80px); }
-.price-section { display: grid; height: 100%; width: 100%; align-items: stretch; }
-.p-col { padding: 8px 4px; border: none; box-sizing: border-box; display: flex; }
-.price-pill { align-items: center; font-size: 14px; font-weight: 800; padding: 8px 4px; }
+.price-section { display: grid; height: 100%; width: 100%; align-items: stretch; gap: 8px; padding: 4px 0;}
+.p-col { padding: 0; border: none; box-sizing: border-box; display: flex; }
+.price-pill { align-items: center; font-size: 14px; font-weight: 800; padding: 8px 4px; border-radius: 16px;}
 .highlight-price { color: var(--text); font-weight: 900; }
 
-.id-zone-square { flex-direction: column; gap: 2px; justify-content: center; padding: 8px 0; }
-.id-sq-top { font-size: 14px; font-weight: 900; color: var(--dim); }
 .mobile-only-meta { display: none; margin-top: 8px; gap: 5px; align-items: center; }
 
 .head-p .p-col { font-family: 'Nunito', sans-serif; font-size: 8px; font-weight: 800; color: var(--dim); letter-spacing: 1.5px; text-transform: uppercase; align-items: center; justify-content: center; }
@@ -893,30 +902,30 @@ onUnmounted(() => {
 @media (max-width: 900px) {
   .dash-grid { grid-template-columns: 1fr 1fr; }
   .span-full { grid-column: span 2; } 
-  .grid-table { min-width: 100%; border: none; }
+  .grid-table { min-width: 100%; border: none; gap: 14px; } /* Больше расстояния на мобилке */
   .cell { border-right: none; }
   .desk-only { display: none; }
   
-  /* МОБИЛЬНАЯ СЕТКА (Строго сохранена) */
-  .grid-layout-def.head { grid-template-columns: 40px 1fr calc(var(--p-cols) * 55px); }
-  .grid-layout-def:not(.head) { grid-template-columns: 40px 1fr calc(var(--p-cols) * 55px); }
+  /* МОБИЛЬНАЯ СЕТКА (Сохранена) */
+  .grid-layout-def.head { grid-template-columns: 35px 1fr calc(var(--p-cols) * 55px); }
+  .grid-layout-def:not(.head) { grid-template-columns: 35px 1fr calc(var(--p-cols) * 55px); padding-bottom: 8px; }
   
-  .cell { padding: 6px 4px; }
-  .p-col { padding: 6px 2px; }
+  .cell { padding: 4px 2px; }
+  .p-col { padding: 0; }
   
-  .id-zone-square { padding: 2px 0 !important; align-items: center; justify-content: flex-start; padding-top: 15px !important; }
-  .id-sq-top { font-size: 11px; margin-bottom: 2px; }
-  .status-btn-pill { width: 18px; height: 18px; font-size: 12px; border-radius: 6px; margin-top: 0;}
+  .id-zone-column { padding: 0 !important; align-items: center; justify-content: center; }
+  .id-text { font-size: 13px; margin-bottom: 4px; }
+  .status-sym-pill { width: 18px; height: 18px; font-size: 12px; border-radius: 6px; }
   
-  .scent-info-pill { padding: 6px 8px; }
+  .scent-card { padding: 8px 10px; border-radius: 12px; }
   .scent-title { font-size: 13px; }
   
-  .mobile-only-meta { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
-  .mini-pill-mobile { background: var(--pill-bg); border-radius: 6px; padding: 4px 8px; font-size: 8px; font-weight: 800; color: var(--text); border: 1px solid rgba(255,255,255,0.02); }
+  .mobile-only-meta { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+  .mini-pill { background: var(--bg); border-radius: 8px; padding: 4px 8px; font-size: 8px; font-weight: 800; color: var(--dim); border: 1px solid rgba(255,255,255,0.02); }
   
   .price-container { width: calc(var(--p-cols) * 55px); display: flex; flex-direction: column; }
-  .price-section { height: 100%; }
-  .price-pill { font-size: 12px; padding: 6px 0; border-radius: 8px; }
+  .price-section { height: 100%; gap: 6px; padding: 0; }
+  .price-pill { font-size: 12px; padding: 6px 0; border-radius: 10px; }
   
   .aura-text { font-size: 9px; letter-spacing: 2px; }
   
@@ -931,7 +940,7 @@ onUnmounted(() => {
   .right-group { display: contents; }
   .control-item { min-width: 0; width: 100%; position: static; }
   
-  .main-ctrl-btn { font-size: 10px; padding: 10px 0; border-radius: 20px; text-transform: none; }
+  .main-ctrl-btn { font-size: 10px; padding: 10px 0; border-radius: 12px; text-transform: none; }
   .btn-txt-fixed { max-width: 65px; }
   
   .bahur-popup-menu { width: calc(100vw - 30px) !important; max-width: 300px; left: 50% !important; right: auto !important; transform: translateX(-50%) !important; }
