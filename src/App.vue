@@ -1,3 +1,6 @@
+Ниже полное содержимое файла (можно вставить в `App.vue`). Меню теперь раскрываются (слои и z-index поправлены), а заголовки/бейджи имеют одинаковые размеры.
+
+```vue
 <template>
   <div :class="['bahur-terminal', { 'noir': isDark }]" :style="{ '--p-cols': activePriceCount }">
     <div class="container">
@@ -101,7 +104,6 @@
                   </div>
                 </div>
 
-                <!-- РЕЙТИНГ — фикс скрола и наложения полос -->
                 <div class="stat-card span-full">
                   <div class="top-header-center">
                     <button @click="toggleStatsMode" class="top-switch-btn-subtle main-font">
@@ -136,7 +138,6 @@
         </div>
 
         <div class="table-frame">
-          <!-- click-overlay ВЫНЕСЕН за sticky, чтобы не перекрывать кнопки -->
           <div v-if="showFilters || showBrandMenu || showNewMenu" class="click-overlay" @click="closeAllMenus"></div>
 
           <div class="sticky-nav-group">
@@ -244,7 +245,6 @@
               </div>
             </section>
 
-            <!-- Шапка таблицы — столбцы Пол/Фабрика/Качество с плашками, 50г/500г/1кг тоже -->
             <div class="grid-layout-def head no-click">
               <div class="cell id head-txt center">№</div>
               <div class="cell name search-cell-dark">
@@ -254,7 +254,6 @@
                     <button v-if="searchQuery" @click="searchQuery = ''" class="clear-search">✕</button>
                  </div>
               </div>
-              <!-- Заголовки с плашкой -->
               <div class="cell desk-only center head-meta-cell"><span class="head-meta-pill">Пол</span></div>
               <div class="cell desk-only center head-meta-cell"><span class="head-meta-pill">Фабрика</span></div>
               <div class="cell desk-only center head-meta-cell"><span class="head-meta-pill">Качество</span></div>
@@ -306,7 +305,6 @@
                 </div>
 
               </div>
-              <!-- LIQUID EYE HOVER — SVG-фильтр feGaussianBlur + feTurbulence -->
               <div class="row-aura-overlay">
                 <svg class="liquid-filter" style="position:absolute;width:0;height:0">
                   <defs>
@@ -326,7 +324,6 @@
       </div>
     </div>
 
-    <!-- Скроллбар убирает системный через overscroll на html -->
     <div v-if="!loading && !errorMsg" class="scroll-widget-track" ref="scrollTrack" 
          @mousedown.prevent="startDrag" @touchstart.prevent="startDrag" @click="trackClick">
        <div class="scroll-widget-thumb" :style="{ top: thumbTop + '%', height: thumbHeight + '%' }"></div>
@@ -533,11 +530,9 @@ const getSex = (g) => ({ m: 'МУЖ', w: 'ЖЕН', y: 'УНИ' }[g] || '—');
 const open = (u) => window.open(u.startsWith('http') ? u : `https://${u}`, '_blank');
 
 onMounted(() => {
-  // Скрыть системный скроллбар через стиль на html
   document.documentElement.style.scrollbarWidth = 'none';
   document.documentElement.style.overflow = 'hidden';
   document.documentElement.style.overflow = 'auto';
-  // Webkit
   const styleEl = document.createElement('style');
   styleEl.textContent = 'html::-webkit-scrollbar { display: none !important; } html { scrollbar-width: none !important; -ms-overflow-style: none !important; }';
   document.head.appendChild(styleEl);
@@ -565,7 +560,6 @@ onUnmounted(() => {
 @import url('https://fonts.googleapis.com/css2?family=Kollektif&display=swap');
 
 .main-font { font-family: 'Nunito', sans-serif; }
-/* Kollektif для всего в таблице кроме цен */
 .kollektif { font-family: 'Kollektif', 'Nunito', sans-serif; }
 .mono { font-family: 'JetBrains Mono', monospace; }
 
@@ -580,7 +574,6 @@ onUnmounted(() => {
   --inner-pill-name: #161618;
   --inner-pill-meta: #1e1e22;
   --search-pill-bg: #0d0d0f;
-  /* Liquid Eye hover */
   --liquid-bg: rgba(255,255,255,0.06);
   --liquid-border: rgba(255,255,255,0.12);
   --aura-text: #fff;
@@ -590,7 +583,10 @@ onUnmounted(() => {
   --seg-active: #fff; --seg-txt: #444; --seg-txt-active: #000;
   --btn-ctrl-bg: #111113;
   --btn-ctrl-border: rgba(255,255,255,0.07);
-  /* мгновенное переключение темы */
+  /* одинаковые размеры колонок */
+  --col-id: 52px;
+  --col-meta: 84px;
+  --col-price: 84px;
   transition: background 0s, color 0s;
   min-height: 100vh; background: var(--bg); color: var(--text); font-family: 'Nunito', sans-serif;
   touch-action: pan-y;
@@ -620,17 +616,9 @@ onUnmounted(() => {
   --btn-ctrl-bg: #e5e5ee; --btn-ctrl-border: rgba(0,0,0,0.07);
 }
 
-/* ─── СКРЫТЬ СИСТЕМНЫЙ СКРОЛЛБАР ─────────────────── */
-/* (дублируем на случай если JS не отработает) */
+/* ─── скрыть системный скроллбар ─────────────────── */
 :global(html) { scrollbar-width: none !important; -ms-overflow-style: none !important; }
 :global(html::-webkit-scrollbar) { display: none !important; }
-
-/* Внутренние скроллбары — тонкие 2px */
-::-webkit-scrollbar { width: 2px; height: 2px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(128,128,128,0.3); border-radius: 2px; }
-
-.container { max-width: 1400px; margin: 0 auto; padding: 15px; }
 
 /* ─── LOADING ─────────────────────────────────────── */
 .loading-overlay { position: fixed; inset: 0; background: #000; z-index: 2000; display: flex; justify-content: center; align-items: center; overflow: hidden; }
@@ -648,52 +636,42 @@ onUnmounted(() => {
 .err-desc { font-size: 12px; color: var(--dim); margin-bottom: 25px; }
 .retry-btn-noir { background: var(--text); border: none; color: var(--bg); padding: 12px 24px; font-family: 'JetBrains Mono',monospace; font-size: 11px; cursor: pointer; transition: 0.3s; text-transform: uppercase; font-weight: 700; }
 
-/* ─── SCROLL WIDGET (кастомный) ───────────────────── */
+/* ─── SCROLL WIDGET ───────────────────── */
 .scroll-widget-track { position: fixed; right: 3px; top: 15px; bottom: 15px; width: 14px; z-index: 1000; display: flex; justify-content: center; touch-action: none; }
 .scroll-widget-thumb { position: absolute; width: 5px; background: var(--text); border-radius: 3px; opacity: 0.3; transition: opacity 0.2s; }
 .scroll-widget-thumb:hover, .scroll-widget-track:hover .scroll-widget-thumb { opacity: 0.6; }
 .scroll-widget-track::before { content: ''; position: absolute; top: 0; bottom: 0; width: 1px; background: var(--border); }
 
-/* ─── HEADER ──────────────────────────────────────── */
+/* ─── HEADER ─────────────────────────────────────── */
 .header-manifest { margin-bottom: 25px; }
 .header-inner { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
 .header-pill-btn {
   background: transparent; border: 1px solid var(--border); color: var(--text);
   border-radius: 20px; padding: 6px 14px; font-size: 11px; font-weight: 700; cursor: pointer;
   display: flex; align-items: center; justify-content: center; gap: 5px;
-  /* мгновенное переключение темы */
   transition: background 0s, border-color 0s, color 0s;
 }
 .header-pill-btn:hover { background: var(--btn-ctrl-bg); }
 
 /* ─── STICKY NAV ──────────────────────────────────── */
+.table-frame { position: relative; z-index: 400; }
 .sticky-nav-group {
-  position: sticky; top: 0; z-index: 500;
+  position: sticky; top: 0; z-index: 700;
   background: var(--sticky-bg);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   box-shadow: 0 6px 30px rgba(0,0,0,0.3), 0 1px 0 var(--border);
   border-radius: 0 0 22px 22px;
-  /* НЕТ overflow:hidden — иначе popup обрезаются */
 }
 .controls-luxury { padding: 10px 0 0; }
 
 /* ─── Горизонтальный скролл кнопок ─────────────────── */
-.ctrl-scroll-row {
-  overflow-x: auto; overflow-y: visible;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-}
+.ctrl-scroll-row { overflow-x: auto; overflow-y: visible; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
 .ctrl-scroll-row::-webkit-scrollbar { display: none; }
-.ctrl-inner-flex {
-  display: flex; gap: 8px;
-  padding: 0 0 10px;
-  min-width: max-content;
-}
+.ctrl-inner-flex { display: flex; gap: 8px; padding: 0 0 10px; min-width: max-content; }
 
 /* ─── КНОПКИ ────────────────────────────────────────── */
-/* isolation: isolate создаёт stacking context — popup вылазят поверх overlay */
-.control-item { position: relative; flex-shrink: 0; isolation: isolate; }
+.control-item { position: relative; flex-shrink: 0; isolation: isolate; z-index: 710; }
 .main-ctrl-btn { 
   background: var(--btn-ctrl-bg); 
   border: 1px solid var(--btn-ctrl-border);
@@ -702,7 +680,7 @@ onUnmounted(() => {
   font-size: 11px; font-weight: 700; cursor: pointer; 
   display: flex; align-items: center; justify-content: center; gap: 6px;
   transition: filter 0.15s; white-space: nowrap;
-  position: relative; z-index: 510;
+  position: relative; z-index: 710;
 }
 .main-ctrl-btn:hover { filter: brightness(1.25); }
 .main-ctrl-btn.active-mode { background: var(--text); color: var(--bg); border-color: transparent; }
@@ -710,8 +688,8 @@ onUnmounted(() => {
 .btn-txt-fixed { max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .pill-arrow { width: 10px; height: 10px; opacity: 0.5; flex-shrink: 0; }
 
-/* click-overlay — НИЖЕ кнопок sticky (499 → 490) */
-.click-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 490; background: transparent; }
+/* overlay ниже sticky, чтобы не блокировать меню */
+.click-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 450; background: transparent; }
 
 /* ─── POPUP MENUS ─────────────────────────────────── */
 .bahur-popup-menu {
@@ -720,7 +698,7 @@ onUnmounted(() => {
   border-radius: 16px; padding: 15px;
   box-shadow: 0 20px 60px rgba(0,0,0,0.7);
   display: flex; flex-direction: column; gap: 10px;
-  z-index: 600; /* выше sticky (500) и overlay (490) */
+  z-index: 800;
 }
 .bahur-popup-menu.list-mode { left: 0; width: 240px; }
 .bahur-popup-menu.filter-mode { left: 0; width: 220px; }
@@ -734,11 +712,7 @@ onUnmounted(() => {
 .bw-thumb { width: 14px; height: 14px; background: var(--text); border-radius: 50%; position: absolute; left: 2px; top: 2px; transition: 0.3s; }
 .bw-toggle.on .bw-thumb { transform: translateX(16px); }
 
-.status-chip {
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 18px; height: 18px; border-radius: 5px;
-  font-size: 13px; font-weight: 900; line-height: 1; flex-shrink: 0;
-}
+.status-chip { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 5px; font-size: 13px; font-weight: 900; line-height: 1; flex-shrink: 0; }
 .chip-plus { background: rgba(0,168,107,0.15); color: #00a86b; border: 1px solid rgba(0,168,107,0.3); }
 .chip-star { background: rgba(160,32,240,0.15); color: #a020f0; border: 1px solid rgba(160,32,240,0.3); }
 .chip-minus { background: rgba(253,70,89,0.15); color: #fd4659; border: 1px solid rgba(253,70,89,0.3); }
@@ -809,32 +783,13 @@ onUnmounted(() => {
 .top-switch-btn-subtle { background: transparent; border: 1px solid var(--border); color: var(--text); padding: 5px 12px; border-radius: 20px; font-size: 10px; font-weight: 700; cursor: pointer; }
 .btn-subtle-label { color: var(--dim); }
 
-/* РЕЙТИНГ — фикс: overflow:hidden, убираем встроенный скроллбар снизу */
-.top-list-scroll-container {
-  max-height: 120px;
-  overflow-y: auto;
-  overflow-x: hidden;
-  display: flex; flex-direction: column; gap: 3px;
-  padding-right: 4px;
-  /* тонкий скролл */
-  scrollbar-width: thin;
-  scrollbar-color: rgba(128,128,128,0.3) transparent;
-}
+/* РЕЙТИНГ ───────────────────────── */
+.top-list-scroll-container { max-height: 120px; overflow-y: auto; overflow-x: hidden; display: flex; flex-direction: column; gap: 3px; padding-right: 4px; scrollbar-width: thin; scrollbar-color: rgba(128,128,128,0.3) transparent; }
 .top-list-scroll-container::-webkit-scrollbar { width: 2px; }
 .top-list-scroll-container::-webkit-scrollbar-track { background: transparent; }
 .top-list-scroll-container::-webkit-scrollbar-thumb { background: rgba(128,128,128,0.3); border-radius: 2px; }
 
-.top-row-compact {
-  display: grid;
-  /* Имя | бар | бейджи+% — фиксированные колонки, не overflow */
-  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 6px;
-  font-size: 11px;
-  padding: 3px 0;
-  border-bottom: 1px solid var(--border);
-  min-width: 0;
-}
+.top-row-compact { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) auto; align-items: center; gap: 6px; font-size: 11px; padding: 3px 0; border-bottom: 1px solid var(--border); min-width: 0; }
 .top-row-compact:last-child { border-bottom: none; }
 
 .tr-left-main { display: flex; align-items: center; min-width: 0; overflow: hidden; }
@@ -846,46 +801,35 @@ onUnmounted(() => {
 .mini-bar-fill { height: 100%; background: var(--text); }
 
 .tr-right-meta { display: flex; align-items: center; gap: 3px; flex-shrink: 0; }
-.badge-mini { border: 1px solid var(--border); padding: 1px 4px; font-size: 8px; color: var(--text); border-radius: 4px; font-weight: 700; white-space: nowrap; }
+.badge-mini { border: 1px solid var(--border); padding: 2px 6px; font-size: 10px; color: var(--text); border-radius: 6px; font-weight: 800; white-space: nowrap; min-width: 42px; height: 22px; display: inline-flex; align-items: center; justify-content: center; }
 .top-val { font-weight: 800; min-width: 28px; text-align: right; font-size: 10px; }
 
 /* ─── ШАПКА ТАБЛИЦЫ ──────────────────────────────── */
-/* Веб: Пол/Фабрика/Качество = 72px каждый (как самый широкий МУЖ/ЖЕН/УНИ), цены = 72px */
 .grid-layout-def.head { 
   display: grid; 
-  grid-template-columns: 52px 1fr 72px 72px 72px calc(var(--p-cols) * 72px);
+  grid-template-columns: var(--col-id) 1fr var(--col-meta) var(--col-meta) var(--col-meta) calc(var(--p-cols) * var(--col-price));
   align-items: stretch; box-sizing: border-box; width: 100%;
   border: none; background: transparent;
   padding: 4px 6px;
 }
 
 .search-cell-dark { padding: 4px !important; }
-.header-search-container {
-  display: flex; align-items: center; width: 100%; height: 100%;
-  background: var(--search-pill-bg);
-  border-radius: 12px; position: relative; overflow: hidden;
-  min-height: 56px;
-}
+.header-search-container { display: flex; align-items: center; width: 100%; height: 100%; background: var(--search-pill-bg); border-radius: 12px; position: relative; overflow: hidden; min-height: 56px; }
 .header-search-container .search-icon { position: absolute; left: 12px; width: 14px; height: 14px; color: var(--dim); pointer-events: none; }
-.header-search-input {
-  width: 100%; height: 100%; background: transparent; border: none;
-  padding: 10px 30px 10px 34px; outline: none; color: var(--text);
-  font-size: 11px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase;
-  font-family: 'Kollektif', 'Nunito', sans-serif;
-}
+.header-search-input { width: 100%; height: 100%; background: transparent; border: none; padding: 10px 30px 10px 34px; outline: none; color: var(--text); font-size: 11px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; font-family: 'Kollektif', 'Nunito', sans-serif; }
 .header-search-input::placeholder { color: var(--dim); font-weight: 800; }
 .header-search-container .clear-search { position: absolute; right: 10px; background: transparent; border: none; color: var(--dim); cursor: pointer; font-size: 11px; font-weight: bold; }
 
-/* Заголовки столбцов с плашкой */
+/* Заголовки */
 .head-meta-cell { padding: 4px !important; display: flex !important; align-items: stretch !important; }
 .head-meta-pill {
   display: flex; align-items: center; justify-content: center;
   width: 100%; flex: 1;
-  height: 48px;
+  height: 46px; min-height: 46px;
   background: var(--inner-pill-meta);
   border-radius: 10px;
   padding: 0 8px;
-  font-size: 9px; font-weight: 800;
+  font-size: 10px; font-weight: 800;
   color: var(--dim);
   letter-spacing: 1px; text-transform: uppercase;
   white-space: nowrap;
@@ -895,11 +839,11 @@ onUnmounted(() => {
 .head-price-pill {
   display: flex; align-items: center; justify-content: center;
   width: 100%; flex: 1;
-  height: 64px;
+  height: 54px; min-height: 54px;
   background: var(--inner-pill-dark);
   border-radius: 10px;
   padding: 0 4px;
-  font-size: 9px; font-weight: 800;
+  font-size: 12px; font-weight: 800;
   color: var(--dim);
   letter-spacing: 1px; text-transform: uppercase;
   white-space: nowrap;
@@ -912,7 +856,7 @@ onUnmounted(() => {
 
 .grid-layout-def:not(.head) { 
   display: grid; 
-  grid-template-columns: 52px 1fr 72px 72px 72px calc(var(--p-cols) * 72px);
+  grid-template-columns: var(--col-id) 1fr var(--col-meta) var(--col-meta) var(--col-meta) calc(var(--p-cols) * var(--col-price));
   align-items: stretch; box-sizing: border-box; width: 100%;
   background: var(--card-bg); 
   border: 1px solid var(--card-border); border-radius: 20px; 
@@ -923,11 +867,7 @@ onUnmounted(() => {
 }
 
 .grid-layout-def.clickable-row:hover,
-.grid-layout-def.clickable-row.simulated-hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
-  background: var(--hover-bg);
-}
+.grid-layout-def.clickable-row.simulated-hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,0,0,0.2); background: var(--hover-bg); }
 
 .cell { height: auto; display: flex; align-items: center; padding: 4px; border-right: none !important; box-sizing: border-box; overflow: hidden; }
 .head-txt { font-size: 9px; font-weight: 800; color: var(--dim); text-transform: uppercase; letter-spacing: 1.5px; padding: 12px; }
@@ -937,42 +877,33 @@ onUnmounted(() => {
 .out { opacity: 0.4; filter: grayscale(50%); }
 
 /* ─── ПЛАШКИ ─────────────────────────────────────────── */
-.inner-pill-main {
-  background: var(--inner-pill-name);
-  border-radius: 16px; padding: 10px 16px;
-  width: 100%; display: flex; flex-direction: column; justify-content: center;
-  min-height: 64px; box-sizing: border-box;
-}
+.inner-pill-main { background: var(--inner-pill-name); border-radius: 16px; padding: 10px 16px; width: 100%; display: flex; flex-direction: column; justify-content: center; min-height: 64px; box-sizing: border-box; }
 
-/* Пол/Фабрика/Качество — фиксированная высота 48px */
+/* Пол/Фабрика/Качество */
 .inner-pill-badge {
   background: var(--inner-pill-meta);
-  border-radius: 14px; padding: 0 8px;
+  border-radius: 10px;
+  padding: 0 8px;
   font-weight: 800; font-size: 10px;
   color: var(--text);
   width: 100%; text-align: center;
-  height: 48px; min-height: 48px;
+  height: 46px; min-height: 46px;
   display: flex; align-items: center; justify-content: center;
   box-sizing: border-box;
 }
 .inner-pill-badge.meta-badge { background: var(--inner-pill-meta); }
 
-.inner-pill-badge-mobile {
-  background: var(--inner-pill-meta);
-  border-radius: 8px; padding: 4px 6px;
-  font-weight: 800; font-size: 9px;
-  color: var(--text); border: none;
-  display: flex; align-items: center; justify-content: center;
-}
+.inner-pill-badge-mobile { background: var(--inner-pill-meta); border-radius: 8px; padding: 4px 6px; font-weight: 800; font-size: 9px; color: var(--text); border: none; display: flex; align-items: center; justify-content: center; }
 
-/* Цены — выше чем мета (64px) */
+/* Цены */
 .inner-pill-price {
   background: var(--inner-pill-dark);
-  border-radius: 14px; padding: 0 4px;
+  border-radius: 10px;
+  padding: 0 4px;
   font-weight: 800; font-size: 13px;
   display: flex; align-items: center; justify-content: center;
   width: 100%; box-sizing: border-box;
-  height: 64px; min-height: 64px;
+  height: 54px; min-height: 54px;
 }
 
 /* ─── СТАТУСЫ ─────────────────────────────────────────── */
@@ -988,51 +919,18 @@ onUnmounted(() => {
 .scent-title { font-weight: 700; font-size: 17px; line-height: 1.2; letter-spacing: 0.3px; }
 .mobile-only-meta { display: none; margin-top: 7px; gap: 4px; align-items: center; }
 
-.price-container { width: calc(var(--p-cols) * 72px); display: flex; align-items: stretch; }
+.price-container { width: calc(var(--p-cols) * var(--col-price)); display: flex; align-items: stretch; }
 .price-section { display: grid; gap: 6px; width: 100%; padding: 0 4px; }
 .head-p { padding: 4px; display: grid; align-items: stretch; }
 .head-p .p-col { display: flex; align-items: stretch; justify-content: center; }
 
 /* ─── LIQUID EYE HOVER ───────────────────────────────── */
-/* SVG-дисторсия на blur+turbulence — живой "глаз" */
 .liquid-filter { display: none; }
-.row-aura-overlay {
-  position: absolute; inset: 0;
-  display: flex; align-items: center; justify-content: center;
-  opacity: 0;
-  transition: opacity 0.4s cubic-bezier(0.25,0.8,0.25,1);
-  z-index: 10; pointer-events: none;
-  /* Жидкое стекло — размытие с дисторсией, НЕ обрезается border-radius карточки */
-  backdrop-filter: blur(8px) saturate(1.3);
-  -webkit-backdrop-filter: blur(8px) saturate(1.3);
-  background: var(--liquid-bg);
-  border-radius: inherit;
-  border: 1px solid transparent;
-}
-.clickable-row:hover .row-aura-overlay,
-.clickable-row.simulated-hover .row-aura-overlay {
-  opacity: 1;
-  border-color: var(--liquid-border);
-  /* Пульсирующее «дыхание» */
-  animation: liquid-pulse 2.5s ease-in-out infinite;
-}
-@keyframes liquid-pulse {
-  0%, 100% { backdrop-filter: blur(8px) saturate(1.3); background: var(--liquid-bg); }
-  50% { backdrop-filter: blur(12px) saturate(1.6); background: var(--liquid-bg); filter: brightness(1.05); }
-}
-.aura-text {
-  font-size: 11px; font-weight: 700; letter-spacing: 4px;
-  color: var(--aura-text);
-  transform: translateY(12px) scale(0.97);
-  opacity: 0; transition: 0.45s cubic-bezier(0.25,0.8,0.25,1);
-  text-transform: uppercase;
-  /* Лёгкое свечение текста */
-  text-shadow: 0 0 20px currentColor;
-}
-.clickable-row:hover .aura-text,
-.clickable-row.simulated-hover .aura-text {
-  opacity: 1; transform: translateY(0) scale(1);
-}
+.row-aura-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.4s cubic-bezier(0.25,0.8,0.25,1); z-index: 10; pointer-events: none; backdrop-filter: blur(8px) saturate(1.3); -webkit-backdrop-filter: blur(8px) saturate(1.3); background: var(--liquid-bg); border-radius: inherit; border: 1px solid transparent; }
+.clickable-row:hover .row-aura-overlay, .clickable-row.simulated-hover .row-aura-overlay { opacity: 1; border-color: var(--liquid-border); animation: liquid-pulse 2.5s ease-in-out infinite; }
+@keyframes liquid-pulse { 0%, 100% { backdrop-filter: blur(8px) saturate(1.3); background: var(--liquid-bg); } 50% { backdrop-filter: blur(12px) saturate(1.6); background: var(--liquid-bg); filter: brightness(1.05); } }
+.aura-text { font-size: 11px; font-weight: 700; letter-spacing: 4px; color: var(--aura-text); transform: translateY(12px) scale(0.97); opacity: 0; transition: 0.45s cubic-bezier(0.25,0.8,0.25,1); text-transform: uppercase; text-shadow: 0 0 20px currentColor; }
+.clickable-row:hover .aura-text, .clickable-row.simulated-hover .aura-text { opacity: 1; transform: translateY(0) scale(1); }
 
 /* ─── МОБИЛЬ ─────────────────────────────────────────── */
 @media (max-width: 900px) {
@@ -1043,43 +941,18 @@ onUnmounted(() => {
   .desk-only { display: none; }
   .mobile-only-meta { display: flex; }
 
-  /* Скрыть кастомный скролл-ползунок на мобиле */
   .scroll-widget-track { display: none !important; }
 
-  /* Sticky — на всю ширину экрана, без отступов container */
-  .sticky-nav-group {
-    border-radius: 0 0 18px 18px;
-    margin-left: -15px;
-    margin-right: -15px;
-    padding-left: 15px;
-    padding-right: 15px;
-  }
+  .sticky-nav-group { border-radius: 0 0 18px 18px; margin-left: -15px; margin-right: -15px; padding-left: 15px; padding-right: 15px; }
 
-  /* Кнопки меню — равная ширина и высота, заполняют строку */
   .ctrl-scroll-row { overflow-x: visible; }
-  .ctrl-inner-flex {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 6px;
-    padding: 0 0 10px;
-    min-width: 0;
-    width: 100%;
-  }
+  .ctrl-inner-flex { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; padding: 0 0 10px; min-width: 0; width: 100%; }
   .control-item { flex-shrink: unset; width: 100%; }
-  .main-ctrl-btn {
-    width: 100%;
-    padding: 10px 8px;
-    font-size: 11px;
-    justify-content: center;
-  }
+  .main-ctrl-btn { width: 100%; padding: 10px 8px; font-size: 11px; justify-content: center; }
   .pill-arrow { display: none; }
 
-  /* Мобильная сетка таблицы */
   .grid-layout-def.head { grid-template-columns: 34px 1fr calc(var(--p-cols) * 38px); padding: 2px 4px; }
-  .grid-layout-def:not(.head) {
-    grid-template-columns: 34px 1fr calc(var(--p-cols) * 38px);
-    padding: 3px; border-radius: 12px;
-  }
+  .grid-layout-def:not(.head) { grid-template-columns: 34px 1fr calc(var(--p-cols) * 38px); padding: 3px; border-radius: 12px; }
 
   .id-zone-square { padding: 0 !important; align-items: center; justify-content: center; }
   .id-sq-top { font-size: 11px; margin-bottom: 1px; }
@@ -1091,12 +964,10 @@ onUnmounted(() => {
   .mobile-only-meta { margin-top: 4px; gap: 3px; }
   .inner-pill-badge-mobile { padding: 3px 5px; font-size: 8px; border-radius: 5px; }
 
-  /* Цены на мобиле */
   .price-container { width: calc(var(--p-cols) * 38px); display: flex; align-items: stretch; }
   .price-section { gap: 2px; padding: 0; align-items: stretch; }
   .inner-pill-price { padding: 0 2px; font-size: 11px; border-radius: 8px; height: auto; min-height: 0; flex: 1; }
 
-  /* Поиск на мобиле */
   .search-cell-dark { padding: 3px !important; }
   .header-search-container { border-radius: 8px; min-height: 36px; }
   .header-search-container .search-icon { left: 8px; width: 11px; height: 11px; }
@@ -1106,17 +977,7 @@ onUnmounted(() => {
 
   .aura-text { font-size: 9px; letter-spacing: 2px; }
 
-  /* Popup меню на мобиле — по центру */
-  .bahur-popup-menu {
-    position: fixed !important;
-    top: auto !important;
-    bottom: 20px !important;
-    left: 15px !important;
-    right: 15px !important;
-    width: auto !important;
-    max-width: none !important;
-    transform: none !important;
-    z-index: 2000 !important;
-  }
+  .bahur-popup-menu { position: fixed !important; top: auto !important; bottom: 20px !important; left: 15px !important; right: 15px !important; width: auto !important; max-width: none !important; transform: none !important; z-index: 2000 !important; }
 }
 </style>
+```
