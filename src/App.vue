@@ -26,10 +26,6 @@
         <div class="tf">
           <!-- Sticky Header -->
           <div class="sn liquid-el" :style="lgStyle">
-            <!-- Stats toggle inside header -->
-            <button @click="showDash=!showDash" :class="['stats-inline',{active:showDash}]">
-              <span class="stats-arrow" :class="{flip:showDash}">▾</span>
-            </button>
             <!-- Table header -->
             <div class="th" :class="'sz-'+cardSize">
               <div class="hn hid"><span class="hp nhp mono">#</span></div>
@@ -52,20 +48,11 @@
             </div>
           </div>
 
-          <!-- Dashboard -->
-          <div :class="['dw',{open:showDash}]"><div class="dc"><section class="dg">
-            <div class="sc"><label class="sl">АРОМАТЫ</label><div class="sv mono">{{ stats.total }}</div><div class="ss"><span>Есть: <b class="mono">{{ stats.countAvail }}</b></span><span>Нет: <b class="mono">{{ stats.countOut }}</b></span></div></div>
-            <div class="sc"><label class="sl">СКЛАД</label><div class="sv mono">{{ stats.availability }}%</div><div class="bt"><div class="bf" :style="{width:stats.availability+'%'}"></div></div></div>
-            <div class="sc"><label class="sl">СРЕДНЯЯ ЦЕНА</label><div class="sp2"><div v-if="showPrices.p50" class="sp3">50г: <span class="mono">{{ stats.avg50 }}₽</span></div><div v-if="showPrices.p500" class="sp3">500г: <span class="mono">{{ stats.avg500 }}₽</span></div><div v-if="showPrices.p1000" class="sp3">1кг: <span class="mono">{{ stats.avg1000 }}₽</span></div></div></div>
-            <div class="sc sc-right"><label class="sl">ФАБРИКИ</label><div v-for="f in ['LUZI','EPS','SELUZ']" :key="f" class="br"><div class="bm"><span class="mono">{{ f }}</span><span class="mono">{{ stats.factoryPerc[f] }}%</span></div><div class="bn"><div class="bf" :style="{width:stats.factoryPerc[f]+'%'}"></div></div></div></div>
-            <div class="sc sc-right"><label class="sl">КАЧЕСТВО</label><div v-for="q in ['TOP','Q1','Q2']" :key="q" class="br"><div class="bm"><span class="mono">{{ q }}</span><span class="mono">{{ stats.qualityPerc[q] }}%</span></div><div class="bn"><div class="bf" :style="{width:stats.qualityPerc[q]+'%'}"></div></div></div></div>
-            <div class="sc sw2"><div style="display:flex;justify-content:center;margin-bottom:6px"><button @click="toggleStatsMode" class="tsw main-font"><span style="color:var(--dim)">РЕЙТИНГ:</span> {{ statsMode==='6m'?'6 МЕС':'ВСЕ ВРЕМЯ' }} ⇄</button></div><div class="tsc"><div v-for="(item,idx) in stats.topListFull" :key="idx" class="tr2"><div class="tl"><span class="tn mono">{{ idx+1 }}.</span><span class="tname kollektif">{{ item.name }}</span></div><div class="tb2"><div class="tbd">{{ item.factory }}</div><div class="tbd">{{ item.quality }}</div><div class="tbd tbh">{{ statsMode==='6m'?item.sales6m:item.salesAll }}%</div></div><div style="display:flex;align-items:center"><div class="bn"><div class="bf" :style="{width:(statsMode==='6m'?item.sales6m:item.salesAll)+'%'}"></div></div></div></div><div v-if="!stats.topListFull.length" class="mono" style="font-size:10px;opacity:.5">НЕТ ДАННЫХ</div></div></div>
-          </section></div></div>
-
           <!-- Popups -->
           <teleport to="body">
             <transition name="pop"><div v-if="showBrandMenu" class="popup-teleport" :style="[brandMenuStyle,pVars]"><div style="width:100%"><input v-model="tempBrandInput" type="search" inputmode="search" enterkeyhint="search" placeholder="ПОИСК БРЕНДА…" class="pinp main-font"/></div><div class="bsc"><button @click="clearBrands" class="bbtn ab main-font"><svg style="width:14px;height:14px;flex-shrink:0" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.5 2 2 6.5 2 12S6.5 22 12 22 22 17.5 22 12 17.5 2 12 2M10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z"/></svg><span>ВСЕ</span></button><button v-for="b in filteredBrandsDropdown" :key="b" @click="toggleBrandSelection(b)" class="bbtn main-font"><span class="btx">{{ b }}</span><svg v-if="selectedBrands.includes(b)" style="width:13px;height:13px" viewBox="0 0 24 24"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/></svg></button><div v-if="!filteredBrandsDropdown.length" style="font-size:10px;color:var(--dim);padding:6px 10px" class="main-font">НЕТ СОВПАДЕНИЙ</div></div></div></transition>
             <transition name="pop"><div v-if="showFragMenu" class="popup-teleport" :style="[fragMenuStyle,pVars]"><div style="width:100%"><input v-model="tempFragInput" type="search" inputmode="search" enterkeyhint="search" placeholder="ПОИСК АРОМАТА…" class="pinp main-font"/></div><div class="bsc"><button @click="clearFrags" class="bbtn ab main-font"><svg style="width:14px;height:14px;flex-shrink:0" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.5 2 2 6.5 2 12S6.5 22 12 22 22 17.5 22 12 17.5 2 12 2M10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z"/></svg><span>ВСЕ</span></button><button v-for="f in filteredFragsDropdown" :key="f" @click="toggleFragSelection(f)" class="bbtn main-font"><span class="btx">{{ f }}</span><svg v-if="selectedFrags.includes(f)" style="width:13px;height:13px" viewBox="0 0 24 24"><path fill="currentColor" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/></svg></button><div v-if="!filteredFragsDropdown.length" style="font-size:10px;color:var(--dim);padding:6px 10px" class="main-font">НЕТ СОВПАДЕНИЙ</div></div></div></transition>
+
             <!-- Filters cascade -->
             <transition name="cascade">
               <div v-if="showFilters" class="filter-cascade" :style="pVars">
@@ -117,11 +104,30 @@
                 </div>
               </div>
             </transition>
+
+            <!-- Stats cascade -->
+            <transition name="cascade">
+              <div v-if="showDash" class="filter-cascade" :style="pVars">
+                <div class="fc-overlay" @click="showDash=false"></div>
+                <div class="fc-panel fc-stats" ref="statsPanelRef" @touchstart="onStatsTouchStart" @touchmove="onStatsTouchMove" @touchend="onStatsTouchEnd">
+                  <div class="fc-handle"></div>
+                  <div class="fc-head"><span class="fc-title main-font">СТАТИСТИКА</span><button @click="showDash=false" class="fc-close">✕</button></div>
+                  <section class="dg">
+                    <div class="sc"><label class="sl">АРОМАТЫ</label><div class="sv mono">{{ stats.total }}</div><div class="ss"><span>Есть: <b class="mono">{{ stats.countAvail }}</b></span><span>Нет: <b class="mono">{{ stats.countOut }}</b></span></div></div>
+                    <div class="sc"><label class="sl">СКЛАД</label><div class="sv mono">{{ stats.availability }}%</div><div class="bt"><div class="bf" :style="{width:stats.availability+'%'}"></div></div></div>
+                    <div class="sc"><label class="sl">СРЕДНЯЯ ЦЕНА</label><div class="sp2"><div v-if="showPrices.p50" class="sp3">50г: <span class="mono">{{ stats.avg50 }}₽</span></div><div v-if="showPrices.p500" class="sp3">500г: <span class="mono">{{ stats.avg500 }}₽</span></div><div v-if="showPrices.p1000" class="sp3">1кг: <span class="mono">{{ stats.avg1000 }}₽</span></div></div></div>
+                    <div class="sc sc-right"><label class="sl">ФАБРИКИ</label><div v-for="f in ['LUZI','EPS','SELUZ']" :key="f" class="br"><div class="bm"><span class="mono">{{ f }}</span><span class="mono">{{ stats.factoryPerc[f] }}%</span></div><div class="bn"><div class="bf" :style="{width:stats.factoryPerc[f]+'%'}"></div></div></div></div>
+                    <div class="sc sc-right"><label class="sl">КАЧЕСТВО</label><div v-for="q in ['TOP','Q1','Q2']" :key="q" class="br"><div class="bm"><span class="mono">{{ q }}</span><span class="mono">{{ stats.qualityPerc[q] }}%</span></div><div class="bn"><div class="bf" :style="{width:stats.qualityPerc[q]+'%'}"></div></div></div></div>
+                    <div class="sc sw2"><div style="display:flex;justify-content:center;margin-bottom:6px"><button @click="toggleStatsMode" class="tsw main-font"><span style="color:var(--dim)">РЕЙТИНГ:</span> {{ statsMode==='6m'?'6 МЕС':'ВСЕ ВРЕМЯ' }} ⇄</button></div><div class="tsc"><div v-for="(item,idx) in stats.topListFull" :key="idx" class="tr2"><div class="tl"><span class="tn mono">{{ idx+1 }}.</span><span class="tname kollektif">{{ item.name }}</span></div><div class="tb2"><div class="tbd">{{ item.factory }}</div><div class="tbd">{{ item.quality }}</div><div class="tbd tbh">{{ statsMode==='6m'?item.sales6m:item.salesAll }}%</div></div><div style="display:flex;align-items:center"><div class="bn"><div class="bf" :style="{width:(statsMode==='6m'?item.sales6m:item.salesAll)+'%'}"></div></div></div></div><div v-if="!stats.topListFull.length" class="mono" style="font-size:10px;opacity:.5">НЕТ ДАННЫХ</div></div></div>
+                  </section>
+                </div>
+              </div>
+            </transition>
           </teleport>
 
           <!-- Products -->
           <div class="gt" :class="'sz-'+cardSize">
-            <div v-for="(p,index) in sortedProducts" :key="p.id+'-'+index" :class="['row','cr',{out:p.isOut}]" @click="p.link&&p.link.length>5?openLink(p.link):null">
+            <div v-for="(p,index) in sortedProducts" :key="p.id+'-'+index" :class="['row','cr',{out:p.isOut}]" @click="handleRowClick(p,$event)">
               <div class="rc">
                 <div class="cn cid"><span class="id-num mono">{{ p.id }}<span v-if="p.isOut" class="id-st st-out">-</span><span v-else-if="p.hasPlus" class="id-st st-plus">+</span><span v-else-if="p.hasStar" class="id-st st-star">*</span></span></div>
                 <div class="cn cbrand"><div class="pn pn-brand"><span class="bc kollektif">{{ p.brand }}</span></div></div>
@@ -144,10 +150,16 @@
       </div>
     </div>
 
-    <!-- FAB Filter -->
-    <button v-if="!loading&&!errorMsg" @click="showFilters=!showFilters" :class="['fab-filter liquid-el',{active:showFilters}]" :style="lgStyle">
-      <svg width="18" height="18" viewBox="0 0 24 24"><path fill="currentColor" d="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z"/></svg>
-    </button>
+    <!-- FAB Pill: Stats + Filters -->
+    <div v-if="!loading&&!errorMsg" class="fab-pill liquid-el" :style="lgStyle">
+      <button @click="showDash=!showDash" :class="['fab-btn fab-stats',{active:showDash}]">
+        <svg width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zm5.6 8H19v6h-2.8z"/></svg>
+      </button>
+      <div class="fab-divider"></div>
+      <button @click="showFilters=!showFilters" :class="['fab-btn fab-filt',{active:showFilters}]">
+        <svg width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z"/></svg>
+      </button>
+    </div>
 
     <!-- Scroll Track -->
     <div v-if="!loading&&!errorMsg" class="strack" ref="scrollTrack" @mousedown.prevent="startDrag" @touchstart.prevent="startDrag" @click="trackClick"><div class="sthumb" :style="{top:thumbTop+'%',height:thumbHeight+'%'}"></div></div>
@@ -170,8 +182,8 @@ const saved=localStorage.getItem('bahur-theme')
 const curTheme=ref(saved==='powder'?'powder':'graphite')
 
 const T={
-graphite:{bg:'#0c0c0e',text:'#e0e0e4',cBg:'#141416',pP:'#18181c',pM:'#141416',pN:'#141416',brd:'rgba(255,255,255,0.05)',dim:'#4a4a50',hBg:'#1c1c20',sBg:'rgba(12,12,14,0.92)',seBg:'#0a0a0c',seA:'#e0e0e4',seT:'#4a4a50',seTA:'#0a0a0c',panBg:'#111114',gBase:'rgba(0,0,0,0.35)',gBrd:'rgba(255,255,255,0.06)',gShine:'rgba(255,255,255,0.04)',acc:'#888890',tRgb:'20,20,22',fabBg:'rgba(14,14,18,0.85)',fabBrd:'rgba(255,255,255,0.08)'},
-powder:{bg:'#f4f0ec',text:'#1a1618',cBg:'#faf7f5',pP:'#f0ebe7',pM:'#f0ebe7',pN:'#f7f3f0',brd:'rgba(0,0,0,0.06)',dim:'#a09088',hBg:'#ede7e3',sBg:'rgba(244,240,236,0.92)',seBg:'#e4ddd8',seA:'#1a1618',seT:'#a09088',seTA:'#faf7f5',panBg:'#f7f3f0',gBase:'rgba(255,255,255,0.45)',gBrd:'rgba(0,0,0,0.06)',gShine:'rgba(255,255,255,0.6)',acc:'#605048',tRgb:'250,247,245',fabBg:'rgba(247,243,240,0.88)',fabBrd:'rgba(0,0,0,0.08)'}
+graphite:{bg:'#0c0c0e',text:'#e0e0e4',cBg:'#141416',pP:'#18181c',pM:'#18181a',pN:'#15151a',brd:'rgba(255,255,255,0.06)',dim:'#4a4a50',hBg:'#1c1c20',sBg:'rgba(16,16,20,0.95)',seBg:'#0a0a0c',seA:'#e0e0e4',seT:'#4a4a50',seTA:'#0a0a0c',panBg:'#111114',gBase:'rgba(0,0,0,0.35)',gBrd:'rgba(255,255,255,0.08)',gShine:'rgba(255,255,255,0.04)',acc:'#888890',tRgb:'20,20,22',fabBg:'rgba(14,14,18,0.88)',fabBrd:'rgba(255,255,255,0.1)'},
+powder:{bg:'#f4f0ec',text:'#1a1618',cBg:'#faf7f5',pP:'#f0ebe7',pM:'#f0ebe7',pN:'#f7f3f0',brd:'rgba(0,0,0,0.06)',dim:'#a09088',hBg:'#ede7e3',sBg:'rgba(238,234,228,0.96)',seBg:'#e4ddd8',seA:'#1a1618',seT:'#a09088',seTA:'#faf7f5',panBg:'#f7f3f0',gBase:'rgba(255,255,255,0.45)',gBrd:'rgba(0,0,0,0.06)',gShine:'rgba(255,255,255,0.6)',acc:'#605048',tRgb:'250,247,245',fabBg:'rgba(247,243,240,0.88)',fabBrd:'rgba(0,0,0,0.08)'}
 }
 
 const themeVars=computed(()=>{const t=T[curTheme.value]||T.graphite;return{'--bg':t.bg,'--text':t.text,'--card-bg':t.cBg,'--pill-price':t.pP,'--pill-meta':t.pM,'--pill-name':t.pN,'--border':t.brd,'--card-border':t.brd,'--dim':t.dim,'--hover-bg':t.hBg,'--sticky-bg':t.sBg,'--seg-bg':t.seBg,'--seg-active':t.seA,'--seg-txt':t.seT,'--seg-txt-active':t.seTA,'--panel-bg':t.panBg,'--glass-base':t.gBase,'--glass-brd':t.gBrd,'--glass-shine':t.gShine,'--accent':t.acc,'--p-cols':activePriceCount.value,'--text-rgb':t.tRgb,'--fab-bg':t.fabBg,'--fab-brd':t.fabBrd}})
@@ -223,6 +235,9 @@ const fragLabel=computed(()=>{const n=selectedFrags.value.length;return n===0?'�
 
 const psg=computed(()=>({gridTemplateColumns:`repeat(${activePriceCount.value},1fr)`}))
 
+// ── Row click — open link, remove highlight immediately ──
+const handleRowClick=(p,e)=>{if(p.link&&p.link.length>5){openLink(p.link)}if(e.currentTarget){e.currentTarget.blur()}}
+
 // ── Scroll ──
 const scrollTrack=ref(null),thumbTop=ref(0),thumbHeight=ref(10)
 const updateThumb=()=>{const wH=window.innerHeight,dH=document.documentElement.scrollHeight,sY=window.scrollY;thumbHeight.value=Math.max((wH/dH)*100,5);const mx=dH-wH;thumbTop.value=mx<=0?0:(sY/mx)*(100-thumbHeight.value)}
@@ -233,12 +248,17 @@ const onMM=e=>{if(isDragging)handleDrag(e.clientY)},onTM=e=>{if(isDragging){e.pr
 const stopDrag=()=>{isDragging=false;window.removeEventListener('mousemove',onMM);window.removeEventListener('touchmove',onTM);window.removeEventListener('mouseup',stopDrag);window.removeEventListener('touchend',stopDrag)}
 const trackClick=e=>handleDrag(e.clientY)
 
-// ── Swipe to dismiss filters ──
-const fcPanelRef=ref(null)
+// ── Swipe to dismiss panels ──
+const fcPanelRef=ref(null),statsPanelRef=ref(null)
 let panelTouchStartY=0,panelTouchDelta=0
 const onPanelTouchStart=e=>{panelTouchStartY=e.touches[0].clientY;panelTouchDelta=0}
 const onPanelTouchMove=e=>{const dy=e.touches[0].clientY-panelTouchStartY;panelTouchDelta=dy;if(dy>0&&fcPanelRef.value){fcPanelRef.value.style.transform=`translateY(${dy}px)`;fcPanelRef.value.style.transition='none'}}
 const onPanelTouchEnd=()=>{if(fcPanelRef.value){fcPanelRef.value.style.transition='transform .3s cubic-bezier(.4,0,.2,1)';if(panelTouchDelta>80){showFilters.value=false}fcPanelRef.value.style.transform=''}}
+
+let statsTouchStartY=0,statsTouchDelta=0
+const onStatsTouchStart=e=>{statsTouchStartY=e.touches[0].clientY;statsTouchDelta=0}
+const onStatsTouchMove=e=>{const dy=e.touches[0].clientY-statsTouchStartY;statsTouchDelta=dy;if(dy>0&&statsPanelRef.value){statsPanelRef.value.style.transform=`translateY(${dy}px)`;statsPanelRef.value.style.transition='none'}}
+const onStatsTouchEnd=()=>{if(statsPanelRef.value){statsPanelRef.value.style.transition='transform .3s cubic-bezier(.4,0,.2,1)';if(statsTouchDelta>80){showDash.value=false}statsPanelRef.value.style.transform=''}}
 
 // ── Data loading ──
 const parseCSV=data=>{try{return data.split(/\r?\n/).filter(l=>l.trim()).map(row=>{const c=row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(x=>x.replace(/^"|"$/g,'').trim());if(!c[0]||isNaN(parseInt(c[0]))||!c[2])return null;const g=c[4]?c[4].toLowerCase().trim():'';const fG=(g==='m'||g==='м'||g.includes('муж'))?'m':(g==='w'||g==='ж'||g.includes('жен'))?'w':(g==='y'||g==='у'||g.includes('уни'))?'y':'';const st=c[10]?c[10].trim():'';return{id:c[0],link:c[1]||'',brand:c[2]||'',name:c[3]||'',gender:fG,factory:c[5]||'',quality:c[6]||'',p50:parseInt(c[7])||0,p500:parseInt(c[8])||0,p1000:parseInt(c[9])||0,status:st,hasPlus:st.includes('+'),hasStar:st.includes('*'),isOut:st.includes('-'),sales6m:parseFloat(c[11])||0,salesAll:parseFloat(c[12])||0}}).filter(Boolean)}catch{return[]}}
@@ -276,12 +296,13 @@ onUnmounted(()=>{window.removeEventListener('scroll',updateThumb);window.removeE
 @import url('https://fonts.googleapis.com/css2?family=Kollektif&display=swap');
 
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;outline:none}
-*:focus{outline:none}
-button:focus,input:focus{outline:none}
+*:focus,*:active{outline:none}
+button:focus,button:active,input:focus{outline:none;box-shadow:none}
 .main-font{font-family:'Nunito',sans-serif}.kollektif{font-family:'Kollektif','Nunito',sans-serif}.mono{font-family:'JetBrains Mono',monospace}.center{display:flex;align-items:center;justify-content:center}
 .bahur-terminal{min-height:100vh;background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;touch-action:pan-y;transition:background .5s ease,color .5s ease}
 ::-webkit-scrollbar{width:0;height:0}
-.container{max-width:1400px;margin:0 auto;padding:8px;overflow-x:hidden}
+/* CRITICAL: no overflow-x:hidden here — it breaks position:sticky */
+.container{max-width:1400px;margin:0 auto;padding:8px}
 
 /* ══ LIQUID GLASS ══ */
 .liquid-el{position:relative;isolation:isolate}
@@ -290,35 +311,27 @@ button:focus,input:focus{outline:none}
 
 /* Loading */
 .lo{position:fixed;inset:0;background:#000;z-index:9999;display:flex;justify-content:center;align-items:center;overflow:hidden}
-.lo-bg{position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent,transparent 10px,rgba(255,255,255,.15) 10px,rgba(255,255,255,.15) 13px);background-size:200% 200%;animation:bgm 4s linear infinite}
+.lo-bg{position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent,transparent 10px,rgba(255,255,255,.5) 10px,rgba(255,255,255,.5) 13px);background-size:200% 200%;animation:bgm 4s linear infinite}
 @keyframes bgm{to{background-position:100% 100%}}
 .lo-c{position:relative;z-index:10}.lo-t{font-weight:800;font-size:56px;color:#fff;letter-spacing:10px;opacity:0;animation:si 1.5s cubic-bezier(.2,.8,.2,1) forwards}
 @keyframes si{0%{transform:scale(.8);opacity:0;filter:blur(10px)}100%{transform:scale(1);opacity:1;filter:blur(0)}}
 .ez{display:flex;justify-content:center;align-items:center;height:50vh}.eb{text-align:center;border:1px solid var(--border);padding:40px 60px;border-radius:12px;background:var(--card-bg)}
 
 /* ── Sticky Header ── */
-.sn{position:sticky;top:0;z-index:100;background:var(--sticky-bg);border-radius:14px;overflow:visible;padding:6px 8px 4px;transition:background .5s ease;box-shadow:0 6px 28px rgba(0,0,0,.25),0 1px 0 var(--glass-brd) inset;border:1px solid var(--glass-brd)}
+.sn{position:sticky;top:0;z-index:100;background:var(--sticky-bg);border-radius:14px;overflow:visible;padding:6px 8px 4px;transition:background .5s ease;box-shadow:0 6px 28px rgba(0,0,0,.3),0 1px 0 var(--glass-brd) inset;border:1px solid var(--glass-brd)}
 
-/* Stats inline button */
-.stats-inline{display:flex;align-items:center;justify-content:center;width:20px;height:14px;background:transparent;border:1px solid var(--border);border-radius:4px;cursor:pointer;color:var(--dim);transition:all .3s ease;margin:0 auto 2px;padding:0}
-.stats-inline:hover{color:var(--text);border-color:var(--accent)}
-.stats-inline.active{color:var(--text);background:rgba(128,128,128,.1)}
-.stats-arrow{display:inline-block;font-size:8px;transition:transform .3s ease;line-height:1}
-.stats-arrow.flip{transform:rotate(180deg)}
-
-/* Dashboard */
-.dw{display:grid;grid-template-rows:0fr;transition:grid-template-rows .4s cubic-bezier(.4,0,.2,1)}.dw.open{grid-template-rows:1fr;margin-bottom:6px}.dc{overflow:hidden}
-.dg{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
+/* Dashboard stats (inside cascade) */
+.dg{display:grid;grid-template-columns:repeat(2,1fr);gap:4px}
 .sc{border:1px solid var(--border);padding:10px 12px;background:var(--card-bg);border-left:2px solid var(--accent);border-radius:8px;transition:all .4s ease}
 .sc-right{text-align:right}.sc-right .bm{justify-content:flex-end}
-.sw2{grid-column:span 5}.sl{display:block;font-size:7px;font-weight:800;color:var(--dim);margin-bottom:5px;letter-spacing:1.5px;text-transform:uppercase}
+.sw2{grid-column:span 2}.sl{display:block;font-size:7px;font-weight:800;color:var(--dim);margin-bottom:5px;letter-spacing:1.5px;text-transform:uppercase}
 .sv{font-size:15px;font-weight:800}.ss{display:flex;gap:8px;margin-top:4px;font-size:8px;color:var(--dim);font-weight:700}.ss b{color:var(--text);margin-left:2px}
 .sp2{display:flex;flex-direction:column;gap:1px}.sp3{font-size:9px;color:var(--dim);font-weight:700}.sp3 span{color:var(--accent);font-weight:800;margin-left:3px}
 .br{margin-bottom:3px}.bm{display:flex;justify-content:space-between;font-size:7px;font-weight:700;margin-bottom:2px;text-transform:uppercase}
 .bn{height:2px;background:var(--border);border-radius:1px;overflow:hidden}.bt{height:3px;background:var(--border);border-radius:2px;overflow:hidden;margin-top:5px}
 .bf{height:100%;background:var(--accent);transition:all .4s ease}
 .tsw{background:transparent;border:1px solid var(--border);color:var(--text);padding:3px 10px;border-radius:16px;font-size:8px;font-weight:700;cursor:pointer;transition:all .2s ease}
-.tsc{max-height:100px;overflow-y:auto;display:flex;flex-direction:column;gap:2px;scrollbar-width:none}
+.tsc{max-height:180px;overflow-y:auto;display:flex;flex-direction:column;gap:2px;scrollbar-width:none}
 .tsc::-webkit-scrollbar{width:0}
 .tr2{display:grid;grid-template-columns:minmax(0,2fr) auto minmax(0,1fr);align-items:center;gap:6px;padding:2px 0;border-bottom:1px solid var(--border)}.tr2:last-child{border-bottom:none}
 .tl{display:flex;align-items:center;min-width:0;overflow:hidden}.tn{color:var(--dim);margin-right:3px;font-weight:700;font-size:8px}
@@ -343,15 +356,18 @@ button:focus,input:focus{outline:none}
 .search-ico{width:11px;height:11px;flex-shrink:0;opacity:.4;transition:opacity .2s}
 .hdr-click:hover .search-ico{opacity:.7}
 
-/* ── FAB ── */
-.fab-filter{position:fixed;bottom:20px;left:calc(50% + 12px);transform:translateX(-50%);z-index:150;display:flex;align-items:center;justify-content:center;width:52px;height:52px;border-radius:50%;border:1px solid var(--fab-brd);cursor:pointer;color:var(--text);background:var(--fab-bg);box-shadow:0 4px 20px rgba(0,0,0,.2);transition:all .3s cubic-bezier(.4,0,.2,1)}
-.fab-filter.active{transform:translateX(-50%) scale(.9) rotate(90deg)}
-.fab-filter:hover{transform:translateX(-50%) scale(1.05);box-shadow:0 6px 28px rgba(0,0,0,.25)}
+/* ── FAB Pill ── */
+.fab-pill{position:fixed;bottom:20px;left:calc(50% + 8px);transform:translateX(-50%);z-index:150;display:flex;align-items:center;height:50px;border-radius:25px;border:1px solid var(--fab-brd);background:var(--fab-bg);box-shadow:0 4px 24px rgba(0,0,0,.25);overflow:hidden}
+.fab-btn{display:flex;align-items:center;justify-content:center;width:50px;height:100%;background:transparent;border:none;cursor:pointer;color:var(--text);transition:all .3s cubic-bezier(.4,0,.2,1)}
+.fab-btn:hover{background:rgba(128,128,128,.1)}
+.fab-btn.active{color:var(--accent);background:rgba(128,128,128,.12)}
+.fab-divider{width:1px;height:24px;background:var(--border);flex-shrink:0}
 
-/* ── Filters ── */
+/* ── Filters / Stats cascade ── */
 .filter-cascade{position:fixed;inset:0;z-index:9000;display:flex;align-items:flex-end;justify-content:center}
-.fc-overlay{position:absolute;inset:0;background:rgba(0,0,0,.35);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
-.fc-panel{position:relative;z-index:1;width:100%;max-width:380px;max-height:80vh;overflow-y:auto;border-radius:20px 20px 0 0;padding:12px 16px 24px;display:flex;flex-direction:column;gap:10px;background:var(--panel-bg);border:1px solid var(--border);border-bottom:none;box-shadow:0 -8px 40px rgba(0,0,0,.2);scrollbar-width:none}
+.fc-overlay{position:absolute;inset:0;background:rgba(0,0,0,.4);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+.fc-panel{position:relative;z-index:1;width:100%;max-width:420px;max-height:80vh;overflow-y:auto;border-radius:20px 20px 0 0;padding:12px 16px 24px;display:flex;flex-direction:column;gap:10px;background:var(--panel-bg);border:1px solid var(--border);border-bottom:none;box-shadow:0 -8px 40px rgba(0,0,0,.25);scrollbar-width:none}
+.fc-stats{max-height:85vh}
 .fc-panel::-webkit-scrollbar{width:0}
 .fc-handle{width:32px;height:3px;background:var(--dim);opacity:.3;border-radius:3px;margin:0 auto 4px}
 .fc-head{display:flex;justify-content:space-between;align-items:center}
@@ -397,9 +413,10 @@ button:focus,input:focus{outline:none}
 .btx{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-transform:uppercase}
 
 /* ── Product grid ── */
-.gt{display:flex;flex-direction:column;gap:2px;width:100%;min-width:700px;padding-top:4px;padding-bottom:80px}
-.row{display:grid;grid-template-columns:22px .7fr 1fr repeat(3,52px) calc(var(--p-cols)*52px);align-items:stretch;width:100%;background:var(--card-bg);border:1px solid var(--card-border);border-radius:10px;position:relative;overflow:hidden;transition:all .25s cubic-bezier(.4,0,.2,1);padding:2px}
-.row.cr:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(0,0,0,.12);background:var(--hover-bg)}
+.gt{display:flex;flex-direction:column;gap:2px;width:100%;min-width:700px;padding-top:4px;padding-bottom:80px;overflow-x:hidden}
+.row{display:grid;grid-template-columns:22px .7fr 1fr repeat(3,52px) calc(var(--p-cols)*52px);align-items:stretch;width:100%;background:var(--card-bg);border:1px solid var(--card-border);border-radius:10px;position:relative;overflow:hidden;transition:background .25s cubic-bezier(.4,0,.2,1),box-shadow .25s cubic-bezier(.4,0,.2,1);padding:2px}
+.row.cr:hover{box-shadow:0 4px 16px rgba(0,0,0,.12);background:var(--hover-bg)}
+.row:focus,.row:active{outline:none;box-shadow:none}
 .rc{display:contents}.cr{cursor:pointer}.out{opacity:.35;filter:grayscale(60%)}
 
 /* ID */
@@ -415,7 +432,7 @@ button:focus,input:focus{outline:none}
 
 /* Brand-Aroma divider */
 .cbrand{position:relative}
-.cbrand::after{content:'';position:absolute;right:0;top:15%;bottom:15%;width:1px;background:var(--border);opacity:.6}
+.cbrand::after{content:'';position:absolute;right:0;top:15%;bottom:15%;width:1px;background:var(--dim);opacity:.15}
 
 /* Aroma */
 .caroma .pn{background:var(--pill-name);border-radius:8px;padding:5px 8px;width:100%;display:flex;flex-direction:column;justify-content:center;min-height:32px;transition:all .4s ease}
@@ -446,13 +463,15 @@ button:focus,input:focus{outline:none}
 .sz-s .row{padding:1px}.sz-s .pn{min-height:26px;padding:3px 6px}.sz-s .st2{font-size:8px}.sz-s .pn-brand .bc{font-size:8px}.sz-s .pp{min-height:26px;font-size:8px}.sz-s .pm{min-height:26px}.sz-s .hp{height:24px}
 .sz-l .row{padding:3px}.sz-l .pn{min-height:40px;padding:7px 10px}.sz-l .st2{font-size:13px}.sz-l .pn-brand .bc{font-size:12px}.sz-l .pp{min-height:40px;font-size:11px}.sz-l .pm{min-height:40px}.sz-l .hp{height:34px}
 
-@media(min-width:901px){.dg{grid-template-columns:repeat(5,1fr)}.sw2{grid-column:span 5}}
+@media(min-width:901px){
+  .dg{grid-template-columns:repeat(3,1fr)}.sw2{grid-column:span 3}
+  .fc-panel{max-width:600px}
+}
 @media(max-width:900px){
   .strack{display:none!important}
   .dg{grid-template-columns:1fr 1fr}.sw2{grid-column:span 2}
   .sn{margin-left:-8px;margin-right:-8px;padding-left:8px;padding-right:8px;border-radius:0 0 12px 12px}
-  .stats-inline{margin-bottom:1px}
-  .gt{min-width:100%}
+  .gt{min-width:100%;overflow-x:hidden}
   .do{display:none!important}
   .mm{display:flex!important}
   .th,.row{grid-template-columns:18px .35fr .65fr calc(var(--p-cols)*34px)}
@@ -468,14 +487,15 @@ button:focus,input:focus{outline:none}
   .hn{padding:1px}.nhp{font-size:7px;border-radius:6px;height:26px}
   .hdr-click{font-size:7px;padding-left:5px;height:26px;border-radius:6px}
   .hpr{padding:1px;gap:1px}.hp{height:26px}
-  .fab-filter{bottom:14px;width:48px;height:48px}
+  .fab-pill{bottom:14px;height:44px;border-radius:22px}
+  .fab-btn{width:44px}
+  .fab-divider{height:20px}
   .fc-panel{max-width:100%;border-radius:16px 16px 0 0;padding:10px 14px 20px}
   .sz-s .st2{font-size:7px}
   .sz-l .st2{font-size:11px}
   .sz-l .pn-brand .bc{font-size:9px}
   .sz-l .row{padding:2px}
-  .sz-l .caroma .pn{padding:5px 6px;min-height:38px}
-  .sz-l .caroma{flex:1}
+  .sz-l .caroma .pn{padding:5px 6px}
   .sz-l .cbrand .pn,.sz-l .caroma .pn{min-height:38px}
 }
 </style>
