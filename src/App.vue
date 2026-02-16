@@ -111,15 +111,24 @@
                 <div class="fc-overlay" @click="showDash=false"></div>
                 <div class="fc-panel fc-stats" ref="statsPanelRef" @touchstart="onStatsTouchStart" @touchmove="onStatsTouchMove" @touchend="onStatsTouchEnd">
                   <div class="fc-handle"></div>
-                  <div class="fc-head"><span class="fc-title main-font">СТАТИСТИКА</span><button @click="showDash=false" class="fc-close">✕</button></div>
-                  <section class="dg">
-                    <div class="sc"><label class="sl">АРОМАТЫ</label><div class="sv mono">{{ stats.total }}</div><div class="ss"><span>Есть: <b class="mono">{{ stats.countAvail }}</b></span><span>Нет: <b class="mono">{{ stats.countOut }}</b></span></div></div>
-                    <div class="sc"><label class="sl">СКЛАД</label><div class="sv mono">{{ stats.availability }}%</div><div class="bt"><div class="bf" :style="{width:stats.availability+'%'}"></div></div></div>
-                    <div class="sc"><label class="sl">СРЕДНЯЯ ЦЕНА</label><div class="sp2"><div v-if="showPrices.p50" class="sp3">50г: <span class="mono">{{ stats.avg50 }}₽</span></div><div v-if="showPrices.p500" class="sp3">500г: <span class="mono">{{ stats.avg500 }}₽</span></div><div v-if="showPrices.p1000" class="sp3">1кг: <span class="mono">{{ stats.avg1000 }}₽</span></div></div></div>
-                    <div class="sc sc-right"><label class="sl">ФАБРИКИ</label><div v-for="f in ['LUZI','EPS','SELUZ']" :key="f" class="br"><div class="bm"><span class="mono">{{ f }}</span><span class="mono">{{ stats.factoryPerc[f] }}%</span></div><div class="bn"><div class="bf" :style="{width:stats.factoryPerc[f]+'%'}"></div></div></div></div>
-                    <div class="sc sc-right"><label class="sl">КАЧЕСТВО</label><div v-for="q in ['TOP','Q1','Q2']" :key="q" class="br"><div class="bm"><span class="mono">{{ q }}</span><span class="mono">{{ stats.qualityPerc[q] }}%</span></div><div class="bn"><div class="bf" :style="{width:stats.qualityPerc[q]+'%'}"></div></div></div></div>
-                    <div class="sc sw2"><div style="display:flex;justify-content:center;margin-bottom:6px"><button @click="toggleStatsMode" class="tsw main-font"><span style="color:var(--dim)">РЕЙТИНГ:</span> {{ statsMode==='6m'?'6 МЕС':'ВСЕ ВРЕМЯ' }} ⇄</button></div><div class="tsc"><div v-for="(item,idx) in stats.topListFull" :key="idx" class="tr2"><div class="tl"><span class="tn mono">{{ idx+1 }}.</span><span class="tname kollektif">{{ item.name }}</span></div><div class="tb2"><div class="tbd">{{ item.factory }}</div><div class="tbd">{{ item.quality }}</div><div class="tbd tbh">{{ statsMode==='6m'?item.sales6m:item.salesAll }}%</div></div><div style="display:flex;align-items:center"><div class="bn"><div class="bf" :style="{width:(statsMode==='6m'?item.sales6m:item.salesAll)+'%'}"></div></div></div></div><div v-if="!stats.topListFull.length" class="mono" style="font-size:10px;opacity:.5">НЕТ ДАННЫХ</div></div></div>
-                  </section>
+                  <!-- Sticky header inside stats -->
+                  <div class="fc-head fc-head-sticky"><span class="fc-title main-font">СТАТИСТИКА</span><button @click="showDash=false" class="fc-close">✕</button></div>
+                  <div class="stats-scroll">
+                    <section class="dg">
+                      <div class="sc"><label class="sl">АРОМАТЫ</label><div class="sv mono">{{ stats.total }}</div><div class="ss"><span>Есть: <b class="mono">{{ stats.countAvail }}</b></span><span>Нет: <b class="mono">{{ stats.countOut }}</b></span></div></div>
+                      <div class="sc"><label class="sl">СКЛАД</label><div class="sv mono">{{ stats.availability }}%</div><div class="bt"><div class="bf" :style="{width:stats.availability+'%'}"></div></div></div>
+                      <div class="sc"><label class="sl">СРЕДНЯЯ ЦЕНА</label><div class="sp2"><div v-if="showPrices.p50" class="sp3">50г: <span class="mono">{{ stats.avg50 }}₽</span></div><div v-if="showPrices.p500" class="sp3">500г: <span class="mono">{{ stats.avg500 }}₽</span></div><div v-if="showPrices.p1000" class="sp3">1кг: <span class="mono">{{ stats.avg1000 }}₽</span></div></div></div>
+                      <div class="sc"><label class="sl">ФАБРИКИ</label><div v-for="f in ['LUZI','EPS','SELUZ']" :key="f" class="br2"><div class="br2-row"><span class="br2-name kollektif">{{ f }}</span><span class="br2-val mono">{{ stats.factoryPerc[f] }}%</span></div><div class="bn"><div class="bf" :style="{width:stats.factoryPerc[f]+'%'}"></div></div></div></div>
+                      <div class="sc"><label class="sl">КАЧЕСТВО</label><div v-for="q in ['TOP','Q1','Q2']" :key="q" class="br2"><div class="br2-row"><span class="br2-name kollektif">{{ q }}</span><span class="br2-val mono">{{ stats.qualityPerc[q] }}%</span></div><div class="bn"><div class="bf" :style="{width:stats.qualityPerc[q]+'%'}"></div></div></div></div>
+                      <div class="sc sw2">
+                        <div class="rating-head"><span class="rating-label main-font">РЕЙТИНГ</span><div class="rating-sw"><button @click="statsMode='6m'" :class="['rsw-btn main-font',{active:statsMode==='6m'}]">6 МЕС</button><button @click="statsMode='all'" :class="['rsw-btn main-font',{active:statsMode==='all'}]">ВСЁ ВРЕМЯ</button></div></div>
+                        <div class="tsc"><div v-for="(item,idx) in stats.topListFull" :key="idx" class="tr2">
+                          <div class="tr2-top"><div class="tl"><span class="tn mono">{{ idx+1 }}.</span><span class="tname kollektif">{{ item.name }}</span></div><div class="tb2"><div class="tbd">{{ item.factory }}</div><div class="tbd">{{ item.quality }}</div><div class="tbd tbh">{{ statsMode==='6m'?item.sales6m:item.salesAll }}%</div></div></div>
+                          <div class="bn"><div class="bf" :style="{width:(statsMode==='6m'?item.sales6m:item.salesAll)+'%'}"></div></div>
+                        </div><div v-if="!stats.topListFull.length" class="mono" style="font-size:10px;opacity:.5">НЕТ ДАННЫХ</div></div>
+                      </div>
+                    </section>
+                  </div>
                 </div>
               </div>
             </transition>
@@ -182,12 +191,12 @@ const saved=localStorage.getItem('bahur-theme')
 const curTheme=ref(saved==='powder'?'powder':'graphite')
 
 const T={
-graphite:{bg:'#0c0c0e',text:'#e0e0e4',cBg:'#141416',pP:'#18181c',pM:'#18181a',pN:'#15151a',brd:'rgba(255,255,255,0.06)',dim:'#4a4a50',hBg:'#1c1c20',sBg:'rgba(16,16,20,0.95)',seBg:'#0a0a0c',seA:'#e0e0e4',seT:'#4a4a50',seTA:'#0a0a0c',panBg:'#111114',gBase:'rgba(0,0,0,0.35)',gBrd:'rgba(255,255,255,0.08)',gShine:'rgba(255,255,255,0.04)',acc:'#888890',tRgb:'20,20,22',fabBg:'rgba(14,14,18,0.88)',fabBrd:'rgba(255,255,255,0.1)'},
-powder:{bg:'#f4f0ec',text:'#1a1618',cBg:'#faf7f5',pP:'#f0ebe7',pM:'#f0ebe7',pN:'#f7f3f0',brd:'rgba(0,0,0,0.06)',dim:'#a09088',hBg:'#ede7e3',sBg:'rgba(238,234,228,0.96)',seBg:'#e4ddd8',seA:'#1a1618',seT:'#a09088',seTA:'#faf7f5',panBg:'#f7f3f0',gBase:'rgba(255,255,255,0.45)',gBrd:'rgba(0,0,0,0.06)',gShine:'rgba(255,255,255,0.6)',acc:'#605048',tRgb:'250,247,245',fabBg:'rgba(247,243,240,0.88)',fabBrd:'rgba(0,0,0,0.08)'}
+graphite:{bg:'#0c0c0e',text:'#e0e0e4',cBg:'#141416',pP:'#18181c',pM:'#18181a',pN:'#161618',brd:'rgba(255,255,255,0.06)',dim:'#4a4a50',hBg:'#1c1c20',sBg:'rgba(16,16,20,0.95)',seBg:'#0a0a0c',seA:'#e0e0e4',seT:'#4a4a50',seTA:'#0a0a0c',panBg:'#111114',gBase:'rgba(0,0,0,0.35)',gBrd:'rgba(255,255,255,0.08)',gShine:'rgba(255,255,255,0.04)',acc:'#888890',tRgb:'20,20,22',fabBg:'rgba(14,14,18,0.88)',fabBrd:'rgba(255,255,255,0.1)',barBg:'rgba(255,255,255,0.08)',barFill:'rgba(255,255,255,0.5)'},
+powder:{bg:'#f4f0ec',text:'#1a1618',cBg:'#faf7f5',pP:'#f0ebe7',pM:'#f0ebe7',pN:'#f7f3f0',brd:'rgba(0,0,0,0.06)',dim:'#a09088',hBg:'#ede7e3',sBg:'rgba(238,234,228,0.96)',seBg:'#e4ddd8',seA:'#1a1618',seT:'#a09088',seTA:'#faf7f5',panBg:'#f7f3f0',gBase:'rgba(255,255,255,0.45)',gBrd:'rgba(0,0,0,0.06)',gShine:'rgba(255,255,255,0.6)',acc:'#605048',tRgb:'250,247,245',fabBg:'rgba(247,243,240,0.88)',fabBrd:'rgba(0,0,0,0.08)',barBg:'rgba(0,0,0,0.06)',barFill:'rgba(0,0,0,0.3)'}
 }
 
-const themeVars=computed(()=>{const t=T[curTheme.value]||T.graphite;return{'--bg':t.bg,'--text':t.text,'--card-bg':t.cBg,'--pill-price':t.pP,'--pill-meta':t.pM,'--pill-name':t.pN,'--border':t.brd,'--card-border':t.brd,'--dim':t.dim,'--hover-bg':t.hBg,'--sticky-bg':t.sBg,'--seg-bg':t.seBg,'--seg-active':t.seA,'--seg-txt':t.seT,'--seg-txt-active':t.seTA,'--panel-bg':t.panBg,'--glass-base':t.gBase,'--glass-brd':t.gBrd,'--glass-shine':t.gShine,'--accent':t.acc,'--p-cols':activePriceCount.value,'--text-rgb':t.tRgb,'--fab-bg':t.fabBg,'--fab-brd':t.fabBrd}})
-const pVars=computed(()=>{const t=T[curTheme.value]||T.graphite;return{'--panel-bg':t.panBg,'--border':t.brd,'--text':t.text,'--dim':t.dim,'--seg-bg':t.seBg,'--seg-active':t.seA,'--seg-txt':t.seT,'--seg-txt-active':t.seTA,'--bg':t.bg,'--card-bg':t.cBg,'--text-rgb':t.tRgb,color:t.text}})
+const themeVars=computed(()=>{const t=T[curTheme.value]||T.graphite;return{'--bg':t.bg,'--text':t.text,'--card-bg':t.cBg,'--pill-price':t.pP,'--pill-meta':t.pM,'--pill-name':t.pN,'--border':t.brd,'--card-border':t.brd,'--dim':t.dim,'--hover-bg':t.hBg,'--sticky-bg':t.sBg,'--seg-bg':t.seBg,'--seg-active':t.seA,'--seg-txt':t.seT,'--seg-txt-active':t.seTA,'--panel-bg':t.panBg,'--glass-base':t.gBase,'--glass-brd':t.gBrd,'--glass-shine':t.gShine,'--accent':t.acc,'--p-cols':activePriceCount.value,'--text-rgb':t.tRgb,'--fab-bg':t.fabBg,'--fab-brd':t.fabBrd,'--bar-bg':t.barBg,'--bar-fill':t.barFill}})
+const pVars=computed(()=>{const t=T[curTheme.value]||T.graphite;return{'--panel-bg':t.panBg,'--border':t.brd,'--text':t.text,'--dim':t.dim,'--seg-bg':t.seBg,'--seg-active':t.seA,'--seg-txt':t.seT,'--seg-txt-active':t.seTA,'--bg':t.bg,'--card-bg':t.cBg,'--text-rgb':t.tRgb,'--bar-bg':t.barBg,'--bar-fill':t.barFill,'--pill-meta':t.pM,'--accent':t.acc,color:t.text}})
 
 const toggleTheme=()=>{curTheme.value=curTheme.value==='graphite'?'powder':'graphite'}
 watch(curTheme,v=>{localStorage.setItem('bahur-theme',v)})
@@ -321,22 +330,42 @@ button:focus,button:active,input:focus{outline:none;box-shadow:none}
 .sn{position:sticky;top:0;z-index:100;background:var(--sticky-bg);border-radius:14px;overflow:visible;padding:6px 8px 4px;transition:background .5s ease;box-shadow:0 6px 28px rgba(0,0,0,.3),0 1px 0 var(--glass-brd) inset;border:1px solid var(--glass-brd)}
 
 /* Dashboard stats (inside cascade) */
+.fc-head-sticky{position:sticky;top:0;z-index:2;background:var(--panel-bg);padding-bottom:6px;margin-bottom:2px}
+.stats-scroll{overflow-y:auto;flex:1;scrollbar-width:none}
+.stats-scroll::-webkit-scrollbar{width:0}
+.fc-stats{overflow:hidden;display:flex;flex-direction:column}
 .dg{display:grid;grid-template-columns:repeat(2,1fr);gap:4px}
 .sc{border:1px solid var(--border);padding:10px 12px;background:var(--card-bg);border-left:2px solid var(--accent);border-radius:8px;transition:all .4s ease}
-.sc-right{text-align:right}.sc-right .bm{justify-content:flex-end}
 .sw2{grid-column:span 2}.sl{display:block;font-size:7px;font-weight:800;color:var(--dim);margin-bottom:5px;letter-spacing:1.5px;text-transform:uppercase}
 .sv{font-size:15px;font-weight:800}.ss{display:flex;gap:8px;margin-top:4px;font-size:8px;color:var(--dim);font-weight:700}.ss b{color:var(--text);margin-left:2px}
 .sp2{display:flex;flex-direction:column;gap:1px}.sp3{font-size:9px;color:var(--dim);font-weight:700}.sp3 span{color:var(--accent);font-weight:800;margin-left:3px}
-.br{margin-bottom:3px}.bm{display:flex;justify-content:space-between;font-size:7px;font-weight:700;margin-bottom:2px;text-transform:uppercase}
-.bn{height:2px;background:var(--border);border-radius:1px;overflow:hidden}.bt{height:3px;background:var(--border);border-radius:2px;overflow:hidden;margin-top:5px}
-.bf{height:100%;background:var(--accent);transition:all .4s ease}
-.tsw{background:transparent;border:1px solid var(--border);color:var(--text);padding:3px 10px;border-radius:16px;font-size:8px;font-weight:700;cursor:pointer;transition:all .2s ease}
-.tsc{max-height:180px;overflow-y:auto;display:flex;flex-direction:column;gap:2px;scrollbar-width:none}
+
+/* Factory / Quality rows */
+.br2{margin-bottom:6px}.br2:last-child{margin-bottom:0}
+.br2-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px}
+.br2-name{font-size:8px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--text)}
+.br2-val{font-size:9px;font-weight:800;color:var(--text);border:1px solid var(--border);border-radius:5px;padding:1px 6px;background:var(--card-bg)}
+
+/* Bars */
+.bn{height:5px;background:var(--bar-bg);border-radius:3px;overflow:hidden;width:100%}
+.bt{height:5px;background:var(--bar-bg);border-radius:3px;overflow:hidden;margin-top:5px}
+.bf{height:100%;background:var(--bar-fill);border-radius:3px;transition:width .4s ease;min-width:2px}
+
+/* Rating header */
+.rating-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:8px}
+.rating-label{font-size:7px;font-weight:800;color:var(--dim);letter-spacing:1.5px}
+.rating-sw{display:flex;background:var(--seg-bg);border-radius:8px;padding:2px}
+.rsw-btn{background:transparent;border:none;color:var(--seg-txt);padding:5px 12px;font-size:7px;font-weight:800;letter-spacing:.8px;border-radius:6px;cursor:pointer;transition:all .25s ease;white-space:nowrap}
+.rsw-btn.active{background:var(--seg-active);color:var(--seg-txt-active);box-shadow:0 1px 3px rgba(0,0,0,.2)}
+
+/* Rating list */
+.tsc{display:flex;flex-direction:column;gap:0;scrollbar-width:none}
 .tsc::-webkit-scrollbar{width:0}
-.tr2{display:grid;grid-template-columns:minmax(0,2fr) auto minmax(0,1fr);align-items:center;gap:6px;padding:2px 0;border-bottom:1px solid var(--border)}.tr2:last-child{border-bottom:none}
-.tl{display:flex;align-items:center;min-width:0;overflow:hidden}.tn{color:var(--dim);margin-right:3px;font-weight:700;font-size:8px}
+.tr2{display:flex;flex-direction:column;gap:3px;padding:4px 0;border-bottom:1px solid var(--border)}.tr2:last-child{border-bottom:none}
+.tr2-top{display:flex;justify-content:space-between;align-items:center;gap:6px}
+.tl{display:flex;align-items:center;min-width:0;overflow:hidden;flex:1}.tn{color:var(--dim);margin-right:3px;font-weight:700;font-size:8px;flex-shrink:0}
 .tname{overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-weight:700;font-size:9px;text-transform:uppercase}
-.tb2{display:flex;gap:2px}.tbd{border:1px solid var(--border);padding:1px 3px;font-size:6px;border-radius:3px;font-weight:700;text-transform:uppercase}.tbh{background:var(--pill-meta);border-color:transparent;font-weight:800}
+.tb2{display:flex;gap:2px;flex-shrink:0}.tbd{border:1px solid var(--border);padding:1px 4px;font-size:6px;border-radius:3px;font-weight:700;text-transform:uppercase}.tbh{background:var(--pill-meta);border-color:transparent;font-weight:800}
 
 /* ── Table header ── */
 .th{display:grid;grid-template-columns:22px .7fr 1fr repeat(3,52px) calc(var(--p-cols)*52px);align-items:stretch;padding:0}
@@ -367,7 +396,7 @@ button:focus,button:active,input:focus{outline:none;box-shadow:none}
 .filter-cascade{position:fixed;inset:0;z-index:9000;display:flex;align-items:flex-end;justify-content:center}
 .fc-overlay{position:absolute;inset:0;background:rgba(0,0,0,.4);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
 .fc-panel{position:relative;z-index:1;width:100%;max-width:420px;max-height:80vh;overflow-y:auto;border-radius:20px 20px 0 0;padding:12px 16px 24px;display:flex;flex-direction:column;gap:10px;background:var(--panel-bg);border:1px solid var(--border);border-bottom:none;box-shadow:0 -8px 40px rgba(0,0,0,.25);scrollbar-width:none}
-.fc-stats{max-height:85vh}
+.fc-stats{max-height:85vh;overflow:hidden}
 .fc-panel::-webkit-scrollbar{width:0}
 .fc-handle{width:32px;height:3px;background:var(--dim);opacity:.3;border-radius:3px;margin:0 auto 4px}
 .fc-head{display:flex;justify-content:space-between;align-items:center}
@@ -466,6 +495,7 @@ button:focus,button:active,input:focus{outline:none;box-shadow:none}
 @media(min-width:901px){
   .dg{grid-template-columns:repeat(3,1fr)}.sw2{grid-column:span 3}
   .fc-panel{max-width:600px}
+  .fc-stats{max-width:650px}
 }
 @media(max-width:900px){
   .strack{display:none!important}
