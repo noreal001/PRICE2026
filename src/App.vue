@@ -490,6 +490,7 @@ button:focus,button:active,input:focus{outline:none;box-shadow:none}
 
 /* Card sizes */
 .sz-s .row{padding:1px}.sz-s .pn{min-height:26px;padding:3px 6px}.sz-s .st2{font-size:8px}.sz-s .pn-brand .bc{font-size:8px}.sz-s .pp{min-height:26px;font-size:8px}.sz-s .pm{min-height:26px}.sz-s .hp{height:24px}
+.sz-l .th,.sz-l .row{grid-template-columns:22px .7fr 1fr repeat(3,52px) minmax(calc(var(--p-cols)*52px),1fr)}
 .sz-l .row{padding:3px}.sz-l .pn{min-height:40px;padding:7px 10px}.sz-l .st2{font-size:13px}.sz-l .pn-brand .bc{font-size:12px}.sz-l .pp{min-height:40px;font-size:11px}.sz-l .pm{min-height:40px}.sz-l .hp{height:34px}
 
 @media(min-width:901px){
@@ -524,6 +525,7 @@ button:focus,button:active,input:focus{outline:none;box-shadow:none}
   .sz-s .st2{font-size:7px}
   .sz-l .st2{font-size:11px}
   .sz-l .pn-brand .bc{font-size:9px}
+  .sz-l .th,.sz-l .row{grid-template-columns:18px .35fr .65fr minmax(calc(var(--p-cols)*34px),1fr)}
   .sz-l .row{padding:2px}
   .sz-l .caroma .pn{padding:5px 6px}
   .sz-l .cbrand .pn,.sz-l .caroma .pn{min-height:38px}
