@@ -118,14 +118,14 @@
                       <div class="sc"><label class="sl">АРОМАТЫ</label><div class="sv mono">{{ stats.total }}</div><div class="ss"><span>Есть: <b class="mono">{{ stats.countAvail }}</b></span><span>Нет: <b class="mono">{{ stats.countOut }}</b></span></div></div>
                       <div class="sc"><label class="sl">СКЛАД</label><div class="sv mono">{{ stats.availability }}%</div><div class="bt"><div class="bf" :style="{width:stats.availability+'%'}"></div></div></div>
                       <div class="sc"><label class="sl">СРЕДНЯЯ ЦЕНА</label><div class="sp2"><div v-if="showPrices.p50" class="sp3">50г: <span class="mono">{{ stats.avg50 }}₽</span></div><div v-if="showPrices.p500" class="sp3">500г: <span class="mono">{{ stats.avg500 }}₽</span></div><div v-if="showPrices.p1000" class="sp3">1кг: <span class="mono">{{ stats.avg1000 }}₽</span></div></div></div>
-                      <div class="sc"><label class="sl">ФАБРИКИ</label><div v-for="f in ['LUZI','EPS','SELUZ']" :key="f" class="br2"><div class="br2-row"><span class="br2-name kollektif">{{ f }}</span><span class="br2-val mono">{{ stats.factoryPerc[f] }}%</span></div><div class="bn"><div class="bf" :style="{width:stats.factoryPerc[f]+'%'}"></div></div></div></div>
-                      <div class="sc"><label class="sl">КАЧЕСТВО</label><div v-for="q in ['TOP','Q1','Q2']" :key="q" class="br2"><div class="br2-row"><span class="br2-name kollektif">{{ q }}</span><span class="br2-val mono">{{ stats.qualityPerc[q] }}%</span></div><div class="bn"><div class="bf" :style="{width:stats.qualityPerc[q]+'%'}"></div></div></div></div>
+                      <div class="sc"><label class="sl">ФАБРИКИ</label><div v-for="f in ['LUZI','EPS','SELUZ']" :key="f" class="br2"><div class="br2-row"><span class="br2-name">{{ f }}</span><span class="br2-val">{{ stats.factoryPerc[f] }}%</span></div><div class="bn"><div class="bf" :style="{width:stats.factoryPerc[f]+'%'}"></div></div></div></div>
+                      <div class="sc"><label class="sl">КАЧЕСТВО</label><div v-for="q in ['TOP','Q1','Q2']" :key="q" class="br2"><div class="br2-row"><span class="br2-name">{{ q }}</span><span class="br2-val">{{ stats.qualityPerc[q] }}%</span></div><div class="bn"><div class="bf" :style="{width:stats.qualityPerc[q]+'%'}"></div></div></div></div>
                       <div class="sc sw2">
                         <div class="rating-head"><span class="rating-label main-font">РЕЙТИНГ</span><div class="rating-sw"><button @click="statsMode='6m'" :class="['rsw-btn main-font',{active:statsMode==='6m'}]">6 МЕС</button><button @click="statsMode='all'" :class="['rsw-btn main-font',{active:statsMode==='all'}]">ВСЁ ВРЕМЯ</button></div></div>
                         <div class="tsc"><div v-for="(item,idx) in stats.topListFull" :key="idx" class="tr2">
-                          <div class="tr2-top"><div class="tl"><span class="tn mono">{{ idx+1 }}.</span><span class="tname kollektif">{{ item.name }}</span></div><div class="tb2"><div class="tbd">{{ item.factory }}</div><div class="tbd">{{ item.quality }}</div><div class="tbd tbh">{{ statsMode==='6m'?item.sales6m:item.salesAll }}%</div></div></div>
+                          <div class="tr2-top"><div class="tl"><span class="tn">{{ idx+1 }}.</span><span class="tname">{{ item.name }}</span></div><div class="tb2"><div class="tbd">{{ item.factory }}</div><div class="tbd">{{ item.quality }}</div><div class="tbd tbh">{{ statsMode==='6m'?item.sales6m:item.salesAll }}%</div></div></div>
                           <div class="bn"><div class="bf" :style="{width:(statsMode==='6m'?item.sales6m:item.salesAll)+'%'}"></div></div>
-                        </div><div v-if="!stats.topListFull.length" class="mono" style="font-size:10px;opacity:.5">НЕТ ДАННЫХ</div></div>
+                        </div><div v-if="!stats.topListFull.length" style="font-size:10px;opacity:.5">НЕТ ДАННЫХ</div></div>
                       </div>
                     </section>
                   </div>
@@ -632,9 +632,9 @@ button{-webkit-tap-highlight-color:transparent}
   display:inline-flex;align-items:center;justify-content:center;
   width:16px;height:16px;border-radius:4px;font-size:10px;font-weight:900
 }
-.chp{background:rgba(var(--text-rgb),0.08);color:var(--text);opacity:.6}
-.chs{background:rgba(var(--text-rgb),0.08);color:var(--text);opacity:.6}
-.chm{background:rgba(var(--text-rgb),0.08);color:var(--text);opacity:.4}
+.chp{background:rgba(76,175,80,.12);color:#4caf50}
+.chs{background:rgba(156,39,176,.12);color:#ab47bc}
+.chm{background:rgba(244,67,54,.12);color:#ef5350}
 
 /* ── Popups ── */
 .co{position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:98;background:transparent}
@@ -708,9 +708,9 @@ button{-webkit-tap-highlight-color:transparent}
 .id-st{font-size:8px;font-weight:800}
 
 /* MONOCHROME status indicators — NO colors */
-.st-out{color:var(--text);opacity:.3}
-.st-plus{color:var(--text);opacity:.6}
-.st-star{color:var(--text);opacity:.5}
+.st-out{color:#ef5350}
+.st-plus{color:#4caf50}
+.st-star{color:#ab47bc}
 
 /* Brand — left-aligned */
 .cn{display:flex;align-items:stretch;padding:1px}
